@@ -1,0 +1,60 @@
+package com.cochera.miproyectointegrador.Login;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.cochera.miproyectointegrador.DataBase.DBHelper;
+
+public class LoginModel {
+    private DBHelper dbHelper;
+
+    public LoginModel(Context context) {
+        dbHelper = new DBHelper(context);
+    }
+
+    // Devuelve el ID del cliente si es correcto, o -1 si no existe
+    public int validateLogin(String correo, String contraseña) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT ClienteID, Nombre FROM Cliente WHERE Correo=? AND Contraseña=?",
+                new String[]{correo, contraseña}
+        );
+        if (c.moveToFirst()) {
+            int clienteId = c.getInt(c.getColumnIndexOrThrow("ClienteID"));
+            c.close();
+            return clienteId;
+        }
+        c.close();
+        return -1;
+    }
+
+    public String getNombreCliente(int clienteId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT Nombre FROM Cliente WHERE ClienteID=?",
+                new String[]{String.valueOf(clienteId)}
+        );
+        String nombre = "";
+        if (c.moveToFirst()) {
+            nombre = c.getString(c.getColumnIndexOrThrow("Nombre"));
+        }
+        c.close();
+        return nombre;
+    }
+
+    public String getCorreoCliente(int clienteId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT Correo FROM Cliente WHERE ClienteID=?",
+                new String[]{String.valueOf(clienteId)}
+        );
+        String correo = "";
+        if (c.moveToFirst()) {
+            correo = c.getString(c.getColumnIndexOrThrow("Correo"));
+        }
+        c.close();
+        return correo;
+    }
+}
+
