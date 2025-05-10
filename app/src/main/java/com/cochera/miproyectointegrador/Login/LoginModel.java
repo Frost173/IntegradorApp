@@ -1,8 +1,8 @@
 package com.cochera.miproyectointegrador.Login;
 
-import android.content.Context;
+import android.content.Context;/*
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase;*/
 
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 
