@@ -3,7 +3,10 @@ package com.cochera.miproyectointegrador.Login;
 import android.content.Context;
 
 public class LoginPresenter implements LoginContract.Presenter {
+<<<<<<< HEAD
     /*
+=======
+>>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
     private LoginContract.View view;
     private LoginModel model;
 
@@ -22,6 +25,7 @@ public class LoginPresenter implements LoginContract.Presenter {
         } else {
             view.showLoginError("Correo o contraseña incorrectos.");
         }
+<<<<<<< HEAD
     }*/
 
     //modificacion testing
@@ -46,6 +50,8 @@ public class LoginPresenter implements LoginContract.Presenter {
                 view.showLoginError("Correo o contraseña incorrectos.");
             }
         }
+=======
+>>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
     }
 }
 

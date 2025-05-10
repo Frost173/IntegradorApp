@@ -27,13 +27,21 @@ public class DBHelper extends SQLiteOpenHelper{
                 "NomCargo TEXT NOT NULL," +
                 "NomInterfaz TEXT NOT NULL," +
                 "Correo TEXT NOT NULL UNIQUE," +
+<<<<<<< HEAD
                 "Contrasena TEXT NOT NULL)");
+=======
+                "Contraseña TEXT NOT NULL)");
+>>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
 
         db.execSQL("CREATE TABLE Cliente (" +
                 "ClienteID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "Nombre TEXT NOT NULL," +
                 "Correo TEXT NOT NULL UNIQUE," +
+<<<<<<< HEAD
                 "Contrasena TEXT NOT NULL," +
+=======
+                "Contraseña TEXT NOT NULL," +
+>>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
                 "Celular TEXT NOT NULL)");
 
         db.execSQL("CREATE TABLE Vehiculos (" +
@@ -107,7 +115,11 @@ public class DBHelper extends SQLiteOpenHelper{
         values.put("NomCargo", "SuperAdmin");
         values.put("NomInterfaz", "Lucas Huallpa");
         values.put("Correo", "admin.59@gmail.com");
+<<<<<<< HEAD
         values.put("Contrasena", "AdminController@159");  // Ideal: almacenar hash en vez de texto plano
+=======
+        values.put("Contraseña", "AdminController@159");  // Ideal: almacenar hash en vez de texto plano
+>>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
 
         db.insert("Administrador", null, values);
     }
@@ -127,12 +139,20 @@ public class DBHelper extends SQLiteOpenHelper{
         onCreate(db);
     }
 
+<<<<<<< HEAD
     public boolean registerClient(String nombre, String correo, String contrasena, String celular) {
+=======
+    public boolean registerClient(String nombre, String correo, String contraseña, String celular) {
+>>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("Nombre", nombre);
         values.put("Correo", correo);
+<<<<<<< HEAD
         values.put("Contrasena", contrasena);
+=======
+        values.put("Contraseña", contraseña);
+>>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
         values.put("Celular", celular);
         long result = db.insert("Cliente", null, values);
         return result != -1;
@@ -152,6 +172,7 @@ public class DBHelper extends SQLiteOpenHelper{
     }
 
     // Cambiar contraseña
+<<<<<<< HEAD
     public boolean updatePassword(String correo, String nuevaContrasena) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -182,6 +203,15 @@ public class DBHelper extends SQLiteOpenHelper{
         c.close();
         return clienteId;
     }
+=======
+    public boolean updatePassword(String correo, String nuevaContraseña) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("Contraseña", nuevaContraseña);
+        int rows = db.update("Cliente", cv, "Correo=?", new String[]{correo});
+        return rows > 0;
+    }
+>>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
 
 
 }
