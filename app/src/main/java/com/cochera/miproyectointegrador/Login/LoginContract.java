@@ -9,7 +9,10 @@ public interface LoginContract {
 
         void goToAdminInterface();
         void goToClienteInterface(int clienteId);
-        void showLoginError(String message);
+
+        default void showLoginError(String message) {
+
+        }
     }
     interface Presenter {
         void login(String correo, String contrasena);
