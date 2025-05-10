@@ -1,19 +1,19 @@
 package com.cochera.miproyectointegrador.Login;
 
-<<<<<<< HEAD
+
 import android.content.Context;/*
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;*/
-=======
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
->>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
+
 
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 
 public class LoginModel {
-<<<<<<< HEAD
+
 
     /*
     private DBHelper dbHelper;
@@ -88,7 +88,6 @@ public class LoginModel {
     public int validateLogin(String correo, String contrasena) {
         return dbHelper.validateLogin(correo, contrasena);
     }
-=======
->>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
+
 }
 

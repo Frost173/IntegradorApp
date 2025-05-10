@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.cochera.miproyectointegrador.Login.LoginContract;
 import com.cochera.miproyectointegrador.Login.LoginPresenter;
-<<<<<<< HEAD
+
 import com.cochera.miproyectointegrador.Register.RegisterActivity;
 
 
@@ -122,6 +122,4 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     public void showLoginError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-=======
->>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
 }

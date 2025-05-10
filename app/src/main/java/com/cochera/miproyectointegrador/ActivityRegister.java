@@ -18,12 +18,8 @@ import com.cochera.miproyectointegrador.Register.RegisterPresenter;
 public class ActivityRegister extends AppCompatActivity implements RegisterContract.View  {
 
 
-
-<<<<<<< HEAD
     private EditText etNombre, etCorreo, etContrasena, etCelular;
-=======
-    private EditText etNombre, etCorreo, etContraseña, etCelular;
->>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
+
     private Button btnRegistrar;
     private RegisterPresenter presenter;
 
@@ -34,11 +30,7 @@ public class ActivityRegister extends AppCompatActivity implements RegisterContr
 
         etNombre = findViewById(R.id.editTextName);
         etCorreo = findViewById(R.id.editTextCorreo);
-<<<<<<< HEAD
         etContrasena = findViewById(R.id.editTextContrasena);
-=======
-        etContraseña = findViewById(R.id.editTextContrasena);
->>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
         etCelular = findViewById(R.id.editTextPhone);
         btnRegistrar = findViewById(R.id.buttonRegistrarse);
 
@@ -47,11 +39,7 @@ public class ActivityRegister extends AppCompatActivity implements RegisterContr
         btnRegistrar.setOnClickListener(v -> presenter.register(
                 etNombre.getText().toString(),
                 etCorreo.getText().toString(),
-<<<<<<< HEAD
                 etContrasena.getText().toString(),
-=======
-                etContraseña.getText().toString(),
->>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
                 etCelular.getText().toString()
         ));
 
