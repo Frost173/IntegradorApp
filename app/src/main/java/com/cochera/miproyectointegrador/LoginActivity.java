@@ -14,9 +14,11 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.cochera.miproyectointegrador.Login.LoginContract;
 import com.cochera.miproyectointegrador.Login.LoginPresenter;
+import com.cochera.miproyectointegrador.Register.RegisterActivity;
 
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.View{
+    /*
     private EditText etCorreo, etContraseña;
     private Button btnLogin;
     private LoginPresenter presenter;
@@ -58,6 +60,56 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         finish();
     }
 
+
+    @Override
+    public void showLoginError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+    */
+    //modifcacion testin
+
+    private EditText etCorreo, etContraseña;
+    private Button btnLogin, btnRegistrate;
+    private LoginPresenter presenter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        etCorreo = findViewById(R.id.editTextCorreolog);
+        etContraseña = findViewById(R.id.editTextContrasenalog);
+        btnLogin = findViewById(R.id.buttonLogin);
+        btnRegistrate = findViewById(R.id.buttonRegistrolog);
+
+        presenter = new LoginPresenter(this, this);
+
+        btnLogin.setOnClickListener(v -> {
+            String correo = etCorreo.getText().toString().trim();
+            String contraseña = etContraseña.getText().toString().trim();
+            presenter.login(correo, contraseña);
+        });
+
+        btnRegistrate.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    @Override
+    public void goToAdminInterface() {
+        Intent intent = new Intent(this, ActivityAdminint.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void goToClienteInterface(int clienteId) {
+        Intent intent = new Intent(this, InterfazCliente.class);
+        intent.putExtra("clienteId", clienteId);
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     public void showLoginError(String message) {

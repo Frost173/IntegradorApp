@@ -159,6 +159,29 @@ public class DBHelper extends SQLiteOpenHelper{
         int rows = db.update("Cliente", cv, "Correo=?", new String[]{correo});
         return rows > 0;
     }
+    //modifcacion testing
+    // Validar administrador
+    public boolean isAdmin(String correo, String contraseña) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Administrador WHERE Correo=? AND Contraseña=?",
+                new String[]{correo, contraseña});
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+        return exists;
+    }
+
+    // Validar cliente
+    public int validateLogin(String correo, String contraseña) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT ClienteID FROM Cliente WHERE Correo=? AND Contraseña=?",
+                new String[]{correo, contraseña});
+        int clienteId = -1;
+        if (c.moveToFirst()) {
+            clienteId = c.getInt(c.getColumnIndexOrThrow("ClienteID"));
+        }
+        c.close();
+        return clienteId;
+    }
 
 
 }

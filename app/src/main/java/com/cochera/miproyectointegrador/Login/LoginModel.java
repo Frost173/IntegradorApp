@@ -7,7 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 
 public class LoginModel {
+
+    /*
     private DBHelper dbHelper;
+
 
     public LoginModel(Context context) {
         dbHelper = new DBHelper(context);
@@ -55,6 +58,23 @@ public class LoginModel {
         }
         c.close();
         return correo;
+    }
+    */
+
+    //modificaciones testing
+
+    private DBHelper dbHelper;
+
+    public LoginModel(Context context) {
+        dbHelper = new DBHelper(context);
+    }
+
+    public boolean isAdmin(String correo, String contraseña) {
+        return dbHelper.isAdmin(correo, contraseña);
+    }
+
+    public int validateLogin(String correo, String contraseña) {
+        return dbHelper.validateLogin(correo, contraseña);
     }
 }
 
