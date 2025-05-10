@@ -69,12 +69,12 @@ public class LoginModel {
         dbHelper = new DBHelper(context);
     }
 
-    public boolean isAdmin(String correo, String contraseña) {
-        return dbHelper.isAdmin(correo, contraseña);
+    public boolean isAdmin(String correo, String contrasena) {
+        return dbHelper.isAdmin(correo, contrasena);
     }
 
-    public int validateLogin(String correo, String contraseña) {
-        return dbHelper.validateLogin(correo, contraseña);
+    public int validateLogin(String correo, String contrasena) {
+        return dbHelper.validateLogin(correo, contrasena);
     }
 }
 

@@ -12,7 +12,7 @@ public interface LoginContract {
         void showLoginError(String message);
     }
     interface Presenter {
-        void login(String correo, String contraseña);
+        void login(String correo, String contrasena);
     }
 }
 

@@ -19,7 +19,7 @@ public class InterfazCliente extends AppCompatActivity {
         String nombre = getIntent().getStringExtra("nombre");
         String correo = getIntent().getStringExtra("correo");
 
-        // Ahora puedes mostrar el nombre/correo en tu interfaz
+
     }
 
 }

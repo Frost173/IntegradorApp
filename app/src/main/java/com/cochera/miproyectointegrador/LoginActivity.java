@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     */
     //modifcacion testin
 
-    private EditText etCorreo, etContraseña;
+    private EditText etCorreo, etContrasena;
     private Button btnLogin, btnRegistrate;
     private LoginPresenter presenter;
 
@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         setContentView(R.layout.activity_login);
 
         etCorreo = findViewById(R.id.editTextCorreolog);
-        etContraseña = findViewById(R.id.editTextContrasenalog);
+        etContrasena = findViewById(R.id.editTextContrasenalog);
         btnLogin = findViewById(R.id.buttonLogin);
         btnRegistrate = findViewById(R.id.buttonRegistrolog);
 
@@ -86,8 +86,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
         btnLogin.setOnClickListener(v -> {
             String correo = etCorreo.getText().toString().trim();
-            String contraseña = etContraseña.getText().toString().trim();
-            presenter.login(correo, contraseña);
+            String contrasena = etContrasena.getText().toString().trim();
+            presenter.login(correo, contrasena);
         });
 
         btnRegistrate.setOnClickListener(v -> {

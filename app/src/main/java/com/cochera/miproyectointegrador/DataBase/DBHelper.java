@@ -27,13 +27,13 @@ public class DBHelper extends SQLiteOpenHelper{
                 "NomCargo TEXT NOT NULL," +
                 "NomInterfaz TEXT NOT NULL," +
                 "Correo TEXT NOT NULL UNIQUE," +
-                "Contraseña TEXT NOT NULL)");
+                "Contrasena TEXT NOT NULL)");
 
         db.execSQL("CREATE TABLE Cliente (" +
                 "ClienteID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "Nombre TEXT NOT NULL," +
                 "Correo TEXT NOT NULL UNIQUE," +
-                "Contraseña TEXT NOT NULL," +
+                "Contrasena TEXT NOT NULL," +
                 "Celular TEXT NOT NULL)");
 
         db.execSQL("CREATE TABLE Vehiculos (" +
@@ -107,7 +107,7 @@ public class DBHelper extends SQLiteOpenHelper{
         values.put("NomCargo", "SuperAdmin");
         values.put("NomInterfaz", "Lucas Huallpa");
         values.put("Correo", "admin.59@gmail.com");
-        values.put("Contraseña", "AdminController@159");  // Ideal: almacenar hash en vez de texto plano
+        values.put("Contrasena", "AdminController@159");  // Ideal: almacenar hash en vez de texto plano
 
         db.insert("Administrador", null, values);
     }
@@ -127,12 +127,12 @@ public class DBHelper extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public boolean registerClient(String nombre, String correo, String contraseña, String celular) {
+    public boolean registerClient(String nombre, String correo, String contrasena, String celular) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("Nombre", nombre);
         values.put("Correo", correo);
-        values.put("Contraseña", contraseña);
+        values.put("Contrasena", contrasena);
         values.put("Celular", celular);
         long result = db.insert("Cliente", null, values);
         return result != -1;
@@ -152,29 +152,29 @@ public class DBHelper extends SQLiteOpenHelper{
     }
 
     // Cambiar contraseña
-    public boolean updatePassword(String correo, String nuevaContraseña) {
+    public boolean updatePassword(String correo, String nuevaContrasena) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("Contraseña", nuevaContraseña);
+        cv.put("Contraseña", nuevaContrasena);
         int rows = db.update("Cliente", cv, "Correo=?", new String[]{correo});
         return rows > 0;
     }
     //modifcacion testing
     // Validar administrador
-    public boolean isAdmin(String correo, String contraseña) {
+    public boolean isAdmin(String correo, String contrasena) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Administrador WHERE Correo=? AND Contraseña=?",
-                new String[]{correo, contraseña});
+        Cursor cursor = db.rawQuery("SELECT * FROM Administrador WHERE Correo=? AND Contrasena=?",
+                new String[]{correo, contrasena});
         boolean exists = cursor.moveToFirst();
         cursor.close();
         return exists;
     }
 
     // Validar cliente
-    public int validateLogin(String correo, String contraseña) {
+    public int validateLogin(String correo, String contrasena) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT ClienteID FROM Cliente WHERE Correo=? AND Contraseña=?",
-                new String[]{correo, contraseña});
+        Cursor c = db.rawQuery("SELECT ClienteID FROM Cliente WHERE Correo=? AND Contrasena=?",
+                new String[]{correo, contrasena});
         int clienteId = -1;
         if (c.moveToFirst()) {
             clienteId = c.getInt(c.getColumnIndexOrThrow("ClienteID"));

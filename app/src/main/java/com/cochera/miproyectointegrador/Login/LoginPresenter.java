@@ -35,11 +35,11 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void login(String correo, String contraseña) {
-        if (model.isAdmin(correo, contraseña)) {
+    public void login(String correo, String contrasena) {
+        if (model.isAdmin(correo, contrasena)) {
             view.goToAdminInterface();
         } else {
-            int clienteId = model.validateLogin(correo, contraseña);
+            int clienteId = model.validateLogin(correo, contrasena);
             if (clienteId != -1) {
                 view.goToClienteInterface(clienteId);
             } else {
