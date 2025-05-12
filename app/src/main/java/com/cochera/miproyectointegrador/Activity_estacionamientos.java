@@ -24,7 +24,7 @@ public class Activity_estacionamientos extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_estacionamientos);
+        setContentView(R.layout.Activity_estacionamientos);
 
         // Configura el Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
