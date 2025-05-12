@@ -105,7 +105,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     @Override
     public void goToAdminInterface() {
-        Intent intent = new Intent(this, ActivityAdminint.class);
+        Intent intent = new Intent(this, Tarifario.class);
         startActivity(intent);
         finish();
     }

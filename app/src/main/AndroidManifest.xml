@@ -26,6 +26,9 @@
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
+            android:name=".Tarifario"
+            android:exported="false" />
+        <activity
             android:name=".ActivityRegister"
             android:exported="true">
             <intent-filter>
