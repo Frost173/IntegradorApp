@@ -9,8 +9,8 @@ public class RegisterModel {
         public RegisterModel(Context context) {
             dbHelper = new DBHelper(context);
         }
-        public boolean register(String nombre, String correo, String contraseña,String celular) {
-            return dbHelper.registerClient(nombre, correo, contraseña, celular);
+        public boolean register(String nombre, String correo, String contrasena,String celular) {
+            return dbHelper.registerClient(nombre, correo, contrasena, celular);
         }
 
 }

@@ -12,8 +12,8 @@ public class RegisterPresenter implements RegisterContract.Presenter {
         this.model = new RegisterModel(context);
     }
     @Override
-    public void register(String nombre, String correo, String contraseña, String celular) {
-        if (model.register(nombre, correo, contraseña, celular)) {
+    public void register(String nombre, String correo, String contrasena, String celular) {
+        if (model.register(nombre, correo, contrasena, celular)) {
             view.showRegisterSuccess();
         } else {
             view.showRegisterError("No se pudo registrar. ¿Correo o DNI ya registrados?");

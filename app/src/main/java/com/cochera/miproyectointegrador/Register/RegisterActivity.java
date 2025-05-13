@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cochera.miproyectointegrador.R;
 
 public class RegisterActivity extends AppCompatActivity implements RegisterContract.View {
-    private EditText etNombre, etCorreo, etContraseña, etCelular;
+    private EditText etNombre, etCorreo, etContrasena, etCelular;
     private Button btnRegistrar;
     private RegisterPresenter presenter;
 
@@ -21,7 +21,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterContr
 
         etNombre = findViewById(R.id.editTextName);
         etCorreo = findViewById(R.id.editTextCorreo);
-        etContraseña = findViewById(R.id.editTextContrasena);
+        etContrasena = findViewById(R.id.editTextContrasena);
         etCelular = findViewById(R.id.editTextPhone);
         btnRegistrar = findViewById(R.id.buttonRegistrarse);
 
@@ -30,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterContr
         btnRegistrar.setOnClickListener(v -> presenter.register(
                 etNombre.getText().toString(),
                 etCorreo.getText().toString(),
-                etContraseña.getText().toString(),
+                etContrasena.getText().toString(),
                 etCelular.getText().toString()
         ));
     }

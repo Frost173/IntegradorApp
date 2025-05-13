@@ -22,112 +22,108 @@ public class DBHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE Administrador (" +
-                "AdminID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "NomCargo TEXT NOT NULL," +
-                "NomInterfaz TEXT NOT NULL," +
-                "Correo TEXT NOT NULL UNIQUE," +
-                "Contrasena TEXT NOT NULL)");
-
-
-        db.execSQL("CREATE TABLE Cliente (" +
-                "ClienteID INTEGER PRIMARY KEY AUTOINCREMENT," +
+        db.execSQL("CREATE TABLE Usuarios (" +
+                "UsuarioID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "Nombre TEXT NOT NULL," +
+                "Apellido TEXT NOT NULL," +
                 "Correo TEXT NOT NULL UNIQUE," +
-                "Contrasena TEXT NOT NULL," +
-                "Contraseña TEXT NOT NULL," +
+                "Contrasena TEXT NOT NULL);");
 
-                "Celular TEXT NOT NULL)");
+        db.execSQL("CREATE TABLE Perfiles (" +
+                "PerfilesID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "NomPerfil TEXT NOT NULL," +
+                "UsuarioID INTEGER NOT NULL," +
+                "FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID));");
+
+        db.execSQL("CREATE TABLE Chats (" +
+                "ChatID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "Mensaje TEXT NOT NULL," +
+                "FechaEnvio TEXT NOT NULL," +
+                "UsuarioID INTEGER NOT NULL," +
+                "FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID));");
 
         db.execSQL("CREATE TABLE Vehiculos (" +
-                "VehiculoID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "Placa TEXT NOT NULL UNIQUE," +
-                "Color TEXT NOT NULL," +
+                "VehiculosID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "Tipo TEXT NOT NULL," +
-                "ClienteID INTEGER NOT NULL," +
-                "FOREIGN KEY (ClienteID) REFERENCES Cliente(ClienteID))");
+                "Color TEXT NOT NULL," +
+                "Placa TEXT NOT NULL UNIQUE," +
+                "UsuarioID INTEGER NOT NULL," +
+                "FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID));");
 
         db.execSQL("CREATE TABLE Estacionamiento (" +
-                "EstacionamientoID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "AdminID INTEGER NOT NULL," +
-                "Nombre TEXT NOT NULL," +
-                "Direccion TEXT NOT NULL," +
-                "Distrito TEXT NOT NULL," +
-                "FOREIGN KEY (AdminID) REFERENCES Administrador(AdminID))");
-
-        db.execSQL("CREATE TABLE Espacios (" +
-                "EspacioID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "EstacionamientoID INTEGER NOT NULL," +
-                "Codigo TEXT NOT NULL," +
+                "EstacionID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "Ubicacion TEXT NOT NULL," +
-                "Estado TEXT NOT NULL," +
-                "FOREIGN KEY (EstacionamientoID) REFERENCES Estacionamiento(EstacionamientoID))");
-
-        db.execSQL("CREATE TABLE Reservas (" +
-                "ReservaID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "FechaReservada TEXT NOT NULL," +
-                "HoraEntrada TEXT NOT NULL," +
-                "HoraSalida TEXT NOT NULL," +
-                "Estado TEXT NOT NULL," +
-                "CodigoTicket TEXT NOT NULL," +
-                "VehiculoID INTEGER NOT NULL," +
-                "ClienteID INTEGER NOT NULL," +
-                "EspacioID INTEGER NOT NULL," +
-                "FOREIGN KEY (VehiculoID) REFERENCES Vehiculos(VehiculoID)," +
-                "FOREIGN KEY (ClienteID) REFERENCES Cliente(ClienteID)," +
-                "FOREIGN KEY (EspacioID) REFERENCES Espacios(EspacioID))");
-
-        db.execSQL("CREATE TABLE Pagos (" +
-                "PagosID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "ReservaID INTEGER NOT NULL," +
-                "Monto REAL NOT NULL," +
-                "Estado TEXT NOT NULL," +
-                "FechaPago TEXT NOT NULL," +
-                "Comprobante TEXT," +
-                "FOREIGN KEY (ReservaID) REFERENCES Reservas(ReservaID))");
+                "UsuarioID INTEGER NOT NULL," +
+                "FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID));");
 
         db.execSQL("CREATE TABLE Tarifas (" +
                 "TarifaID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "PrecioHora REAL NOT NULL," +
                 "TipoVehiculo TEXT NOT NULL," +
-                "ReservaID INTEGER," +
-                "EstacionamientoID INTEGER NOT NULL," +
-                "FOREIGN KEY (ReservaID) REFERENCES Reservas(ReservaID)," +
-                "FOREIGN KEY (EstacionamientoID) REFERENCES Estacionamiento(EstacionamientoID))");
+                "Precio REAL NOT NULL," +
+                "EstacionID INTEGER NOT NULL," +
+                "FOREIGN KEY (EstacionID) REFERENCES Estacionamiento(EstacionID));");
 
-        db.execSQL("CREATE TABLE Chat (" +
-                "ChatID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "Textos TEXT NOT NULL," +
-                "FechaEnvio TEXT NOT NULL," +
-                "FechaInicio TEXT NOT NULL," +
-                "AdminID INTEGER NOT NULL," +
-                "ClienteID INTEGER NOT NULL," +
-                "FOREIGN KEY (AdminID) REFERENCES Administrador(AdminID)," +
-                "FOREIGN KEY (ClienteID) REFERENCES Cliente(ClienteID))");
+        db.execSQL("CREATE TABLE Espacios (" +
+                "EspacioID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "Codigo TEXT NOT NULL UNIQUE," +
+                "Estado TEXT NOT NULL," +
+                "EstacionID INTEGER NOT NULL," +
+                "FOREIGN KEY (EstacionID) REFERENCES Estacionamiento(EstacionID));");
 
-        // Inserción del admin por defecto
-        ContentValues values = new ContentValues();
-        values.put("NomCargo", "SuperAdmin");
-        values.put("NomInterfaz", "Lucas Huallpa");
-        values.put("Correo", "admin.59@gmail.com");
-        values.put("Contrasena", "AdminController@159");  // Ideal: almacenar hash en vez de texto plano
+        db.execSQL("CREATE TABLE Reservas (" +
+                "ReservalID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "FechaEntrada TEXT NOT NULL," +
+                "HoraEntrada TEXT NOT NULL," +
+                "HoraSalida TEXT," +
+                "Estado TEXT NOT NULL," +
+                "UsuarioID INTEGER NOT NULL," +
+                "EspacioID INTEGER NOT NULL," +
+                "VehiculosID INTEGER NOT NULL," +
+                "FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID)," +
+                "FOREIGN KEY (EspacioID) REFERENCES Espacios(EspacioID)," +
+                "FOREIGN KEY (VehiculosID) REFERENCES Vehiculos(VehiculosID));");
 
+        db.execSQL("CREATE TABLE Pagos (" +
+                "PagosID TEXT PRIMARY KEY," +
+                "Monto REAL NOT NULL," +
+                "FechaPago TEXT NOT NULL," +
+                "ReservalID INTEGER NOT NULL," +
+                "FOREIGN KEY (ReservalID) REFERENCES Reservas(ReservalID));");
 
-        db.insert("Administrador", null, values);
+        db.execSQL("CREATE TABLE HistorialAcceso (" +
+                "HistorialID TEXT PRIMARY KEY," +
+                "FechaIngreso TEXT NOT NULL," +
+                "FechaSalida TEXT," +
+                "ReservalID INTEGER NOT NULL," +
+                "FOREIGN KEY (ReservalID) REFERENCES Reservas(ReservalID));");
+
+        // Insertar admin por defecto
+        ContentValues adminUser = new ContentValues();
+        adminUser.put("Nombre", "Admin");
+        adminUser.put("Apellido", "Controller");
+        adminUser.put("Correo", "admin.59@gmail.com");
+        adminUser.put("Contrasena", "AdminController@159");
+        long adminId = db.insert("Usuarios", null, adminUser);
+
+        ContentValues adminProfile = new ContentValues();
+        adminProfile.put("NomPerfil", "Admin");
+        adminProfile.put("UsuarioID", adminId);
+        db.insert("Perfiles", null, adminProfile);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Si cambias la estructura de la base de datos, puedes borrar y recrear aquí
-        db.execSQL("DROP TABLE IF EXISTS Chat");
-        db.execSQL("DROP TABLE IF EXISTS Tarifas");
+        db.execSQL("DROP TABLE IF EXISTS HistorialAcceso");
         db.execSQL("DROP TABLE IF EXISTS Pagos");
         db.execSQL("DROP TABLE IF EXISTS Reservas");
         db.execSQL("DROP TABLE IF EXISTS Espacios");
+        db.execSQL("DROP TABLE IF EXISTS Tarifas");
         db.execSQL("DROP TABLE IF EXISTS Estacionamiento");
         db.execSQL("DROP TABLE IF EXISTS Vehiculos");
-        db.execSQL("DROP TABLE IF EXISTS Cliente");
-        db.execSQL("DROP TABLE IF EXISTS Administrador");
+        db.execSQL("DROP TABLE IF EXISTS Chats");
+        db.execSQL("DROP TABLE IF EXISTS Perfiles");
+        db.execSQL("DROP TABLE IF EXISTS Usuarios");
         onCreate(db);
     }
 
@@ -169,11 +165,57 @@ public class DBHelper extends SQLiteOpenHelper{
     // Validar administrador
     public boolean isAdmin(String correo, String contrasena) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Administrador WHERE Correo=? AND Contrasena=?",
-                new String[]{correo, contrasena});
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM Usuarios u " +
+                        "INNER JOIN Perfiles p ON u.UsuarioID = p.UsuarioID " +
+                        "WHERE u.Correo = ? AND u.Contrasena = ? AND p.NomPerfil = 'Admin'",
+                new String[]{correo, contrasena}
+        );
         boolean exists = cursor.moveToFirst();
         cursor.close();
         return exists;
+    }
+
+    public boolean isCliente(String correo, String contrasena) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM Usuarios u " +
+                        "INNER JOIN Perfiles p ON u.UsuarioID = p.UsuarioID " +
+                        "WHERE u.Correo = ? AND u.Contrasena = ? AND p.NomPerfil = 'Cliente'",
+                new String[]{correo, contrasena}
+        );
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+        return exists;
+    }
+
+    public boolean registerCliente(String nombre, String apellido, String correo,
+                                   String contrasena, String dni, String celular) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("Nombre", nombre);
+        values.put("Apellido", apellido);
+        values.put("Correo", correo);
+        values.put("Contrasena", contrasena);
+
+        try {
+            db.beginTransaction();
+            long userId = db.insertOrThrow("Usuarios", null, values);
+
+            if(userId == -1) return false;
+
+            ContentValues perfil = new ContentValues();
+            perfil.put("NomPerfil", "Cliente");
+            perfil.put("UsuarioID", userId);
+            db.insertOrThrow("Perfiles", null, perfil);
+
+            db.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            db.endTransaction();
+        }
     }
 
     // Validar cliente
@@ -181,12 +223,12 @@ public class DBHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT ClienteID FROM Cliente WHERE Correo=? AND Contrasena=?",
                 new String[]{correo, contrasena});
-        int clienteId = -1;
+        int usuarioId = -1;
         if (c.moveToFirst()) {
-            clienteId = c.getInt(c.getColumnIndexOrThrow("ClienteID"));
+            usuarioId = c.getInt(c.getColumnIndexOrThrow("UsuarioID"));
         }
         c.close();
-        return clienteId;
+        return usuarioId;
     }
 
 

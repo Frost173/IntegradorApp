@@ -2,6 +2,8 @@ package com.cochera.miproyectointegrador.Login;
 
 import android.content.Context;
 
+import com.cochera.miproyectointegrador.DataBase.DBHelper;
+
 public class LoginPresenter implements LoginContract.Presenter {
 
     /*
@@ -31,26 +33,23 @@ public class LoginPresenter implements LoginContract.Presenter {
     //modificacion testing
 
     private LoginContract.View view;
-    private LoginModel model;
+    private DBHelper dbHelper;
+
 
     public LoginPresenter(LoginContract.View view, Context context) {
         this.view = view;
-        this.model = new LoginModel(context);
+        this.dbHelper = new DBHelper(context);
     }
 
     @Override
     public void login(String correo, String contrasena) {
-        if (model.isAdmin(correo, contrasena)) {
-            view.goToAdminInterface();
+        if (dbHelper.isAdmin(correo, contrasena)) {
+            view.goToAdminInterface(); // Redirige a Tarifario
+        } else if (dbHelper.isCliente(correo, contrasena)) {
+            view.goToClienteInterface();
         } else {
-            int clienteId = model.validateLogin(correo, contrasena);
-            if (clienteId != -1) {
-                view.goToClienteInterface(clienteId);
-            } else {
-                view.showLoginError("Correo o contraseña incorrectos.");
-            }
+            view.showLoginError("Credenciales incorrectas");
         }
-
     }
 }
 
