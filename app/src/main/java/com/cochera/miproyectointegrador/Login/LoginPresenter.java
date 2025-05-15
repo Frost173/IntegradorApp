@@ -1,56 +1,38 @@
 package com.cochera.miproyectointegrador.Login;
 
 import android.content.Context;
+import com.cochera.miproyectointegrador.DataBase.DBHelper;
 
 public class LoginPresenter implements LoginContract.Presenter {
 
-    /*
-=======
->>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
     private LoginContract.View view;
-    private LoginModel model;
+    private DBHelper dbHelper;
 
     public LoginPresenter(LoginContract.View view, Context context) {
         this.view = view;
-        this.model = new LoginModel(context);
+        this.dbHelper = new DBHelper(context);
     }
 
     @Override
     public void login(String correo, String contraseña) {
-        int clienteId = model.validateLogin(correo, contraseña);
-        if (clienteId != -1) {
-            String nombre = model.getNombreCliente(clienteId);
-            String correoReal = model.getCorreoCliente(clienteId);
-            view.showLoginSuccess(clienteId, nombre, correoReal);
-        } else {
-            view.showLoginError("Correo o contraseña incorrectos.");
-        }
-<<<<<<< HEAD
-    }*/
-
-    //modificacion testing
-
-    private LoginContract.View view;
-    private LoginModel model;
-
-    public LoginPresenter(LoginContract.View view, Context context) {
-        this.view = view;
-        this.model = new LoginModel(context);
-    }
-
-    @Override
-    public void login(String correo, String contrasena) {
-        if (model.isAdmin(correo, contrasena)) {
-            view.goToAdminInterface();
-        } else {
-            int clienteId = model.validateLogin(correo, contrasena);
-            if (clienteId != -1) {
-                view.goToClienteInterface(clienteId);
-            } else {
-                view.showLoginError("Correo o contraseña incorrectos.");
-            }
-        }
-
+//        DBHelper.UsuarioData data = dbHelper.getUsuarioData(correo, contraseña);
+//
+//        if (data.perfilId == -1) {
+//            // Credenciales incorrectas
+//            view.showLoginError("Correo o contraseña incorrectos.");
+//            return;
+//        }
+//
+//        switch (data.perfilId) {
+//            case 1: // Administrador
+//                view.goToAdminInterface();
+//                break;
+//            case 2: // Cliente
+//                view.goToClienteInterface(data.usuarioId);
+//                break;
+//            default:
+//                view.showLoginError("Perfil de usuario no reconocido.");
+//                break;
+//        }
     }
 }
-

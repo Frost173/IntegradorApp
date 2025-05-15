@@ -27,12 +27,12 @@ public class RegisterActivity extends AppCompatActivity implements RegisterContr
 
         presenter = new RegisterPresenter(this, this);
 
-        btnRegistrar.setOnClickListener(v -> presenter.register(
-                etNombre.getText().toString(),
-                etCorreo.getText().toString(),
-                etContraseña.getText().toString(),
-                etCelular.getText().toString()
-        ));
+//        btnRegistrar.setOnClickListener(v -> presenter.register(
+//                etNombre.getText().toString(),
+//                etCorreo.getText().toString(),
+//                etContraseña.getText().toString(),
+//                etCelular.getText().toString()
+//        ));
     }
 
     @Override
@@ -44,6 +44,16 @@ public class RegisterActivity extends AppCompatActivity implements RegisterContr
     @Override
     public void showRegisterError(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSuccess(String message) {
+
+    }
+
+    @Override
+    public void showError(String message) {
+
     }
 }
 

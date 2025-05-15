@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_margin="12dp"
+android:elevation="4dp"
+android:padding="16dp">
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tvPlaca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Placa: XYZ-123"
+        android:textStyle="bold"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvHoraEntrada"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hora Entrada: 08:00 AM" />
+
+    <TextView
+        android:id="@+id/tvHoraSalida"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hora Salida: 10:00 AM" />
+
+    <TextView
+        android:id="@+id/tvFecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fecha: 13/05/2025" />
+
+    <TextView
+        android:id="@+id/tvPagoHora"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pago/hora: S/10.00" />
+
+    <TextView
+        android:id="@+id/tvUbicacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ubicación: Estacionamiento A" />
+</LinearLayout>
+</androidx.cardview.widget.CardView>

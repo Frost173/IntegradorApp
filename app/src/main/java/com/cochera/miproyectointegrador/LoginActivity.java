@@ -2,6 +2,7 @@ package com.cochera.miproyectointegrador;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -12,114 +13,89 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.cochera.miproyectointegrador.DataBase.DBHelper;
+import com.cochera.miproyectointegrador.DataBase.Usuario;
 import com.cochera.miproyectointegrador.Login.LoginContract;
 import com.cochera.miproyectointegrador.Login.LoginPresenter;
 
 import com.cochera.miproyectointegrador.Register.RegisterActivity;
 
+public class LoginActivity extends AppCompatActivity {
 
-public class LoginActivity extends AppCompatActivity implements LoginContract.View{
-    /*
-=======
-
-
-public class LoginActivity extends AppCompatActivity implements LoginContract.View{
->>>>>>> 70cf38bf16dac277ecf77023b818e34e2e8818c4
-    private EditText etCorreo, etContraseña;
-    private Button btnLogin;
-    private LoginPresenter presenter;
+    EditText etCorreo, etClave;
+    Button btnLogin;
+    DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         etCorreo = findViewById(R.id.editTextCorreolog);
-        etContraseña = findViewById(R.id.editTextContrasenalog);
+        etClave = findViewById(R.id.editTextContrasenalog);
         btnLogin = findViewById(R.id.buttonLogin);
+        dbHelper = new DBHelper(this);
 
-        presenter = new LoginPresenter(this, this);
+        //dbHelper.insertarUsuario("cliente", "cliente","cliente@gmail.com", "1234",2);
+        //dbHelper.insertarEstacionamiento("Surco Local","Surco",1);
+        //dbHelper.insertarEspacio(1,"LV005","Disponible");
+        //dbHelper.insertarEspacio(1,"LV006","Disponible");
+        //dbHelper.insertarEspacio(1,"LV007","Disponible");
+        //dbHelper.insertarTarifas(1,"Convertible","13.00");
+        //dbHelper.insertarTarifas(1,"Station Wagon","10.00");
+        //dbHelper.insertarTarifas(1,"Camioneta","15.00");
+        //dbHelper.insertarPerfil("Cliente");
+        // OPCIONAL: insertar un usuario de prueba
+        // dbHelper.insertarUsuario("Juan", "juan@correo.com", "1234");
+        //dbHelper.insertarVehiculo(2, "NSHU76", "Camioneta","Verde");
+        //dbHelper.insertarReserva(2, 1,1, "14/05/2025","14:00","16:00","Pendiente");
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    String correo = etCorreo.getText().toString().trim();
+                    String clave = etClave.getText().toString().trim();
+//
+//                    if (dbHelper.verificarUsuario(correo, clave)) {
+//                        Toast.makeText(LoginActivity.this, "Login exitoso", Toast.LENGTH_SHORT).show();
+//
+//                        // Redirigir a ActivityAdminint
+//                        Intent intent = new Intent(LoginActivity.this, ActivityAdminint.class);
+//                        startActivity(intent);
+//                        finish(); // opcional
+//
+//                    } else {
+//                        Toast.makeText(LoginActivity.this, "Correo o clave incorrectos", Toast.LENGTH_SHORT).show();
+//                    }
+                    Usuario usuario = dbHelper.verificarUsuario(correo, clave);
 
-        btnLogin.setOnClickListener(v -> {
-            String correo = etCorreo.getText().toString().trim();
-            String contraseña = etContraseña.getText().toString().trim();
-            presenter.login(correo, contraseña);
+                    if (usuario != null) {
+                        Toast.makeText(LoginActivity.this, "Bienvenido, " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
+
+                        // Redirección según perfil
+                        switch (usuario.getPerfil()) {
+                            case "Administrador":
+                                startActivity(new Intent(LoginActivity.this, ActivityAdminint.class));
+                                break;
+                            case "Cliente":
+                                startActivity(new Intent(LoginActivity.this, Activity_estacionamientos.class));
+                                break;
+
+                            default:
+                                Toast.makeText(LoginActivity.this, "Perfil no reconocido", Toast.LENGTH_SHORT).show();
+                        }
+
+                        finish(); // Cierra LoginActivity
+
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
         });
-        Button btnRegistrate = findViewById(R.id.buttonRegistrolog); // Asegúrate de tener este botón en tu layout
-
-        btnRegistrate.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, ActivityRegister.class);
-            startActivity(intent);
-        });
-
-
-    }
-
-    @Override
-    public void showLoginSuccess(int clienteId, String nombre, String correo) {
-        Toast.makeText(this, "¡Bienvenido " + nombre + "!", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, InterfazCliente.class);
-        intent.putExtra("clienteId", clienteId);
-        intent.putExtra("nombre", nombre);
-        intent.putExtra("correo", correo);
-        startActivity(intent);
-        finish();
-    }
-
-
-    @Override
-    public void showLoginError(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-<<<<<<< HEAD
-    */
-    //modifcacion testin
-
-    private EditText etCorreo, etContrasena;
-    private Button btnLogin, btnRegistrate;
-    private LoginPresenter presenter;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        etCorreo = findViewById(R.id.editTextCorreolog);
-        etContrasena = findViewById(R.id.editTextContrasenalog);
-        btnLogin = findViewById(R.id.buttonLogin);
-        btnRegistrate = findViewById(R.id.buttonRegistrolog);
-
-        presenter = new LoginPresenter(this, this);
-
-        btnLogin.setOnClickListener(v -> {
-            String correo = etCorreo.getText().toString().trim();
-            String contrasena = etContrasena.getText().toString().trim();
-            presenter.login(correo, contrasena);
-        });
-
-        btnRegistrate.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
-        });
-    }
-
-    @Override
-    public void goToAdminInterface() {
-        Intent intent = new Intent(this, ActivityAdminint.class);
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
-    public void goToClienteInterface(int clienteId) {
-        Intent intent = new Intent(this, InterfazCliente.class);
-        intent.putExtra("clienteId", clienteId);
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
-    public void showLoginError(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

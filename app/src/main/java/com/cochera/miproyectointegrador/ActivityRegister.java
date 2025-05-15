@@ -6,11 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.cochera.miproyectointegrador.Register.RegisterContract;
 import com.cochera.miproyectointegrador.Register.RegisterPresenter;
@@ -22,6 +18,7 @@ public class ActivityRegister extends AppCompatActivity implements RegisterContr
 
     private Button btnRegistrar;
     private RegisterPresenter presenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,21 +33,12 @@ public class ActivityRegister extends AppCompatActivity implements RegisterContr
 
         presenter = new RegisterPresenter(this, this);
 
-        btnRegistrar.setOnClickListener(v -> presenter.register(
-                etNombre.getText().toString(),
-                etCorreo.getText().toString(),
-                etContrasena.getText().toString(),
-                etCelular.getText().toString()
-        ));
-
-        Button btnIrLogin = findViewById(R.id.buttonInicioSesion); // Asegúrate de tener este botón en tu layout
-
+        Button btnIrLogin = findViewById(R.id.buttonInicioSesion);
         btnIrLogin.setOnClickListener(v -> {
             Intent intent = new Intent(ActivityRegister.this, LoginActivity.class);
             startActivity(intent);
             finish();
         });
-
     }
 
     @Override
@@ -65,5 +53,15 @@ public class ActivityRegister extends AppCompatActivity implements RegisterContr
     @Override
     public void showRegisterError(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSuccess(String message) {
+
+    }
+
+    @Override
+    public void showError(String message) {
+
     }
 }

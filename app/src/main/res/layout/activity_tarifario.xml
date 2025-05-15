@@ -1,157 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutTarifario"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Tarifario">
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center">
 
+    <!-- Etiqueta para el tipo de vehículo -->
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="413dp"
-        android:layout_height="57dp"
-        android:background="@drawable/back_franja"
-        android:gravity="center"
-        android:padding="18dp"
-        android:text="Tarifas por Vehiculo"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.081" />
-
-    <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/textViewTipoVehiculo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Tipo de Vehículo:"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Spinner para seleccionar el tipo de vehículo -->
+    <Spinner
+        android:id="@+id/spinnerTipoVehiculo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Etiqueta para el precio -->
+    <TextView
+        android:id="@+id/textViewPrecio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Precio por Hora (S/):"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Campo de texto para mostrar el precio -->
+    <EditText
+        android:id="@+id/editTextPrecio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:enabled="false"
+        android:backgroundTint="@android:color/darker_gray"
+        android:textSize="16sp" />
+
+
+    <Button
+        android:id="@+id/btnReservar"
+        android:layout_width="154dp"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="40dp"
         android:layout_marginBottom="8dp"
-        android:text="T. Vehiculo"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#000a0b"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText"
-        app:layout_constraintEnd_toEndOf="@+id/editTextText"
-        app:layout_constraintHorizontal_bias="0.357"
-        app:layout_constraintStart_toStartOf="@+id/editTextText" />
-
-    <EditText
-        android:id="@+id/editTextText"
-        android:layout_width="205dp"
-        android:layout_height="49dp"
-        android:layout_marginBottom="508dp"
-        android:background="@drawable/btn_transparent"
-        android:ems="10"
-        android:gravity="center"
-        android:inputType="text"
-        android:text="Name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="149dp"
-        android:layout_height="61dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="512dp"
         android:backgroundTint="#FFA500"
-        android:text="Editar"
-        android:textColor="#000a0b"
-        android:textSize="23sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:text="Reservar"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="T. por Hora"
-        android:textColor="#000a0b"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText2"
-        app:layout_constraintEnd_toEndOf="@+id/editTextText2"
-        app:layout_constraintHorizontal_bias="0.322"
-        app:layout_constraintStart_toStartOf="@+id/editTextText2"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <EditText
-        android:id="@+id/editTextText2"
-        android:layout_width="205dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="60dp"
-        android:background="@drawable/btn_transparent"
-        android:ems="10"
-        android:gravity="center"
-        android:inputType="text"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText3"
-        app:layout_constraintEnd_toStartOf="@+id/button3"
-        app:layout_constraintHorizontal_bias="0.21"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Estado"
-        android:textColor="#000a0b"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText3"
-        app:layout_constraintEnd_toEndOf="@+id/editTextText3"
-        app:layout_constraintHorizontal_bias="0.341"
-        app:layout_constraintStart_toStartOf="@+id/editTextText3"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText2"
-        app:layout_constraintVertical_bias="0.722" />
-
-    <EditText
-        android:id="@+id/editTextText3"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="308dp"
-        android:background="@drawable/btn_transparent"
-        android:ems="10"
-        android:gravity="center"
-        android:inputType="text"
-        android:text="Name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button4" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="144dp"
-        android:layout_height="63dp"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="24dp"
-        android:backgroundTint="#FFA500"
-        android:text="Eliminar"
-        android:textColor="#000a0b"
-        android:textSize="23sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="144dp"
-        android:layout_height="62dp"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="24dp"
-        android:backgroundTint="#FFA500"
-        android:text="Guardar"
-        android:textColor="#000a0b"
-        android:textSize="23sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

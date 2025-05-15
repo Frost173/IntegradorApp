@@ -1,7 +1,8 @@
 package com.cochera.miproyectointegrador.Register;
 
 import android.content.Context;
-
+import com.cochera.miproyectointegrador.Register.RegisterContract;
+import com.cochera.miproyectointegrador.Register.RegisterModel;
 import androidx.leanback.widget.Presenter;
 
 public class RegisterPresenter implements RegisterContract.Presenter {
@@ -12,14 +13,8 @@ public class RegisterPresenter implements RegisterContract.Presenter {
         this.model = new RegisterModel(context);
     }
     @Override
-    public void register(String nombre, String correo, String contraseña, String celular) {
-        if (model.register(nombre, correo, contraseña, celular)) {
-            view.showRegisterSuccess();
-        } else {
-            view.showRegisterError("No se pudo registrar. ¿Correo o DNI ya registrados?");
-        }
+    public void registerUser(String nombre, String correo, String contraseña, String celular) {
+
     }
-
-
 }
 
