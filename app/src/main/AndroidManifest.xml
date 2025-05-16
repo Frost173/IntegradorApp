@@ -45,6 +45,9 @@
         <activity android:name=".activity_control_espacios"
             tools:ignore="Instantiatable" />
         <activity
+            android:name=".Tarifario"
+            android:exported="false" />
+        <activity
             android:name=".ActivityRegister"
             android:exported="false"/>
 
