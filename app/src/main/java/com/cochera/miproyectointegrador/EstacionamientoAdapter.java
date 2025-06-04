@@ -17,10 +17,13 @@ import java.util.List;
 public class EstacionamientoAdapter extends RecyclerView.Adapter<EstacionamientoAdapter.ViewHolder> {
     private List<Estacionamiento> lista;
     private Context context;
+
+    private int usuarioId;
     DBHelper dbHelper;
-    public EstacionamientoAdapter(Context context, List<Estacionamiento> lista) {
+    public EstacionamientoAdapter(Context context, List<Estacionamiento> lista, int usuarioId) {
         this.context = context;
         this.lista = lista;
+        this.usuarioId = usuarioId;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -30,7 +33,7 @@ public class EstacionamientoAdapter extends RecyclerView.Adapter<Estacionamiento
         public ViewHolder(View itemView) {
             super(itemView);
             nombreTextView = itemView.findViewById(R.id.nombreEstacionamiento);
-            direccionTextView = itemView.findViewById(R.id.direccionEstacionamiento);
+            //direccionTextView = itemView.findViewById(R.id.direccionEstacionamiento);
 
         }
 
@@ -46,11 +49,12 @@ public class EstacionamientoAdapter extends RecyclerView.Adapter<Estacionamiento
     public void onBindViewHolder(EstacionamientoAdapter.ViewHolder holder, int position) {
         Estacionamiento estacionamiento = lista.get(position);
         holder.nombreTextView.setText(estacionamiento.getNombre());
-        holder.direccionTextView.setText(estacionamiento.getDireccion());
+        //holder.direccionTextView.setText(estacionamiento.getDireccion());
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, activity_control_espacios.class);
             intent.putExtra("estacionamientoid", estacionamiento.getEstacionamientoId());
+            intent.putExtra("usuarioId", usuarioId);
             //dbHelper.insertarReserva(2, 1,1, "14/05/2025","14:00","16:00","Pendiente");
             context.startActivity(intent);
         });

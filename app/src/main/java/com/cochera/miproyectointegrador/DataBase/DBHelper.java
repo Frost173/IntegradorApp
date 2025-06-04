@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Clase DBHelper para manejar la base de datos SQLite.
@@ -16,7 +18,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
-        super(context, "tu_basedatos_2.db", null, 2);
+        super(context, "tu_basedatos_2.db", null, 3);
     }
 
     @Override
@@ -96,6 +98,45 @@ public class DBHelper extends SQLiteOpenHelper {
                 "mensaje TEXT NOT NULL," +
                 "fechaenvio TEXT NOT NULL," +
                 "FOREIGN KEY (usuarioid) REFERENCES Usuarios(usuarioid));");
+
+        // Insertar datos iniciales en Perfiles
+        db.execSQL("INSERT INTO Perfiles (perfilid, nombreperfil) VALUES (1, 'Administrador');");
+        db.execSQL("INSERT INTO Perfiles (perfilid, nombreperfil) VALUES (2, 'Cliente');");
+
+        // Insertar datos iniciales en Usuarios
+        db.execSQL("INSERT INTO Usuarios (usuarioid, perfilid, nombre, apellido, correo, contrasena) " +
+                "VALUES (1, 1, 'admin', 'admin', 'admin@gmail.com', '1234');");
+        db.execSQL("INSERT INTO Usuarios (usuarioid, perfilid, nombre, apellido, correo, contrasena) " +
+                "VALUES (2, 2, 'cliente', 'cliente', 'cliente@gmail.com', '1234');");
+        // Tabla Estacionamientos
+        db.execSQL("INSERT INTO Estacionamientos (estacionamientoid, nombre, direccion, propietarioid) " +
+                "VALUES (1, 'Parking Central', 'Calle 123', 1);");
+
+// Tabla Espacios
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (1, 1, 'A1', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (2, 1, 'A2', 'Ocupado');");
+
+// Tabla Vehiculos
+        db.execSQL("INSERT INTO Vehiculos (vehiculoid, usuarioid, placa, tipo, color) " +
+                "VALUES (1, 2, 'ABC123', 'Carro', 'Rojo');");
+        db.execSQL("INSERT INTO Vehiculos (vehiculoid, usuarioid, placa, tipo, color) " +
+                "VALUES (2, 2, 'XYZ789', 'Moto', 'Negro');");
+
+// Tabla Reservas
+        db.execSQL("INSERT INTO Reservas (reservaid, usuarioid, espacioid, vehiculoid, fechareserva, horaentrada, horasalida, estado) " +
+                "VALUES (1, 2, 2, 1, '2025-05-17', '08:00', '10:00', 'Confirmada');");
+
+// Tabla Pagos
+        db.execSQL("INSERT INTO Pagos (pagoid, reservaid, monto, fechapago) " +
+                "VALUES (1, 1, 15.00, '2025-05-17');");
+
+// Tabla Tarifas
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) " +
+                "VALUES (1, 1, 'Carro', 7.5);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) " +
+                "VALUES (2, 1, 'Moto', 3.0);");
     }
 
     @Override
@@ -125,6 +166,67 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         cursor.close();
     }
+
+    // Ejemplo: Obtenemos tarifas para un estacionamiento específico
+//    public List<String> obtenerTarifasPorEstacionamiento( int estacionamientoId) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        List<String> listaTarifas = new ArrayList<>();
+//        String sql = "SELECT tipovehiculo || ' - $' || precio as descripcion FROM Tarifas WHERE estacionamientoid = ?";
+//        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(estacionamientoId)});
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                String descripcion = cursor.getString(cursor.getColumnIndexOrThrow("descripcion"));
+//                listaTarifas.add(descripcion);
+//            } while (cursor.moveToNext());
+//        }
+//
+//        cursor.close();
+//        return listaTarifas;
+//    }
+//    public Map<String, Double> obtenerTarifasPorEstacionamiento(int estacionamientoId) {
+//        Map<String, Double> tarifasMap = new HashMap<>();
+//        SQLiteDatabase db = this.getReadableDatabase();
+//
+//        String sql = "SELECT tipovehiculo, precio FROM Tarifas WHERE estacionamientoid = ?";
+//        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(estacionamientoId)});
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                String tipoVehiculo = cursor.getString(cursor.getColumnIndexOrThrow("tipovehiculo"));
+//                double precio = cursor.getDouble(cursor.getColumnIndexOrThrow("precio"));
+//
+//                tarifasMap.put(tipoVehiculo, precio);
+//            } while (cursor.moveToNext());
+//        }
+//
+//        cursor.close();
+//        db.close();
+//        return tarifasMap;
+//    }
+
+    public List<Tarifa> obtenerTarifasPorEstacionamiento(int estacionamientoId) {
+        List<Tarifa> tarifasList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT tarifaid, tipovehiculo, precio FROM Tarifas WHERE estacionamientoid = ?";
+        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(estacionamientoId)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                int idTarifa = cursor.getInt(cursor.getColumnIndexOrThrow("tarifaid"));
+                String tipoVehiculo = cursor.getString(cursor.getColumnIndexOrThrow("tipovehiculo"));
+                double precio = cursor.getDouble(cursor.getColumnIndexOrThrow("precio"));
+
+                tarifasList.add(new Tarifa(idTarifa, tipoVehiculo, precio));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return tarifasList;
+    }
+
     public List<Estacionamiento> obtenerEstacionamientos() {
         List<Estacionamiento> lista = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -300,6 +402,5 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert("Tarifas", null, values);
     }
 }
-
 
 

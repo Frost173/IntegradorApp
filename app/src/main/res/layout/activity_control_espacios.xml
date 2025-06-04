@@ -1,304 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:id="@+id/main"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    tools:context=".Register.ControlEstapacios">-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/textView3"-->
-<!--        android:layout_width="414dp"-->
-<!--        android:layout_height="90dp"-->
-<!--        android:background="@drawable/back_franja"-->
-<!--        android:gravity="center"-->
-<!--        android:padding="18dp"-->
-<!--        android:text="Control de espacios"-->
-<!--        android:textSize="28sp"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="1.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.081" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/textView7"-->
-<!--        android:layout_width="388dp"-->
-<!--        android:layout_height="391dp"-->
-<!--        android:layout_marginTop="152dp"-->
-
-<!--        android:background="@drawable/frame_panel"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.478"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginBottom="8dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.061"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.339"-->
-<!--        app:srcCompat="@drawable/izquierda" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton2"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginBottom="16dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.25"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.23"-->
-<!--        app:srcCompat="@drawable/centro" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton4"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.735"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.224"-->
-<!--        app:srcCompat="@drawable/centro" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton5"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.481"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.224"-->
-<!--        app:srcCompat="@drawable/centro" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton6"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.061"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.443"-->
-<!--        app:srcCompat="@drawable/izquierda" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton7"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.061"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.565"-->
-<!--        app:srcCompat="@drawable/izquierda" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton8"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.061"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.691"-->
-<!--        app:srcCompat="@drawable/izquierda" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton9"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.481"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.332"-->
-<!--        app:srcCompat="@drawable/centro" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton10"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="80dp"-->
-<!--        android:layout_marginBottom="36dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.35"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.462"-->
-<!--        app:srcCompat="@drawable/centro" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton11"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginEnd="108dp"-->
-<!--        android:layout_marginBottom="28dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.72"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.581"-->
-<!--        app:srcCompat="@drawable/centro" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton12"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="8"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.498"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.681"-->
-<!--        app:srcCompat="@drawable/centro" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton13"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.924"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.331"-->
-<!--        app:srcCompat="@drawable/izquierda" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton14"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.924"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.443"-->
-<!--        app:srcCompat="@drawable/izquierda" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton15"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.93"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.565"-->
-<!--        app:srcCompat="@drawable/izquierda" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/imageButton16"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.924"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.691"-->
-<!--        app:srcCompat="@drawable/izquierda" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/button5"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Liberar"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.825"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.805" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/button6"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Suspender"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.18"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.805" />-->
-<!--    <LinearLayout-->
-<!--        android:id="@+id/barraInferior"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="56dp"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:background="#FFFFFF"-->
-<!--        android:elevation="8dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent">-->
-<!--    <ImageButton-->
-<!--        android:id="@+id/btnHome"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_weight="1"-->
-<!--        android:src="@drawable/home"-->
-<!--        android:background="@android:color/transparent"-->
-<!--        android:scaleType="centerInside"-->
-<!--        android:contentDescription="Inicio" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/btnCalendario"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_weight="1"-->
-<!--        android:src="@drawable/calendario"-->
-<!--        android:background="@android:color/transparent"-->
-<!--        android:scaleType="centerInside"-->
-<!--        android:contentDescription="Calendario" />-->
-
-<!--    <ImageButton-->
-<!--        android:id="@+id/btnPerfil"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_weight="1"-->
-<!--        android:src="@drawable/perfil"-->
-<!--        android:background="@android:color/transparent"-->
-<!--        android:scaleType="centerInside"-->
-<!--        android:contentDescription="Perfil" />-->
-<!--    </LinearLayout>-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
-<LinearLayout
-    android:id="@+id/main"
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".EspacioAdapter">
+    android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerEspacios"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        tools:context=".Activity_estacionamientos">
+
+        <!-- Toolbar -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/nav_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#507EA4"
+            android:title="Estacionamientos"
+            android:titleTextColor="@android:color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Menú hamburguesa -->
+        <ImageView
+            android:id="@+id/menuIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/tresbanner"
+            android:contentDescription="Menú"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="24dp"/>
+
+        <!-- Tarjeta de bienvenida -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardBienvenida"
+            android:layout_width="0dp"
+            android:layout_height="110dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp"
+            android:backgroundTint="#1976A6"
+            app:layout_constraintTop_toBottomOf="@id/nav_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|start"
+                android:padding="24dp"
+                android:text="Elige un estacionamiento"
+                android:textColor="#FFF"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Botón reservas -->
+        <ImageButton
+            android:id="@+id/btnReservas"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/calendario"
+            android:background="@android:color/transparent"
+            android:contentDescription="Ir a Reservas"
+            app:layout_constraintTop_toBottomOf="@id/cardBienvenida"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp" />
+
+        <!-- Barra de búsqueda -->
+        <LinearLayout
+            android:id="@+id/layoutBuscador"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bannerbuscar"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/btnReservas"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/lupa" />
+
+            <EditText
+                android:id="@+id/etBuscador"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="Buscar."
+                android:textColor="#000000"
+                android:textColorHint="#9E9E9E"
+                android:paddingStart="8dp"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <!-- Tu GridLayout de espacios -->
+        <GridLayout
+            android:id="@+id/gridEspacios"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:columnCount="5"
+            android:rowCount="6"
+            android:background="#D5DAF0"
+            android:layout_margin="16dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toBottomOf="@id/layoutBuscador"
+            app:layout_constraintBottom_toTopOf="@id/barraInferior"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Barra inferior -->
+        <LinearLayout
+            android:id="@+id/barraInferior"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:background="#FFFFFF"
+            android:elevation="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                android:id="@+id/btnHome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/home"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:contentDescription="Inicio" />
+
+            <ImageButton
+                android:id="@+id/btnCalendario"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/calendario"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:contentDescription="Calendario" />
+
+            <ImageButton
+                android:id="@+id/btnPerfil"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/perfil"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:contentDescription="Perfil" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,57 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layoutTarifario"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center">
+    android:background="@android:color/white">
 
-    <!-- Etiqueta para el tipo de vehículo -->
+    <!-- Título superior -->
     <TextView
-        android:id="@+id/textViewTipoVehiculo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tipo de Vehículo:"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
-
-    <!-- Spinner para seleccionar el tipo de vehículo -->
-    <Spinner
-        android:id="@+id/spinnerTipoVehiculo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp" />
-
-    <!-- Etiqueta para el precio -->
-    <TextView
-        android:id="@+id/textViewPrecio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Precio por Hora (S/):"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
-
-    <!-- Campo de texto para mostrar el precio -->
-    <EditText
         android:id="@+id/editTextPrecio"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:enabled="false"
-        android:backgroundTint="@android:color/darker_gray"
-        android:textSize="16sp" />
+        android:text="Reservas"
+        android:textColor="#00BFFF"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginLeft="16dp"/>
 
+    <!-- Subtítulo estacionamiento -->
+    <TextView
+        android:id="@+id/tvEstacionamientoLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Estacionamiento:"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/tvTitulo"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"/>
 
+    <TextView
+        android:id="@+id/tvEstacionamientoNombre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="La victoria"
+        android:textColor="#00BFFF"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/tvTitulo"
+        app:layout_constraintStart_toEndOf="@id/tvEstacionamientoLabel"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="4dp"/>
+
+    <!-- Contenedor de campos -->
+    <GridLayout
+        android:id="@+id/gridFormulario"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/tvEstacionamientoLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Fecha -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha"
+            android:textColor="#000000"/>
+        <Spinner
+            android:id="@+id/spinnerFecha"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:background="@drawable/back_franja"/>
+
+        <!-- Placa -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Placa"
+            android:textColor="#000000"/>
+        <EditText
+            android:id="@+id/etPlaca"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:background="@drawable/back_franja"
+            android:hint="ABC-000"
+            android:inputType="text"/>
+
+        <!-- Hora Entrada -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hora de Entrada"
+            android:textColor="#000000"/>
+        <Spinner
+            android:id="@+id/spinnerHoraEntrada"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:background="@drawable/back_franja"/>
+
+        <!-- Tipo de Vehículo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo de Vehiculo"
+            android:textColor="#000000"/>
+        <Spinner
+            android:id="@+id/spinnerTipoVehiculo"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:background="@drawable/back_franja"/>
+
+        <!-- Código de Entrada -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Codigo de Entrada"
+            android:textColor="#000000"/>
+        <EditText
+            android:id="@+id/etCodigoEntrada"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:background="@drawable/back_franja"
+            android:hint="AAADDDD"
+            android:inputType="text"/>
+
+        <!-- Tarifa por hora -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tarifa por hora"
+            android:textColor="#000000"/>
+        <EditText
+            android:id="@+id/etTarifa"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:enabled="false"
+            android:text="S/. 10.00"
+            android:background="@drawable/back_franja"/>
+
+        <!-- Color -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Color"
+            android:textColor="#000000"/>
+        <EditText
+            android:id="@+id/etColor"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:background="@drawable/back_franja"
+            android:hint="Rojo"
+            android:inputType="text"/>
+
+    </GridLayout>
+
+    <!-- Botón Reservar -->
     <Button
         android:id="@+id/btnReservar"
-        android:layout_width="154dp"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="#FFA500"
+        android:layout_width="200dp"
+        android:layout_height="48dp"
         android:text="Reservar"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:textColor="@android:color/white"
+        android:backgroundTint="#0077A6"
+        app:cornerRadius="24dp"
+        app:layout_constraintTop_toBottomOf="@id/gridFormulario"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
 
-</LinearLayout>
+    <!-- Barra inferior -->
+    <LinearLayout
+        android:id="@+id/barraInferior"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/home"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:contentDescription="Inicio" />
+
+        <ImageButton
+            android:id="@+id/btnCalendario"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/calendario"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:contentDescription="Calendario" />
+
+        <ImageButton
+            android:id="@+id/btnPerfil"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/perfil"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:contentDescription="Perfil" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

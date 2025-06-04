@@ -1,5 +1,6 @@
 package com.cochera.miproyectointegrador.DataBase;
 
+
 public class Espacio {
     private int espacioid;
     private int estacionamientoid;
@@ -35,7 +36,10 @@ public class Espacio {
         this.espacioid = espacioid;
     }
 
+    public int getEspacioId() {return espacioid;
+    }
 
 
     // Getters y Setters
 }
+

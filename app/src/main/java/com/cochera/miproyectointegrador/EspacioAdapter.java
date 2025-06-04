@@ -41,6 +41,7 @@ public class EspacioAdapter extends RecyclerView.Adapter<EspacioAdapter.ViewHold
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TarifarioActivity.class); // Reemplaza con la clase que quieras abrir
             intent.putExtra("estacionamientoid", espacio.getEstacionamientoId()); // Si tienes el ID en tu modelo
+            intent.putExtra("espacioid", espacio.getEspacioId());
             context.startActivity(intent);
         });
     }
@@ -56,7 +57,7 @@ public class EspacioAdapter extends RecyclerView.Adapter<EspacioAdapter.ViewHold
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvCodigo = itemView.findViewById(R.id.tvCodigo);
-            tvEstado = itemView.findViewById(R.id.tvEstado);
+            //tvEstado = itemView.findViewById(R.id.tvEstado);
         }
     }
 }

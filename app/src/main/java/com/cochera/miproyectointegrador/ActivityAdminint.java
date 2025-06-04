@@ -63,5 +63,3 @@ public class ActivityAdminint extends AppCompatActivity {
 
 
 
-
-
