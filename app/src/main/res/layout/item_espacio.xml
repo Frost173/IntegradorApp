@@ -33,5 +33,5 @@
         android:text="A1"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        android:rotation="45" />
+         />
 </FrameLayout>

@@ -18,7 +18,7 @@ import java.util.Map;
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
-        super(context, "tu_basedatos_2.db", null, 3);
+        super(context, "tu_basedatos_2.db", null, 7);
     }
 
     @Override
@@ -110,13 +110,51 @@ public class DBHelper extends SQLiteOpenHelper {
                 "VALUES (2, 2, 'cliente', 'cliente', 'cliente@gmail.com', '1234');");
         // Tabla Estacionamientos
         db.execSQL("INSERT INTO Estacionamientos (estacionamientoid, nombre, direccion, propietarioid) " +
-                "VALUES (1, 'Parking Central', 'Calle 123', 1);");
+                "VALUES (1, 'La Victoria', 'Estacion gamarra', 1);");
+        db.execSQL("INSERT INTO Estacionamientos (estacionamientoid, nombre, direccion, propietarioid) " +
+                "VALUES (2, 'Los Olivos', 'Estadio Nacional', 1);");
+        db.execSQL("INSERT INTO Estacionamientos (estacionamientoid, nombre, direccion, propietarioid) " +
+                "VALUES (3, 'San Borja', 'Estacion San Borja', 1);");
+        db.execSQL("INSERT INTO Estacionamientos (estacionamientoid, nombre, direccion, propietarioid) " +
+                "VALUES (4, 'Chaclacayo', 'Calle 456', 1);");
 
 // Tabla Espacios
         db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
                 "VALUES (1, 1, 'A1', 'Disponible');");
         db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (2, 1, 'A2', 'Ocupado');");
+                "VALUES (2, 1, 'A2', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (3, 1, 'A3', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (4, 1, 'A4', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (5, 1, 'A5', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (6, 1, 'A6', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (7, 1, 'A7', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (8, 1, 'A8', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (9, 2, 'B1', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (10, 2, 'B2', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (11, 2, 'B3', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (12, 2, 'B4', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (13, 3, 'C1', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (14, 3, 'C2', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (15, 3, 'C3', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (16, 4, 'D1', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (17, 4, 'D2', 'Disponible');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
+                "VALUES (18, 4, 'D3', 'Disponible');");
 
 // Tabla Vehiculos
         db.execSQL("INSERT INTO Vehiculos (vehiculoid, usuarioid, placa, tipo, color) " +
@@ -137,6 +175,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "VALUES (1, 1, 'Carro', 7.5);");
         db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) " +
                 "VALUES (2, 1, 'Moto', 3.0);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) " +
+                "VALUES (3, 1, 'Camion', 10.0);");
     }
 
     @Override
@@ -299,6 +339,19 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return precio;
+    }
+
+    public String obtenerNombreEstacionamientoPorId(int estacionamientoId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String nombre = null;
+        Cursor cursor = db.rawQuery("SELECT nombre FROM Estacionamientos WHERE estacionamientoid = ?",
+                new String[]{String.valueOf(estacionamientoId)});
+        if (cursor.moveToFirst()) {
+            nombre = cursor.getString(0);
+        }
+        cursor.close();
+        db.close();
+        return nombre;
     }
 
     public Usuario  verificarUsuario(String correo, String contrasena) {

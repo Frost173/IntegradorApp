@@ -5,17 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".Activity_estacionamientos">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFF"
-        tools:context=".Activity_estacionamientos">
+        android:background="#FFFFFF">
 
         <!-- Toolbar -->
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/nav_view"
+            android:id="@+id/toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="#507EA4"
@@ -25,151 +26,125 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Menú hamburguesa -->
+        <!-- Botón menú hamburguesa -->
         <ImageView
             android:id="@+id/menuIcon"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:src="@drawable/tresbanner"
             android:contentDescription="Menú"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="24dp"
-            android:layout_marginStart="24dp"/>
-
-        <!-- Tarjeta de bienvenida -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardBienvenida"
-            android:layout_width="0dp"
-            android:layout_height="110dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="8dp"
-            android:backgroundTint="#1976A6"
-            app:layout_constraintTop_toBottomOf="@id/nav_view"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
             android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|start"
-                android:padding="24dp"
-                android:text="Elige un estacionamiento"
-                android:textColor="#FFF"
-                android:textSize="26sp"
-                android:textStyle="bold" />
-        </androidx.cardview.widget.CardView>
-
-        <!-- Botón reservas -->
-        <ImageButton
-            android:id="@+id/btnReservas"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/calendario"
-            android:background="@android:color/transparent"
-            android:contentDescription="Ir a Reservas"
-            app:layout_constraintTop_toBottomOf="@id/cardBienvenida"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp" />
-
-        <!-- Barra de búsqueda -->
-        <LinearLayout
-            android:id="@+id/layoutBuscador"
+        <!-- ScrollView con contenido principal -->
+        <ScrollView
+            android:id="@+id/scrollContent"
             android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:background="@drawable/bannerbuscar"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toBottomOf="@id/btnReservas"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/lupa" />
-
-            <EditText
-                android:id="@+id/etBuscador"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:hint="Buscar."
-                android:textColor="#000000"
-                android:textColorHint="#9E9E9E"
-                android:paddingStart="8dp"
-                android:textSize="16sp"/>
-        </LinearLayout>
-
-        <!-- Tu GridLayout de espacios -->
-        <GridLayout
-            android:id="@+id/gridEspacios"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="24dp"
-            android:columnCount="5"
-            android:rowCount="6"
-            android:background="#D5DAF0"
-            android:layout_margin="16dp"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            app:layout_constraintTop_toBottomOf="@id/layoutBuscador"
-            app:layout_constraintBottom_toTopOf="@id/barraInferior"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- Barra inferior -->
-        <LinearLayout
-            android:id="@+id/barraInferior"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:orientation="horizontal"
-            android:background="#FFFFFF"
-            android:elevation="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@id/btnContinuar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <ImageButton
-                android:id="@+id/btnHome"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/home"
-                android:background="@android:color/transparent"
-                android:scaleType="centerInside"
-                android:contentDescription="Inicio" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <ImageButton
-                android:id="@+id/btnCalendario"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/calendario"
-                android:background="@android:color/transparent"
-                android:scaleType="centerInside"
-                android:contentDescription="Calendario" />
+                <!-- Tarjeta de bienvenida -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardBienvenida"
+                    android:layout_width="match_parent"
+                    android:layout_height="110dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="8dp"
+                    android:backgroundTint="#1976A6"
+                    android:layout_marginBottom="16dp">
 
-            <ImageButton
-                android:id="@+id/btnPerfil"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/perfil"
-                android:background="@android:color/transparent"
-                android:scaleType="centerInside"
-                android:contentDescription="Perfil" />
-        </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|start"
+                        android:padding="24dp"
+                        android:text="Elige un estacionamiento"
+                        android:textColor="#FFF"
+                        android:textSize="26sp"
+                        android:textStyle="bold" />
+                </androidx.cardview.widget.CardView>
 
+                <!-- Barra de búsqueda -->
+                <LinearLayout
+                    android:id="@+id/layoutBuscador"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/bannerbuscar"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/lupa" />
+
+                    <EditText
+                        android:id="@+id/etBuscador"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:hint="Buscar."
+                        android:textColor="#000000"
+                        android:textColorHint="#9E9E9E"
+                        android:paddingStart="8dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <!-- GridLayout de espacios -->
+                <GridLayout
+                    android:id="@+id/gridEspacios"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="24dp"
+                    android:columnCount="5"
+                    android:rowCount="6"
+                    android:background="#D5DAF0"
+                    android:clipChildren="false"
+                    android:clipToPadding="false" />
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Botón Continuar en la parte inferior -->
+        <Button
+            android:id="@+id/btnContinuar"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="Continuar"
+            android:textColor="#FFF"
+            android:textSize="18sp"
+            android:backgroundTint="#1976A6"
+            android:enabled="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="16dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Menú lateral (opcional, comentado) -->
+    <!--
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/menu_lateral" />
+    -->
 </androidx.drawerlayout.widget.DrawerLayout>
+

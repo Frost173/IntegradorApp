@@ -5,4 +5,69 @@
     <string name="navigation_drawer_open">Abrir menú lateral</string>
     <string name="navigation_drawer_close">Cerrar menú lateral</string>
     <string name="banner_desc">Banner de búsqueda</string>
+    <string name="politica_seguridad">
+    Última actualización: 5 de junio de 2025
+
+La presente Política de Privacidad tiene como objetivo informarte sobre cómo tu información personal es recopilada, utilizada, almacenada y protegida cuando utilizas nuestro aplicativo de reserva de estacionamiento (“la App”) en dispositivos Android.
+
+Responsable del Tratamiento de Datos
+
+El responsable del tratamiento de tus datos personales es [Nombre de tu empresa o responsable], con domicilio en [Dirección de la empresa] y correo electrónico de contacto [correo@empresa.com].
+
+1. Datos que Recopilamos
+Para ofrecerte el servicio de reserva de estacionamiento, podemos recopilar los siguientes datos personales:
+
+Nombre completo
+
+Correo electrónico
+
+Número de teléfono
+
+Datos del vehículo (marca, modelo, color, número de placas)
+
+Información de pago (si aplica)
+
+Datos de ubicación (si permites el acceso a la geolocalización)
+
+Datos técnicos del dispositivo (modelo, sistema operativo, identificador único de dispositivo)
+
+2. Finalidad del Tratamiento de Datos
+Tus datos personales serán utilizados para:
+
+Gestionar y confirmar tus reservas de estacionamiento
+
+Identificarte como usuario de la App
+
+Procesar pagos y emitir facturas (si corresponde)
+
+Mejorar la experiencia de usuario y el funcionamiento de la App
+
+Cumplir con obligaciones legales y requerimientos de autoridades competentes
+
+3. Compartición de Datos
+No compartiremos tus datos personales con terceros, salvo en los siguientes casos:
+
+Proveedores de servicios necesarios para la operación de la App (por ejemplo, procesadores de pago), quienes están obligados a proteger tu información bajo las mismas condiciones de esta política
+
+Autoridades legales en caso de requerimiento formal
+
+Situaciones de emergencia o fuerza mayor que requieran la difusión de datos para proteger tu seguridad o la de otros usuarios
+
+4. Conservación de Datos
+Tus datos personales serán conservados solo durante el tiempo necesario para cumplir con las finalidades mencionadas o mientras mantengas una cuenta activa en la App. Posteriormente, serán eliminados o anonimizados, salvo que la ley exija su conservación por un periodo mayor.
+
+5. Derechos del Usuario
+Como titular de tus datos personales, puedes ejercer los derechos de acceso, rectificación, cancelación y oposición (ARCO). Para ello, puedes enviar una solicitud a [correo@empresa.com], indicando el derecho que deseas ejercer.
+
+6. Seguridad de los Datos
+Implementamos medidas técnicas y organizativas adecuadas para proteger tus datos personales contra pérdida, uso indebido, acceso no autorizado, divulgación, alteración o destrucción.
+
+7. Cambios en la Política de Privacidad
+Nos reservamos el derecho de modificar esta Política de Privacidad en cualquier momento. Cualquier cambio será notificado a través de la App o por los medios de contacto proporcionados por el usuario.
+
+8. Contacto
+Para cualquier duda o solicitud relacionada con esta Política de Privacidad, puedes contactarnos en [correo@empresa.com].
+
+</string>
+
 </resources>

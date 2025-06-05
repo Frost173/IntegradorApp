@@ -1,0 +1,78 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!-- Flecha atrás (ImageButton) -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/flecha"
+        android:contentDescription="Atrás"
+        android:rotation="180"
+        android:scaleType="centerInside" />
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/tvTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selecciona un tema"
+        android:textSize="18sp"
+        android:textColor="#222222"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@id/btnBack"
+        android:layout_marginTop="8dp" />
+
+    <!-- CardView para los temas -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitulo"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_redondeado"
+        android:elevation="2dp">
+
+        <RadioGroup
+            android:id="@+id/radioGroupTema"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_box"
+            android:padding="24dp">
+
+            <RadioButton
+                android:id="@+id/rbSistema"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Predeterminado del sistema"
+                android:checked="true"
+                android:textColor="#ffffff" />
+
+            <RadioButton
+                android:id="@+id/rbClaro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Claro"
+                android:textColor="#ffffff"
+                android:layout_marginTop="16dp" />
+
+            <RadioButton
+                android:id="@+id/rbOscuro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Oscuro"
+                android:textColor="#ffffff"
+                android:layout_marginTop="16dp" />
+
+        </RadioGroup>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
+

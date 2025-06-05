@@ -55,6 +55,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        <activity android:name=".Activity_seguridad" />
+        <activity android:name=".CambiarTemaActivity" />
+        <activity android:name=".PoliticaPrivacidadActivity" />
+
+
     </application>
 
 </manifest>
