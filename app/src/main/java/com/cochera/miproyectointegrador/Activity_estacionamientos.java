@@ -3,22 +3,26 @@ package com.cochera.miproyectointegrador;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.cochera.miproyectointegrador.AjustesActivity;
+import com.cochera.miproyectointegrador.ChatActivity;
+
 
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Estacionamiento;
 import com.google.android.material.navigation.NavigationView;
-
 
 import java.util.List;
 
@@ -64,7 +68,7 @@ public class Activity_estacionamientos extends AppCompatActivity {
         btnCalendario = findViewById(R.id.btnCalendario);
         btnPerfil = findViewById(R.id.btnPerfil);
 
-        // Acción menú hamburguesa: abrir drawer
+        // Acción menú hamburguesa: abrir/cerrar drawer
         menuIcon.setOnClickListener(view -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -72,22 +76,27 @@ public class Activity_estacionamientos extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-/*
-        // Manejar selección de ítems del Navigation Drawer (opcional)
-        navigationView.setNavigationItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.nav_reservas:
-                    Toast.makeText(this, "Reservas seleccionado", Toast.LENGTH_SHORT).show();
-                    // Aquí puedes abrir la actividad o fragmento correspondiente
-                    break;
-                case R.id.nav_historial:
-                    Toast.makeText(this, "Historial seleccionado", Toast.LENGTH_SHORT).show();
-                    break;
-                // Agrega más casos según tu menú
+
+        // Manejar selección de ítems del Navigation Drawer
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.nav_ajustes) {
+                    startActivity(new Intent(Activity_estacionamientos.this, AjustesActivity.class));
+                } else if (id == R.id.nav_chats) {
+                    startActivity(new Intent(Activity_estacionamientos.this, ChatActivity.class));
+                } else {
+                    // Opcional: manejar otros ítems o mostrar mensaje
+                }
+
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
             }
-            drawerLayout.closeDrawer(GravityCompat.START);
-            return true;
-        }); */
+        });
+
+
 
         // Acción botón Calendario: abre CalendarioActivity
         btnCalendario.setOnClickListener(v -> {
