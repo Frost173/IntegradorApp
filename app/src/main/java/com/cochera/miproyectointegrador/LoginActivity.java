@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -18,6 +19,7 @@ import com.cochera.miproyectointegrador.DataBase.Usuario;
 import com.cochera.miproyectointegrador.Login.LoginContract;
 import com.cochera.miproyectointegrador.Login.LoginPresenter;
 
+import com.cochera.miproyectointegrador.Recover.ActivityRecover;
 import com.cochera.miproyectointegrador.Register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -28,9 +30,13 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+    //codigo agregado para recuperar contraseña--borrar de ser neeccesario con las demas clases
+        TextView textRecover = findViewById(R.id.textRecover);
+        textRecover.setOnClickListener(v -> {
+            startActivity(new Intent(this, ActivityRecover.class));
+        });
 
         etCorreo = findViewById(R.id.editTextCorreolog);
         etClave = findViewById(R.id.editTextContrasenalog);

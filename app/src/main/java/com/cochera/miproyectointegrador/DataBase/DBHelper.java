@@ -454,6 +454,17 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("precio", precio);
         db.insert("Tarifas", null, values);
     }
+
+    public boolean actualizarContrasena(String email, String nuevaContrasena) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("contrasena", nuevaContrasena);
+
+        int rowsAffected = db.update("Usuarios", values, "correo = ?", new String[]{email});
+        db.close();
+
+        return rowsAffected > 0;
+    }
 }
 
 

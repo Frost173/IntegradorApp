@@ -47,7 +47,9 @@
 
         app:layout_constraintEnd_toEndOf="@+id/editTextCorreolog"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/editTextCorreolog" />
+        app:layout_constraintStart_toStartOf="@+id/editTextCorreolog"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/editTextContrasenalog"
@@ -75,7 +77,9 @@
         app:layout_constraintBottom_toTopOf="@+id/editTextContrasenalog"
         app:layout_constraintEnd_toEndOf="@+id/editTextContrasenalog"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/editTextContrasenalog" />
+        app:layout_constraintStart_toStartOf="@+id/editTextContrasenalog"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCorreolog"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/buttonLogin"
@@ -122,5 +126,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonLogin" />
 
+    <TextView
+        android:id="@+id/textRecover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Recuperar contraseña"
+        app:layout_constraintBottom_toTopOf="@+id/buttonLogin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.197"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextContrasenalog"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
