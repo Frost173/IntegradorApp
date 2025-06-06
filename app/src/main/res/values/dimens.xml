@@ -1,0 +1,3 @@
+<resources>
+    <dimen name="tamaño_dia_calendario">48dp</dimen>
+</resources>

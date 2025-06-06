@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
     <color name="purple_200">#BB86FC</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="colorDiaSeleccionado">#1976A6</color> <!-- azul para seleccionado -->
+    <color name="colorDiaPresionado">#90CAF9</color>  <!-- azul claro para presionado -->
+    <color name="verdeReserva">#A5D6A7</color> <!-- Verde suave, lo puedes cambiar -->
 </resources>

@@ -1,11 +1,14 @@
 package com.cochera.miproyectointegrador.DataBase;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -385,6 +388,107 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return usuario;
     }
+    // Verifica si hay reservas en una fecha específica
+    public boolean tieneReservasEnFecha(String fecha) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        boolean tieneReservas = false;
+
+        try {
+            cursor = db.rawQuery("SELECT 1 FROM Reserva WHERE fechareserva = ? LIMIT 1", new String[]{fecha});
+            tieneReservas = cursor.moveToFirst();
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+
+        Log.d("DEBUG_DB", "Tiene reservas en fecha " + fecha + ": " + tieneReservas);
+        return tieneReservas;
+    }
+
+    public List<Reserva> obtenerReservasPorFecha(String fechareserva) {
+        List<Reserva> lista = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase(); // Ahora OK
+        Cursor cursor = null;
+
+        try {
+            cursor = db.rawQuery("SELECT * FROM Reserva WHERE fechareserva = ? ORDER BY horaentrada ASC", new String[]{fechareserva});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Reserva reserva = new Reserva();
+                    reserva.setReservaid(cursor.getInt(cursor.getColumnIndexOrThrow("reservaid")));
+                    reserva.setUsuarioId(cursor.getInt(cursor.getColumnIndexOrThrow("usuarioid")));
+                    reserva.setEspacioId(cursor.getInt(cursor.getColumnIndexOrThrow("espacioid")));
+                    reserva.setVehiculoId(cursor.getInt(cursor.getColumnIndexOrThrow("vehiculoid")));
+                    reserva.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fechareserva")));
+                    reserva.setHoraEntrada(cursor.getString(cursor.getColumnIndexOrThrow("horaentrada")));
+                    reserva.setHoraSalida(cursor.getString(cursor.getColumnIndexOrThrow("horasalida")));
+                    reserva.setEstado(cursor.getString(cursor.getColumnIndexOrThrow("estado")));
+                    // Más campos si los hay...
+
+                    lista.add(reserva);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+
+        Log.d("DEBUG_DB", "Reservas encontradas en fecha " + fechareserva + ": " + lista.size());
+        return lista;
+    }
+    /*
+    private void cargarReservasPorFecha(String fechaSeleccionada) {
+        if (fechaSeleccionada == null || fechaSeleccionada.isEmpty()) {
+            Toast.makeText(this, "Fecha inválida", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            List<Reserva> reservas = DBHelper.obtenerReservasPorFecha(fechaSeleccionada);
+
+            if (reservas == null) {
+                Toast.makeText(this, "Error: la lista de reservas es null", Toast.LENGTH_SHORT).show();
+                Log.e("DEBUG_DB", "obtenerReservasPorFecha devolvió null para fecha: " + fechaSeleccionada);
+                return;
+            }
+
+            if (reservas.isEmpty()) {
+                Toast.makeText(this, "No hay reservas para esta fecha.", Toast.LENGTH_SHORT).show();
+                Log.d("DEBUG_DB", "No hay reservas para la fecha: " + fechaSeleccionada);
+            } else {
+                Log.d("DEBUG_DB", "Reservas cargadas: " + reservas.size());
+            }
+
+            // Actualizar lista en adapter
+            reservaAdapter.setListaReservas(reservas);
+
+        } catch (Exception e) {
+            Log.e("DEBUG_DB", "Error cargando reservas: ", e);
+            Toast.makeText(this, "No se pudo cargar las reservas", Toast.LENGTH_SHORT).show();
+        }
+    } **/
+
+
+
+
+    public void insertarReserva(int usuarioid, int espacioid, int vehiculoid, String fechareserva, String horaentrada, String horasalida, String estado) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("usuarioid", usuarioid);
+        values.put("espacioid", espacioid);
+        values.put("vehiculoid", vehiculoid);
+        values.put("fechareserva", fechareserva);
+        values.put("horaentrada", horaentrada);
+        values.put("horasalida", horasalida);
+        values.put("estado", estado);
+        db.insert("Reservas", null, values);
+        db.close();
+    }
+
+
+
 
     // Método opcional para agregar un usuario de prueba
     public void insertarUsuario( String nombre, String apellido, String correo, String contraseña, int id) {
@@ -397,18 +501,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("perfilid", id);
         db.insert("Usuarios", null, values);
     }
-    public void insertarReserva( int usuarioid, int espacioid, int vehiculoid, String fechareserva, String horaentrada,String horasalida,String estado) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("usuarioid", usuarioid);
-        values.put("espacioid", espacioid);
-        values.put("vehiculoid", vehiculoid);
-        values.put("fechareserva", fechareserva);
-        values.put("horaentrada", horaentrada);
-        values.put("horasalida", horasalida);
-        values.put("estado", estado);
-        db.insert("Reservas", null, values);
-    }
+
 
     public void insertarVehiculo( int usuarioid, String placa, String tipo,String color) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -454,6 +547,9 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("precio", precio);
         db.insert("Tarifas", null, values);
     }
+
+
+
 }
 
 

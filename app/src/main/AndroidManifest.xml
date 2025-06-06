@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingLeanbackLauncher,MissingLeanbackSupport">
+
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
@@ -14,51 +15,33 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MiProyectoIntegrador"
+        android:theme="@style/Theme.MiApp"
         tools:targetApi="31">
 
-        <activity android:name=".TarifarioActivity" android:exported="false"></activity>
-        <activity android:name=".Activity_reservas" android:exported="false"></activity>
-        <activity android:name=".Perfil" />
-
-
-        <activity
-            android:name=".ActivityAdminint"
-            android:exported="false" />
-        <activity
-            android:name=".Activity_estacionamientos"
-            android:exported="false" />
-        <activity
-            android:name=".InterfazCliente"
-            android:exported="false" />
+        <!-- Actividades principales -->
         <activity
             android:name=".LoginActivity"
-            android:exported="true" >
-
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-
             </intent-filter>
         </activity>
-        <activity android:name=".activity_control_espacios"
-            tools:ignore="Instantiatable" />
-        <activity
-            android:name=".Tarifario"
-            android:exported="false" />
-        <activity
-            android:name=".ActivityRegister"
-            android:exported="false"/>
 
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-        <activity android:name=".Activity_seguridad" />
-        <activity android:name=".CambiarTemaActivity" />
-        <activity android:name=".PoliticaPrivacidadActivity" />
-
+        <activity android:name=".Activity_estacionamientos" android:exported="false" />
+        <activity android:name=".CalendarioActivity" android:exported="false" />
+        <activity android:name=".Activity_reservas" android:exported="false" />
+        <activity android:name=".Perfil" android:exported="false" />
+        <activity android:name=".ActivityAdminint" android:exported="false" />
+        <activity android:name=".InterfazCliente" android:exported="false" />
+        <activity android:name=".activity_control_espacios" android:exported="false" tools:ignore="Instantiatable" />
+        <activity android:name=".Tarifario" android:exported="false" tools:ignore="MissingClass" />
+        <activity android:name=".TarifarioActivity" android:exported="false" />
+        <activity android:name=".ActivityRegister" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".Activity_seguridad" android:exported="false" />
+        <activity android:name=".CambiarTemaActivity" android:exported="false" />
+        <activity android:name=".PoliticaPrivacidadActivity" android:exported="false" />
 
     </application>
 
