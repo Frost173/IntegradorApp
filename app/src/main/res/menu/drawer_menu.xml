@@ -1,17 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_reservas"
-        android:title="Reservas" />
-    <item
-        android:id="@+id/nav_historial"
-        android:title="Historial" />
+        android:id="@+id/nav_ajustes"
+        android:title="Ajustes"
+         />
     <item
         android:id="@+id/nav_chats"
-        android:title="Chats" />
-    <item
-        android:id="@+id/nav_resenas"
-        android:title="Reseñas" />
-    <item
-        android:id="@+id/nav_ajustes"
-        android:title="Ajustes" />
+        android:title="Chat"
+         />
 </menu>
+

@@ -42,6 +42,10 @@
         <activity android:name=".Activity_seguridad" android:exported="false" />
         <activity android:name=".CambiarTemaActivity" android:exported="false" />
         <activity android:name=".PoliticaPrivacidadActivity" android:exported="false" />
+        <activity android:name=".AjustesActivity" />
+        <activity android:name=".ChatActivity" />
+
+
 
     </application>
 
