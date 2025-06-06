@@ -15,6 +15,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import com.cochera.miproyectointegrador.DataBase.Reserva;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -88,8 +90,13 @@ public class Activity_reservas extends AppCompatActivity {
 
     private void cargarTiposVehiculo() {
         List<Tarifa> tarifas = dbHelper.obtenerTarifasPorEstacionamiento(estacionamientoId);
-        List<String> tiposVehiculo = new ArrayList<>();
 
+        if (tarifas == null || tarifas.isEmpty()) {
+            Toast.makeText(this, "No hay tarifas disponibles", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<String> tiposVehiculo = new ArrayList<>();
         for (Tarifa t : tarifas) {
             tiposVehiculo.add(t.getTipoVehiculo());
         }
@@ -100,7 +107,7 @@ public class Activity_reservas extends AppCompatActivity {
 
         spTipoVehiculo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, android.view.View view, int position, long l) {
+            public void onItemSelected(AdapterView<?> adapterView, android.view.View view, int position, long id) {
                 Tarifa tarifaSeleccionada = tarifas.get(position);
                 idTarifaSeleccionada = tarifaSeleccionada.getIdTarifa();
                 etTarifa.setText(String.format("%.2f", tarifaSeleccionada.getPrecio()));
@@ -115,6 +122,7 @@ public class Activity_reservas extends AppCompatActivity {
             }
         });
     }
+
 
     private void mostrarDatePicker() {
         final Calendar calendar = Calendar.getInstance();

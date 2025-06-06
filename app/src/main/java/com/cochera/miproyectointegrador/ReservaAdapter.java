@@ -10,21 +10,27 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cochera.miproyectointegrador.DataBase.Reserva;
+import com.cochera.miproyectointegrador.R;
 
 import java.util.List;
 
 public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ViewHolder> {
 
-    List<Reserva> reservas;
-    Context context;
+    private List<Reserva> reservas;  // Quitar final para poder actualizar
+    private final Context context;
 
     public ReservaAdapter(Context context, List<Reserva> reservas) {
         this.context = context;
         this.reservas = reservas;
     }
 
+    public void setListaReservas(List<Reserva> nuevasReservas) {
+        this.reservas = nuevasReservas;
+        notifyDataSetChanged();
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvPlaca, tvHoraEntrada, tvHoraSalida, tvFecha, tvPagoHora, tvUbicacion;
+        TextView tvPlaca, tvHoraEntrada, tvHoraSalida, tvFecha, tvPagoHora, tvUbicacion, tvReservaDetalle;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -34,6 +40,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ViewHold
             tvFecha = itemView.findViewById(R.id.tvFecha);
             tvPagoHora = itemView.findViewById(R.id.tvPagoHora);
             tvUbicacion = itemView.findViewById(R.id.tvUbicacion);
+            tvReservaDetalle = itemView.findViewById(R.id.tvReservaDetalle);
         }
     }
 
@@ -47,16 +54,21 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ReservaAdapter.ViewHolder holder, int position) {
         Reserva r = reservas.get(position);
-        holder.tvPlaca.setText("Placa: " + r.placa);
-        holder.tvHoraEntrada.setText("Hora Entrada: " + r.horaEntrada);
-        holder.tvHoraSalida.setText("Hora Salida: " + r.horaSalida);
-        holder.tvFecha.setText("Fecha: " + r.fecha);
-        holder.tvPagoHora.setText("Pago/hora: S/" + r.pagoHora);
-        holder.tvUbicacion.setText("Ubicación: " + r.ubicacion);
+        holder.tvPlaca.setText("Placa: " + r.getPlaca());
+        holder.tvHoraEntrada.setText("Hora Entrada: " + r.getHoraEntrada());
+        holder.tvHoraSalida.setText("Hora Salida: " + r.getHoraSalida());
+        holder.tvFecha.setText("Fecha: " + r.getFecha());
+        holder.tvPagoHora.setText("Pago/hora: S/" + r.getPagoHora());
+        holder.tvUbicacion.setText("Ubicación: " + r.getUbicacion());
+
+        String detalle = "Reserva registrada correctamente para el vehículo con placa " + r.getPlaca()
+                + " en " + r.getUbicacion() + ".";
+        holder.tvReservaDetalle.setText(detalle);
+        holder.tvReservaDetalle.setVisibility(View.VISIBLE);
     }
 
     @Override
     public int getItemCount() {
-        return reservas.size();
+        return reservas == null ? 0 : reservas.size();
     }
 }

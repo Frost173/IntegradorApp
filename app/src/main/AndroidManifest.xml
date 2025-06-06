@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingLeanbackLauncher,MissingLeanbackSupport">
-
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
@@ -18,15 +17,11 @@
         android:theme="@style/Theme.MiProyectoIntegrador"
         tools:targetApi="31">
 
-        <activity android:name=".Recover.ActivityRecover" />
-
-        <activity
-            android:name=".TarifarioActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity_reservas"
-            android:exported="false" />
+        <activity android:name=".TarifarioActivity" android:exported="false"></activity>
+        <activity android:name=".Activity_reservas" android:exported="false"></activity>
         <activity android:name=".Perfil" />
+
+
         <activity
             android:name=".ActivityAdminint"
             android:exported="false" />
@@ -38,25 +33,33 @@
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
+            android:exported="true" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity_control_espacios"
+        <activity android:name=".activity_control_espacios"
             tools:ignore="Instantiatable" />
         <activity
-            android:name=".ActivityRegister"
+            android:name=".Tarifario"
             android:exported="false" />
+        <activity
+            android:name=".ActivityRegister"
+            android:exported="false"/>
+
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity android:name=".Activity_seguridad" />
         <activity android:name=".CambiarTemaActivity" />
         <activity android:name=".PoliticaPrivacidadActivity" />
+
+
     </application>
 
 </manifest>

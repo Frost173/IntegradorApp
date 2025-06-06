@@ -1,5 +1,6 @@
 package com.cochera.miproyectointegrador;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -77,6 +78,7 @@ public class TarifarioActivity extends AppCompatActivity {
 
     DBHelper dbHelper;
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

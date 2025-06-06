@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ScrollView con el contenido principal -->
+    <ScrollView
+        android:id="@+id/scrollViewContenido"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/barraInferior"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Encabezado con mes/año y controles -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+                <ImageButton
+                    android:id="@+id/btnAnterior"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/flecha"
+                    android:contentDescription="Mes anterior"
+                    android:rotation="180"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
+
+                <TextView
+                    android:id="@+id/tvMesAnio"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textColor="#1976A6" />
+
+                <ImageButton
+                    android:id="@+id/btnSiguiente"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/flecha"
+                    android:contentDescription="Mes siguiente"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
+            </LinearLayout>
+
+            <!-- Días de la semana -->
+            <GridLayout
+                android:id="@+id/gridDiasSemana"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="7"
+                android:rowCount="1"
+                android:background="@android:color/transparent" />
+
+            <!-- Calendario -->
+            <GridLayout
+                android:id="@+id/gridCalendario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="7"
+                android:rowCount="6"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:layout_margin="4dp"
+                android:useDefaultMargins="true"
+                android:alignmentMode="alignMargins"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:columnOrderPreserved="false" />
+
+            <!-- Reservas del día seleccionado -->
+            <TextView
+                android:id="@+id/tvReservasTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reservas:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvReservas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                tools:listitem="@layout/item_reserva" />
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Barra inferior fija -->
+    <LinearLayout
+        android:id="@+id/barraInferior"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:elevation="8dp"
+        android:layout_alignParentBottom="true">
+
+        <ImageButton
+            android:id="@+id/btnHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/home"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:contentDescription="Inicio" />
+
+        <ImageButton
+            android:id="@+id/btnCalendario"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/calendario"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:contentDescription="Calendario" />
+
+        <ImageButton
+            android:id="@+id/btnPerfil"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/perfil"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:contentDescription="Perfil" />
+    </LinearLayout>
+
+</RelativeLayout>
