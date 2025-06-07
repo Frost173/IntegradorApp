@@ -44,4 +44,13 @@ public class Reserva {
     public void setPlaca(String placa) { this.placa = placa; }
     public void setTipoVehiculo(String tipoVehiculo) { this.tipoVehiculo = tipoVehiculo; }
     public void setEstado(String estado) { this.estado = estado; }
+
+    // Alias methods for compatibility
+    public void setId(int id) {
+        this.reservaid = id;
+    }
+
+    public void setFechaReserva(String fechaReserva) {
+        this.fecha = fechaReserva;
+    }
 }

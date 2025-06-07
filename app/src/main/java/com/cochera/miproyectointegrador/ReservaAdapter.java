@@ -1,5 +1,6 @@
 package com.cochera.miproyectointegrador;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ViewHolder> {
 
-    private List<Reserva> reservas;  // Quitar final para poder actualizar
+    private List<Reserva> reservas;  // Lista mutable para actualizar
     private final Context context;
 
     public ReservaAdapter(Context context, List<Reserva> reservas) {
@@ -51,24 +52,41 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ViewHold
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ReservaAdapter.ViewHolder holder, int position) {
-        Reserva r = reservas.get(position);
-        holder.tvPlaca.setText("Placa: " + r.getPlaca());
-        holder.tvHoraEntrada.setText("Hora Entrada: " + r.getHoraEntrada());
-        holder.tvHoraSalida.setText("Hora Salida: " + r.getHoraSalida());
-        holder.tvFecha.setText("Fecha: " + r.getFecha());
-        holder.tvPagoHora.setText("Pago/hora: S/" + r.getPagoHora());
-        holder.tvUbicacion.setText("Ubicación: " + r.getUbicacion());
+        if (reservas == null || reservas.isEmpty()) return;
 
-        String detalle = "Reserva registrada correctamente para el vehículo con placa " + r.getPlaca()
-                + " en " + r.getUbicacion() + ".";
+        Reserva r = reservas.get(position);
+
+        holder.tvPlaca.setText("Placa: " + safeString(r.getPlaca()));
+        holder.tvHoraEntrada.setText("Hora Entrada: " + safeString(r.getHoraEntrada()));
+        holder.tvHoraSalida.setText("Hora Salida: " + safeString(r.getHoraSalida()));
+        holder.tvFecha.setText("Fecha: " + safeString(r.getFecha()));
+        holder.tvPagoHora.setText("Pago/hora: S/" + r.getPagoHora());
+        holder.tvUbicacion.setText("Ubicación: " + safeString(r.getUbicacion()));
+
+        String detalle = "Reserva registrada correctamente para el vehículo con placa "
+                + safeString(r.getPlaca()) + " en " + safeString(r.getUbicacion()) + ".";
         holder.tvReservaDetalle.setText(detalle);
         holder.tvReservaDetalle.setVisibility(View.VISIBLE);
+
+        // Si quieres agregar listener de click en el ítem, descomenta y adapta:
+        /*
+        holder.itemView.setOnClickListener(v -> {
+            // Código para manejar click, e.g. mostrar detalles o editar reserva
+        });
+        */
     }
 
     @Override
     public int getItemCount() {
-        return reservas == null ? 0 : reservas.size();
+        return (reservas != null) ? reservas.size() : 0;
+    }
+
+    // Método auxiliar para evitar nulls y mostrar string vacío
+    private String safeString(String s) {
+        return s != null ? s : "";
     }
 }
+

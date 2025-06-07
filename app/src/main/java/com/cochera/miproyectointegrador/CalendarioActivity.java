@@ -26,15 +26,16 @@ public class CalendarioActivity extends AppCompatActivity {
 
     private static final String TAG = "CalendarioActivity";
 
+    // Vistas
     private ImageButton btnHome, btnCalendario, btnPerfil, btnAnterior, btnSiguiente;
     private GridLayout gridCalendario, gridDiasSemana;
     private RecyclerView rvReservas;
     private TextView tvMesAnio, tvReservasTitulo;
 
+    // Variables
     private Calendar calendar;
     private DBHelper dbHelper;
     private ReservaAdapter reservaAdapter;
-
     private int diaSeleccionado = -1;
 
     @Override
@@ -42,95 +43,77 @@ public class CalendarioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendario);
 
-        try {
-            // 1) Inicializar vistas. Si alguna no existe en el XML, petará aquí.
-            btnHome        = findViewById(R.id.btnHome);
-            btnCalendario  = findViewById(R.id.btnCalendario);
-            btnPerfil      = findViewById(R.id.btnPerfil);
-            btnAnterior    = findViewById(R.id.btnAnterior);
-            btnSiguiente   = findViewById(R.id.btnSiguiente);
-            tvMesAnio      = findViewById(R.id.tvMesAnio);
-            gridCalendario = findViewById(R.id.gridCalendario);
-            gridDiasSemana = findViewById(R.id.gridDiasSemana);
-            rvReservas     = findViewById(R.id.rvReservas);
-            tvReservasTitulo = findViewById(R.id.tvReservasTitulo);
-
-            // Verificar que ninguna vista sea null (para no chocar más adelante)
-            if (btnHome == null || btnCalendario == null || btnPerfil == null ||
-                    btnAnterior == null || btnSiguiente == null || tvMesAnio == null ||
-                    gridCalendario == null || gridDiasSemana == null ||
-                    rvReservas == null || tvReservasTitulo == null) {
-                throw new IllegalStateException("Alguna vista de CalendarioActivity es null. Revisa tus IDs en activity_calendario.xml");
-            }
-
-            // 2) Inicializar helper y calendario
-            calendar = Calendar.getInstance();
-            dbHelper = new DBHelper(this);
-
-            // 3) RecyclerView (solo layoutManager; el adapter se setea cuando haya reservas)
-            rvReservas.setLayoutManager(new LinearLayoutManager(this));
-
-            // 4) Preparar mes/día por defecto
-            diaSeleccionado = calendar.get(Calendar.DAY_OF_MONTH);
-            mostrarCalendario();  // construye la grilla de días
-            cargarReservasPorFecha(getFechaFormateada(calendar));  // carga reservas del día actual
-
-            // 5) Botón “<” para mes anterior
-            btnAnterior.setOnClickListener(v -> {
-                calendar.add(Calendar.MONTH, -1);
-                diaSeleccionado = -1;  // Ningún día seleccionado aún en el nuevo mes
-                mostrarCalendario();
-                limpiarReservas();
-            });
-
-            // 6) Botón “>” para mes siguiente
-            btnSiguiente.setOnClickListener(v -> {
-                calendar.add(Calendar.MONTH, 1);
-                diaSeleccionado = -1;
-                mostrarCalendario();
-                limpiarReservas();
-            });
-
-            // 7) Barra inferior: Home, Calendario y Perfil
-            btnHome.setOnClickListener(v -> {
-                startActivity(new Intent(this, Activity_estacionamientos.class));
-                finish();
-            });
-
-            btnCalendario.setOnClickListener(v ->
-                    Toast.makeText(this, "Ya estás en Calendario", Toast.LENGTH_SHORT).show()
-            );
-
-            btnPerfil.setOnClickListener(v ->
-                    startActivity(new Intent(this, Perfil.class))
-            );
-
-        } catch (Exception e) {
-            // Si algo falla en onCreate (por ejemplo una vista es null),
-            // mostramos un Toast, hacemos Log y cerramos la actividad para que no quede en estado inconsistente.
-            Log.e(TAG, "Error en onCreate de CalendarioActivity", e);
-            Toast.makeText(this, "No se pudo abrir el calendario. Revisa la configuración.", Toast.LENGTH_LONG).show();
-            finish();
-        }
+        // Inicializar vistas y componentes
+        inicializarVistas();
+        inicializarComponentes();
+        configurarListeners();
     }
 
-    /**
-     * Limpia la sección de reservas (quita el adapter y reinicia el título).
-     */
+    private void inicializarVistas() {
+        btnHome = findViewById(R.id.btnHome);
+        btnCalendario = findViewById(R.id.btnCalendario);
+        btnPerfil = findViewById(R.id.btnPerfil);
+        btnAnterior = findViewById(R.id.btnAnterior);
+        btnSiguiente = findViewById(R.id.btnSiguiente);
+        tvMesAnio = findViewById(R.id.tvMesAnio);
+        gridCalendario = findViewById(R.id.gridCalendario);
+        gridDiasSemana = findViewById(R.id.gridDiasSemana);
+        rvReservas = findViewById(R.id.rvReservas);
+        tvReservasTitulo = findViewById(R.id.tvReservasTitulo);
+    }
+
+    private void inicializarComponentes() {
+        calendar = Calendar.getInstance();
+        dbHelper = new DBHelper(this);
+
+        rvReservas.setLayoutManager(new LinearLayoutManager(this));
+
+        // Inicializamos el día seleccionado en el día actual
+        diaSeleccionado = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // Mostrar calendario y cargar reservas del mes y día actuales
+        mostrarCalendario();
+        cargarReservasPorFecha(getFechaFormateada(calendar));
+    }
+
+    private void configurarListeners() {
+        btnAnterior.setOnClickListener(v -> {
+            calendar.add(Calendar.MONTH, -1);
+            diaSeleccionado = -1; // No seleccionamos día al cambiar mes
+            mostrarCalendario();
+            limpiarReservas();
+        });
+
+        btnSiguiente.setOnClickListener(v -> {
+            calendar.add(Calendar.MONTH, 1);
+            diaSeleccionado = -1;
+            mostrarCalendario();
+            limpiarReservas();
+        });
+
+        btnHome.setOnClickListener(v -> {
+            startActivity(new Intent(this, Activity_estacionamientos.class));
+            finish();
+        });
+
+        btnCalendario.setOnClickListener(v ->
+                Toast.makeText(this, "Ya estás en Calendario", Toast.LENGTH_SHORT).show()
+        );
+
+        btnPerfil.setOnClickListener(v ->
+                startActivity(new Intent(this, Perfil.class))
+        );
+    }
+
     private void limpiarReservas() {
         tvReservasTitulo.setText("Reservas:");
         rvReservas.setAdapter(null);
     }
 
-    /**
-     * Construye de cero la grilla de 6 filas x 7 columnas,
-     * pintando cada día según su mes, si tiene reserva o si está seleccionado.
-     */
     private void mostrarCalendario() {
         gridCalendario.removeAllViews();
         gridDiasSemana.removeAllViews();
 
-        // 1) Mostrar mes y año en español, todo en mayúsculas
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatoMes = new SimpleDateFormat("MMMM yyyy", new Locale("es", "ES"));
         tvMesAnio.setText(formatoMes.format(calendar.getTime()).toUpperCase());
@@ -138,7 +121,7 @@ public class CalendarioActivity extends AppCompatActivity {
         gridDiasSemana.setColumnCount(7);
         gridCalendario.setColumnCount(7);
 
-        // 2) Encabezado de días de la semana
+        // Mostrar días de la semana
         String[] diasSemana = {"Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"};
         for (int i = 0; i < 7; i++) {
             TextView tvDiaEnc = new TextView(this);
@@ -158,15 +141,15 @@ public class CalendarioActivity extends AppCompatActivity {
             gridDiasSemana.addView(tvDiaEnc);
         }
 
-        // 3) Averiguar en qué columna empieza el día 1 del mes actual
+        // Calcular desde qué día iniciar el calendario (el domingo anterior o mismo día 1 si es domingo)
         Calendar tempCal = (Calendar) calendar.clone();
         tempCal.set(Calendar.DAY_OF_MONTH, 1);
-        int primerDiaSemana = tempCal.get(Calendar.DAY_OF_WEEK) - 1; // domingo=0, lunes=1, ...
-        int mesActual = calendar.get(Calendar.MONTH);
-        // Retrocedemos hasta el domingo anterior (o el mismo día si el 1 cae en domingo)
+        int primerDiaSemana = tempCal.get(Calendar.DAY_OF_WEEK) - 1; // Domingo=1, restamos 1 para índice base 0
         tempCal.add(Calendar.DAY_OF_MONTH, -primerDiaSemana);
 
-        // 4) Generar 42 “celdas” (6 filas × 7 columnas)
+        int mesActual = calendar.get(Calendar.MONTH);
+
+        // Crear las 6 semanas (42 días)
         for (int i = 0; i < 42; i++) {
             TextView tvDia = new TextView(this);
             int diaDelMes = tempCal.get(Calendar.DAY_OF_MONTH);
@@ -184,70 +167,62 @@ public class CalendarioActivity extends AppCompatActivity {
             paramsDia.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
             tvDia.setLayoutParams(paramsDia);
 
-            // Fecha “actual” guardada para el listener
             Calendar fechaCelda = (Calendar) tempCal.clone();
             String fechaFormateada = getFechaFormateada(fechaCelda);
 
-            // 5) Estilos según condición:
             if (mesTemp != mesActual) {
-                // Días de meses anteriores/próximos en gris
+                // Días de otros meses en gris y no clickeables
                 tvDia.setTextColor(getResources().getColor(android.R.color.darker_gray));
                 tvDia.setBackgroundResource(android.R.color.transparent);
+                tvDia.setClickable(false);
             } else if (diaDelMes == diaSeleccionado) {
-                // Día actualmente seleccionado: fondo especial
+                // Día seleccionado con fondo especial
                 tvDia.setBackgroundResource(R.drawable.fondo_dia_seleccionado);
                 tvDia.setTextColor(getResources().getColor(android.R.color.white));
             } else {
-                // Si el día (mesTemp == mesActual) tiene reservas, color verde
+                // Verificar si tiene reservas
                 boolean tieneRes = false;
                 try {
                     tieneRes = dbHelper.tieneReservasEnFecha(fechaFormateada);
                 } catch (Exception e) {
                     Log.e(TAG, "Error comprobando reservas en " + fechaFormateada, e);
                 }
+
                 if (tieneRes) {
+                    // Días con reservas en verde
                     tvDia.setBackgroundColor(getResources().getColor(R.color.verdeReserva));
                     tvDia.setTextColor(getResources().getColor(android.R.color.black));
                 } else {
-                    // Día normal del mes
                     tvDia.setBackgroundResource(android.R.drawable.dialog_holo_light_frame);
                     tvDia.setTextColor(getResources().getColor(android.R.color.black));
                 }
             }
 
-            // 6) Listener para cuando el usuario cliquea un día del mes visible
-            final int diaClick = diaDelMes;
-            final Calendar fechaClick = (Calendar) tempCal.clone();
-            tvDia.setOnClickListener(v -> {
-                if (fechaClick.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)) {
+            if (mesTemp == mesActual) {
+                final int diaClick = diaDelMes;
+                final Calendar fechaClick = (Calendar) tempCal.clone();
+                tvDia.setOnClickListener(v -> {
                     diaSeleccionado = diaClick;
-                    mostrarCalendario();  // repinta todo el mes con el nuevo díaSeleccionado
+                    mostrarCalendario();
                     cargarReservasPorFecha(getFechaFormateada(fechaClick));
-                }
-            });
+                });
+            }
 
             gridCalendario.addView(tvDia);
             tempCal.add(Calendar.DAY_OF_MONTH, 1);
         }
     }
 
-    /**
-     * @param cal Calendario con la fecha que queremos formatear.
-     * @return cadena "yyyy-MM-dd" de la fecha.
-     */
     @SuppressLint("SimpleDateFormat")
     private String getFechaFormateada(Calendar cal) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         return sdf.format(cal.getTime());
     }
 
-    /**
-     * Carga las reservas de la base de datos para la fecha dada y actualiza el RecyclerView.
-     * Si ocurre alguna excepción, se atrapa y se muestra un Toast en lugar de crashear.
-     */
     private void cargarReservasPorFecha(String fecha) {
         try {
             List<Reserva> reservas = dbHelper.obtenerReservasPorFecha(fecha);
+
             if (reservas == null || reservas.isEmpty()) {
                 tvReservasTitulo.setText("Reservas para " + fecha + ": No hay reservas");
                 rvReservas.setAdapter(null);
@@ -267,9 +242,9 @@ public class CalendarioActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Cerramos el helper para no filtrar contexto
         if (dbHelper != null) {
             dbHelper.close();
         }
     }
 }
+

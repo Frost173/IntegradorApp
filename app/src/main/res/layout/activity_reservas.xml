@@ -1,194 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:padding="16dp">
 
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <LinearLayout
+        <!-- TÍTULO CENTRAL -->
+        <TextView
+            android:id="@+id/tvNombreEstacionamiento"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:text="Nombre del Estacionamiento"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
 
-            <!-- Barra superior azul -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="horizontal"
-                android:background="#1976A6"
-                android:gravity="center_vertical">
+        <!-- CAMPO: Fecha -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha"
+            android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/etFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Seleccionar fecha"
+            android:focusable="false"
+            android:background="@drawable/field_background"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"/>
 
-                <TextView
-                    android:id="@+id/tvNombreEstacionamiento"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Estacionamiento"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginStart="24dp"/>
-            </LinearLayout>
+        <!-- CAMPO: Hora de Entrada -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hora de Entrada"
+            android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/etHoraEntrada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Seleccionar hora"
+            android:focusable="false"
+            android:background="@drawable/field_background"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"/>
 
-            <!-- Nombre del estacionamiento
-            <TextView
-                android:id="@+id/tvNombreEstacionamiento"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Estacionamiento"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#1976A6"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="-60dp"
-                android:layout_marginBottom="16dp"/> -->
+        <!-- CAMPO: Hora de Salida -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hora de Salida"
+            android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/etHoraSalida"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Seleccionar hora"
+            android:focusable="false"
+            android:background="@drawable/field_background"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"/>
 
-            <!-- Fecha -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fecha"
-                android:textSize="15sp"
-                android:textColor="#222"/>
-            <EditText
-                android:id="@+id/etFecha"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="01/05/25"
-                android:focusable="false"
-                android:inputType="none"
-                android:background="@drawable/bg_edittext"
-                android:drawableEnd="@drawable/ic_arrow_drop_down"
-                android:paddingHorizontal="15dp"
-                android:layout_marginBottom="16dp"/>
+        <!-- CAMPO: Tipo de Vehículo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo de Vehículo"
+            android:textSize="16sp"/>
+        <Spinner
+            android:id="@+id/spTipoVehiculo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/field_background"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"/>
 
-            <!-- Hora de Entrada -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hora de Entrada"
-                android:textSize="15sp"
-                android:textColor="#222"/>
-            <EditText
-                android:id="@+id/etHora"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="00:10"
-                android:focusable="false"
-                android:inputType="none"
-                android:background="@drawable/bg_edittext"
-                android:drawableEnd="@drawable/ic_arrow_drop_down"
-                android:paddingHorizontal="15dp"
-                android:layout_marginBottom="16dp"/>
+        <!-- CAMPO: Tarifa por hora -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tarifa por hora"
+            android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/etTarifa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:enabled="false"
+            android:background="@drawable/field_background"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"/>
 
-            <!-- Hora de Salida -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hora de Salida"
-                android:textSize="15sp"
-                android:textColor="#222"/>
-            <EditText
-                android:id="@+id/etHoraSalida"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="00:10"
-                android:focusable="false"
-                android:inputType="none"
-                android:background="@drawable/bg_edittext"
-                android:drawableEnd="@drawable/ic_arrow_drop_down"
-                android:paddingHorizontal="15dp"
-                android:layout_marginBottom="16dp"/>
+        <!-- CAMPO: Horas estimadas -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Horas estimadas"
+            android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/etHorasEstimadas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:enabled="false"
+            android:background="@drawable/field_background"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"/>
 
-            <!-- Tipo de Vehículo -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tipo de Vehículo"
-                android:textSize="15sp"
-                android:textColor="#222"/>
-            <Spinner
-                android:id="@+id/spTipoVehiculo"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginBottom="16dp"/>
+        <!-- CAMPO: Precio Total -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Precio Total"
+            android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/etPrecio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:enabled="false"
+            android:background="@drawable/field_background"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"/>
 
-            <!-- Tarifa por hora (no editable) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tarifa por hora"
-                android:textSize="15sp"
-                android:textColor="#222"/>
-            <EditText
-                android:id="@+id/etTarifa"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="S/0.00"
-                android:focusable="false"
-                android:inputType="none"
-                android:background="@drawable/bg_edittext"
-                android:paddingHorizontal="15dp"
-                android:layout_marginBottom="16dp"/>
+        <!-- CAMPO: Placa del vehículo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Placa del vehículo"
+            android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/etPlaca"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:background="@drawable/field_background"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="24dp"/>
 
-            <!-- Horas (no editable) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Horas"
-                android:textSize="15sp"
-                android:textColor="#222"/>
-            <EditText
-                android:id="@+id/etColor"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="0.00"
-                android:focusable="false"
-                android:inputType="none"
-                android:background="@drawable/bg_edittext"
-                android:paddingHorizontal="15dp"
-                android:layout_marginBottom="16dp"/>
+        <!-- BOTÓN FINAL -->
+        <Button
+            android:id="@+id/btnReservar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reservar"
+            android:backgroundTint="#1976A6"
+            android:textColor="#FFFFFF" />
 
-            <!-- Precio (no editable) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Precio"
-                android:textSize="15sp"
-                android:textColor="#222"/>
-            <EditText
-                android:id="@+id/etPrecio"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="S/0.00"
-                android:focusable="false"
-                android:inputType="none"
-                android:background="@drawable/bg_edittext"
-                android:paddingHorizontal="15dp"
-                android:layout_marginBottom="24dp"/>
-
-            <!-- Botón Reservar -->
-            <Button
-                android:id="@+id/btnReservar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Reservar"
-                android:textColor="#FFF"
-                android:textSize="18sp"
-                android:backgroundTint="#1976A6"
-                android:layout_marginBottom="24dp"/>
-        </LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
-
+    </LinearLayout>
+</ScrollView>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- ScrollView con el contenido principal -->
+    <!-- ScrollView principal -->
     <ScrollView
         android:id="@+id/scrollViewContenido"
         android:layout_width="match_parent"
@@ -18,7 +19,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Encabezado con mes/año y controles -->
+            <!-- Encabezado Mes/Año con botones de navegación -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,10 +43,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:textColor="#1976A6" />
+                    android:textColor="#1976A6"
+                    android:text="MARZO 2025" />
 
                 <ImageButton
                     android:id="@+id/btnSiguiente"
@@ -58,7 +60,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless" />
             </LinearLayout>
 
-            <!-- Días de la semana -->
+            <!-- Días de la semana (puedes llenarlo dinámicamente si deseas) -->
             <GridLayout
                 android:id="@+id/gridDiasSemana"
                 android:layout_width="match_parent"
@@ -83,24 +85,25 @@
                 android:clipToPadding="false"
                 android:columnOrderPreserved="false" />
 
-            <!-- Reservas del día seleccionado -->
+            <!-- Título Reservas -->
             <TextView
                 android:id="@+id/tvReservasTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reservas:"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                android:textColor="#1976A6" />
 
+            <!-- Lista de reservas -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvReservas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 tools:listitem="@layout/item_reserva" />
-
 
         </LinearLayout>
     </ScrollView>

@@ -18,7 +18,7 @@ import java.util.Map;
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
-        super(context, "tu_basedatos_2.db", null, 7);
+        super(context, "tu_basedatos_2.db", null, 13);
     }
 
     @Override
@@ -67,9 +67,13 @@ public class DBHelper extends SQLiteOpenHelper {
                 "horaentrada TEXT," +
                 "horasalida TEXT," +
                 "estado TEXT CHECK(estado IN ('Pendiente', 'Confirmada', 'Cancelada', 'Finalizada')) NOT NULL," +
+                "placa TEXT," +           // columna nueva versión 2
+                "pago REAL DEFAULT 0," +  // columna nueva versión 3
+                "ubicacion TEXT," +       // columna nueva versión 3
                 "FOREIGN KEY (usuarioid) REFERENCES Usuarios(usuarioid)," +
                 "FOREIGN KEY (espacioid) REFERENCES Espacios(espacioid)," +
                 "FOREIGN KEY (vehiculoid) REFERENCES Vehiculos(vehiculoid));");
+
 
         db.execSQL("CREATE TABLE Pagos (" +
                 "pagoid INTEGER PRIMARY KEY," +
@@ -171,29 +175,63 @@ public class DBHelper extends SQLiteOpenHelper {
                 "VALUES (1, 1, 15.00, '2025-05-17');");
 
 // Tabla Tarifas
-        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) " +
-                "VALUES (1, 1, 'Carro', 7.5);");
-        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) " +
-                "VALUES (2, 1, 'Moto', 3.0);");
-        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) " +
-                "VALUES (3, 1, 'Camion', 10.0);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (1, 1, 'Carro', 7.5);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (2, 1, 'Moto', 3.0);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (3, 1, 'Camion', 10.0);");
+
+        // Tarifas para Estacionamiento 2 (Los Olivos)
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (4, 2, 'Carro', 7.0);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (5, 2, 'Moto', 2.5);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (6, 2, 'Camion', 9.5);");
+
+        // Tarifas para Estacionamiento 3 (San Borja)
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (7, 3, 'Carro', 8.0);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (8, 3, 'Moto', 3.5);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (9, 3, 'Camion', 11.0);");
+
+        // Tarifas para Estacionamiento 4 (Chaclacayo)
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (10, 4, 'Carro', 6.5);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (11, 4, 'Moto', 2.0);");
+        db.execSQL("INSERT INTO Tarifas (tarifaid, estacionamientoid, tipovehiculo, precio) VALUES (12, 4, 'Camion', 9.0);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Aquí puedes manejar futuras migraciones
-        db.execSQL("DROP TABLE IF EXISTS Chats");
-        db.execSQL("DROP TABLE IF EXISTS HistorialAcceso");
-        db.execSQL("DROP TABLE IF EXISTS Tarifas");
-        db.execSQL("DROP TABLE IF EXISTS Pagos");
-        db.execSQL("DROP TABLE IF EXISTS Reservas");
-        db.execSQL("DROP TABLE IF EXISTS Vehiculos");
-        db.execSQL("DROP TABLE IF EXISTS Espacios");
-        db.execSQL("DROP TABLE IF EXISTS Estacionamientos");
-        db.execSQL("DROP TABLE IF EXISTS Usuarios");
-        db.execSQL("DROP TABLE IF EXISTS Perfiles");
-        onCreate(db);
+        if (oldVersion < 2) {
+            // Agrega columna 'placa'
+            db.execSQL("ALTER TABLE Reservas ADD COLUMN placa TEXT");
+        }
+
+        if (oldVersion < 3) {
+            // Agrega columna 'pago' y 'ubicacion' si aún no existen
+            try {
+                db.execSQL("ALTER TABLE Reservas ADD COLUMN pago REAL DEFAULT 0");
+            } catch (Exception e) {
+                // La columna ya existe, ignora el error
+            }
+            try {
+                db.execSQL("ALTER TABLE Reservas ADD COLUMN ubicacion TEXT DEFAULT 'No definido'");
+            } catch (Exception e) {
+                // La columna ya existe, ignora el error
+            }
+        }
+
+        if (oldVersion < 4) {
+            // Cambios grandes: eliminar y recrear tablas
+            db.execSQL("DROP TABLE IF EXISTS Chats");
+            db.execSQL("DROP TABLE IF EXISTS HistorialAcceso");
+            db.execSQL("DROP TABLE IF EXISTS Tarifas");
+            db.execSQL("DROP TABLE IF EXISTS Pagos");
+            db.execSQL("DROP TABLE IF EXISTS Reservas");
+            db.execSQL("DROP TABLE IF EXISTS Vehiculos");
+            db.execSQL("DROP TABLE IF EXISTS Espacios");
+            db.execSQL("DROP TABLE IF EXISTS Estacionamientos");
+            db.execSQL("DROP TABLE IF EXISTS Usuarios");
+            db.execSQL("DROP TABLE IF EXISTS Perfiles");
+            onCreate(db);
+        }
     }
+
 
     public void mostrarUsuarios() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -206,6 +244,24 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         cursor.close();
     }
+    public boolean tieneReservasEnFecha(String fecha) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM reservas WHERE fechareserva = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{fecha});
+        boolean tieneReserva = false;
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int count = cursor.getInt(0);
+                tieneReserva = count > 0;
+            }
+            cursor.close();
+        }
+
+        return tieneReserva;
+    }
+
+
 
     // Ejemplo: Obtenemos tarifas para un estacionamiento específico
 //    public List<String> obtenerTarifasPorEstacionamiento( int estacionamientoId) {
@@ -341,6 +397,68 @@ public class DBHelper extends SQLiteOpenHelper {
         return precio;
     }
 
+    public List<Reserva> obtenerReservasPorFecha(String fecha) {
+        List<Reserva> lista = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM Reservas WHERE fechareserva = ?", new String[]{fecha});
+
+        if (cursor.moveToFirst()) {
+            int idxPlaca = cursor.getColumnIndex("placa");
+            int idxHoraEntrada = cursor.getColumnIndex("horaentrada");
+            int idxHoraSalida = cursor.getColumnIndex("horasalida");
+            int idxFecha = cursor.getColumnIndex("fechareserva");
+            int idxPago = cursor.getColumnIndex("pago");
+            int idxUbicacion = cursor.getColumnIndex("ubicacion");
+
+            do {
+                Reserva r = new Reserva();
+
+                if (idxPlaca != -1 && !cursor.isNull(idxPlaca))
+                    r.setPlaca(cursor.getString(idxPlaca));
+                else
+                    r.setPlaca("N/A");
+
+                if (idxHoraEntrada != -1 && !cursor.isNull(idxHoraEntrada))
+                    r.setHoraEntrada(cursor.getString(idxHoraEntrada));
+                else
+                    r.setHoraEntrada("00:00");
+
+                if (idxHoraSalida != -1 && !cursor.isNull(idxHoraSalida))
+                    r.setHoraSalida(cursor.getString(idxHoraSalida));
+                else
+                    r.setHoraSalida("00:00");
+
+                if (idxFecha != -1 && !cursor.isNull(idxFecha))
+                    r.setFecha(cursor.getString(idxFecha));
+                else
+                    r.setFecha("00/00/0000");
+
+                if (idxPago != -1 && !cursor.isNull(idxPago))
+                    r.setPagoHora(cursor.getDouble(idxPago));
+                else
+                    r.setPagoHora(0.0);
+
+                if (idxUbicacion != -1 && !cursor.isNull(idxUbicacion))
+                    r.setUbicacion(cursor.getString(idxUbicacion));
+                else
+                    r.setUbicacion("No definido");
+
+                lista.add(r);
+            } while (cursor.moveToNext());
+        } else {
+            Log.e("DBHelper", "No se encontraron reservas para la fecha: " + fecha);
+        }
+
+        cursor.close();
+        return lista;
+    }
+
+
+
+
+
+
     public String obtenerNombreEstacionamientoPorId(int estacionamientoId) {
         SQLiteDatabase db = this.getReadableDatabase();
         String nombre = null;
@@ -385,6 +503,41 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return usuario;
     }
+
+    public boolean insertarReserva(Reserva r) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("usuarioid", r.getUsuarioId());
+        values.put("espacioid", r.getEspacioId());
+        values.put("vehiculoid", r.getVehiculoId());
+        values.put("fechareserva", r.getFecha());
+        values.put("horaentrada", r.getHoraEntrada());
+        values.put("horasalida", r.getHoraSalida());
+        values.put("estado", r.getEstado());
+        values.put("placa", r.getPlaca());
+
+        // Aquí agregas estos 2 campos que faltan
+        values.put("pago", r.getPagoHora());
+        values.put("ubicacion", r.getUbicacion());
+
+        long resultado = db.insert("Reservas", null, values);
+        return resultado != -1;
+    }
+
+
+
+    public boolean actualizarContrasena(String email, String newPassword) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("contrasena", newPassword);
+
+        int filasActualizadas = db.update("usuarios", values, "email = ?", new String[]{email});
+        db.close();
+
+        return filasActualizadas > 0;
+    }
+
 
     // Método opcional para agregar un usuario de prueba
     public void insertarUsuario( String nombre, String apellido, String correo, String contraseña, int id) {
