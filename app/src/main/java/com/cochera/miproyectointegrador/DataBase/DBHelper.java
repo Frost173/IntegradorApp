@@ -397,6 +397,56 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("perfilid", id);
         db.insert("Usuarios", null, values);
     }
+/*
+    public boolean tieneReservasEnFecha(String fecha) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        boolean tieneReservas = false;
+
+        try {
+            cursor = db.rawQuery("SELECT 1 FROM Reserva WHERE fechareserva = ? LIMIT 1", new String[]{fecha});
+            tieneReservas = cursor.moveToFirst();
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+
+        }
+        return tieneReservas;
+    }
+
+    public List<Reserva> obtenerReservasPorFecha(String fechareserva) {
+        List<Reserva> lista = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase(); // Ahora OK
+        Cursor cursor = null;
+
+        try {
+            cursor = db.rawQuery("SELECT * FROM Reserva WHERE fechareserva = ? ORDER BY horaentrada ASC", new String[]{fechareserva});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Reserva reserva = new Reserva();
+                    reserva.setReservaid(cursor.getInt(cursor.getColumnIndexOrThrow("reservaid")));
+                    reserva.setUsuarioId(cursor.getInt(cursor.getColumnIndexOrThrow("usuarioid")));
+                    reserva.setEspacioId(cursor.getInt(cursor.getColumnIndexOrThrow("espacioid")));
+                    reserva.setVehiculoId(cursor.getInt(cursor.getColumnIndexOrThrow("vehiculoid")));
+                    reserva.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fechareserva")));
+                    reserva.setHoraEntrada(cursor.getString(cursor.getColumnIndexOrThrow("horaentrada")));
+                    reserva.setHoraSalida(cursor.getString(cursor.getColumnIndexOrThrow("horasalida")));
+                    reserva.setEstado(cursor.getString(cursor.getColumnIndexOrThrow("estado")));
+                    // Más campos si los hay...
+
+                    lista.add(reserva);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+
+        Log.d("DEBUG_DB", "Reservas encontradas en fecha " + fechareserva + ": " + lista.size());
+        return lista;
+    }
+*/
     public void insertarReserva( int usuarioid, int espacioid, int vehiculoid, String fechareserva, String horaentrada,String horasalida,String estado) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -454,6 +504,43 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("precio", precio);
         db.insert("Tarifas", null, values);
     }
+        /*
+    public Usuario obtenerUsuarioPorId(int usuarioId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Usuario usuario = null;
+
+        String query = "SELECT u.usuarioid, u.nombre, u.apellido, u.correo, p.nombreperfil " +
+                "FROM Usuarios u " +
+                "INNER JOIN Perfiles p ON u.perfilid = p.perfilid " +
+                "WHERE u.usuarioid = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(usuarioId)});
+
+        if (cursor.moveToFirst()) {
+            int id = cursor.getInt(0);
+            String nombre = cursor.getString(1);
+            String apellido = cursor.getString(2);
+            String correo = cursor.getString(3);
+            String perfil = cursor.getString(4);
+
+            usuario = new Usuario(id, nombre, apellido, correo, perfil);
+        }
+
+        cursor.close();
+        db.close();
+        return usuario;
+    }
+    public boolean actualizarContrasena(String email, String nuevaContrasena) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("contrasena", nuevaContrasena);
+
+        int rowsAffected = db.update("Usuarios", values, "correo = ?", new String[]{email});
+        db.close();
+
+        return rowsAffected > 0;
+    }*/
+
 }
 
 

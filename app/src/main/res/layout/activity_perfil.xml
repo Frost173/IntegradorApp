@@ -5,63 +5,41 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity_control_espacios">
+    tools:context=".acitivity_perfil">
 
     <TextView
         android:id="@+id/imgPerfil"
         android:layout_width="163dp"
         android:layout_height="122dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/perfil_cliente"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textCorreolog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sobre mí"
-        android:textSize="13sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextCorreolog"
-        app:layout_constraintStart_toStartOf="@+id/editTextCorreolog" />
-
-    <EditText
-        android:id="@+id/editTextCorreolog"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/txt_datos"
-        android:hint="Deja un mensaje para conocernos."
-        android:inputType="textEmailAddress"
-        android:padding="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgPerfil" />
-
-    <TextView
         android:id="@+id/textCelular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TUS FAVORITOS"
+        android:layout_marginBottom="28dp"
+        android:text="Descripcion"
         android:textSize="13sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextPhone"
-        app:layout_constraintStart_toStartOf="@+id/editTextPhone" />
+        app:layout_constraintBottom_toTopOf="@+id/editTextDescripcion"
+        app:layout_constraintStart_toStartOf="@+id/editTextDescripcion" />
 
     <EditText
-        android:id="@+id/editTextPhone"
+        android:id="@+id/editTextDescripcion"
         android:layout_width="0dp"
         android:layout_height="119dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="96dp"
         android:background="@drawable/txt_datos"
         android:hint=""
         android:inputType="phone"
         android:padding="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextCorreolog" />
+        app:layout_constraintTop_toBottomOf="@+id/imgPerfil" />
 
     <TextView
         android:id="@+id/textCorreo"
@@ -69,22 +47,23 @@
         android:layout_height="wrap_content"
         android:text="Nombre"
         android:textSize="13sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextCorreo"
-        app:layout_constraintStart_toStartOf="@+id/editTextCorreo" />
+        app:layout_constraintBottom_toTopOf="@+id/editTextNombre"
+        app:layout_constraintStart_toStartOf="@+id/editTextNombre" />
 
     <EditText
-        android:id="@+id/editTextCorreo"
+        android:id="@+id/editTextNombre"
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="56dp"
         android:background="@drawable/txt_datos"
-        android:hint=""
+        android:hint=" "
         android:inputType="textEmailAddress"
         android:padding="12dp"
+        android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPhone" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextDescripcion" />
 
     <TextView
         android:id="@+id/textContrasenalog"
@@ -92,22 +71,23 @@
         android:layout_height="wrap_content"
         android:text="CORREO"
         android:textSize="13sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextContrasenalog"
-        app:layout_constraintStart_toStartOf="@+id/editTextContrasenalog" />
+        app:layout_constraintBottom_toTopOf="@+id/editTextCorreo"
+        app:layout_constraintStart_toStartOf="@+id/editTextCorreo" />
 
     <EditText
-        android:id="@+id/editTextContrasenalog"
+        android:id="@+id/editTextCorreo"
         android:layout_width="0dp"
         android:layout_height="57dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="44dp"
         android:background="@drawable/txt_datos"
-        android:hint="Correo"
+        android:hint=" "
         android:inputType="textPassword"
         android:padding="12dp"
+        android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextCorreo" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextNombre" />
 
     <LinearLayout
         android:id="@+id/barraInferior"
