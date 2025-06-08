@@ -18,7 +18,7 @@
         android:theme="@style/Theme.MiApp"
         tools:targetApi="31">
 
-        <!-- Actividades principales -->
+        <!-- Actividad principal / launcher -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -28,6 +28,7 @@
             </intent-filter>
         </activity>
 
+        <!-- Otras actividades, exportadas false para restringir acceso externo -->
         <activity android:name=".Activity_estacionamientos" android:exported="false" />
         <activity android:name=".CalendarioActivity" android:exported="false" />
         <activity android:name=".Activity_reservas" android:exported="false" />
@@ -37,12 +38,17 @@
         <activity android:name=".activity_control_espacios" android:exported="false" tools:ignore="Instantiatable" />
         <activity android:name=".Tarifario" android:exported="false" tools:ignore="MissingClass" />
         <activity android:name=".TarifarioActivity" android:exported="false" />
-        <activity android:name=".ActivityRegister" android:exported="false" />
+
         <activity android:name=".MainActivity" android:exported="false" />
         <activity android:name=".Activity_seguridad" android:exported="false" />
         <activity android:name=".CambiarTemaActivity" android:exported="false" />
         <activity android:name=".PoliticaPrivacidadActivity" android:exported="false" />
+        <activity android:name=".AjustesActivity" android:exported="false" />
+        <activity android:name=".ChatActivity" android:exported="false" />
+        <activity android:name=".ActivityRegister" android:exported="false" />
+
 
     </application>
 
 </manifest>
+

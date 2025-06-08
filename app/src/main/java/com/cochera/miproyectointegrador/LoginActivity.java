@@ -8,90 +8,89 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Usuario;
-import com.cochera.miproyectointegrador.Login.LoginContract;
-import com.cochera.miproyectointegrador.Login.LoginPresenter;
-
 import com.cochera.miproyectointegrador.Recover.ActivityRecover;
 import com.cochera.miproyectointegrador.Register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText etCorreo, etClave;
-    Button btnLogin;
-    DBHelper dbHelper;
+    private EditText etCorreo, etClave;
+    private Button btnLogin, btnRegistro;
+    private TextView tvRecover;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-    //codigo agregado para recuperar contraseña--borrar de ser neeccesario con las demas clases
-        TextView textRecover = findViewById(R.id.textRecover);
-        textRecover.setOnClickListener(v -> {
-            startActivity(new Intent(this, ActivityRecover.class));
-        });
 
+        // Inicializar vistas
         etCorreo = findViewById(R.id.editTextCorreolog);
         etClave = findViewById(R.id.editTextContrasenalog);
         btnLogin = findViewById(R.id.buttonLogin);
+        btnRegistro = findViewById(R.id.buttonRegistrolog);
+        tvRecover = findViewById(R.id.textRecover);
         dbHelper = new DBHelper(this);
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    String correo = etCorreo.getText().toString().trim();
-                    String clave = etClave.getText().toString().trim();
-//
-//                    if (dbHelper.verificarUsuario(correo, clave)) {
-//                        Toast.makeText(LoginActivity.this, "Login exitoso", Toast.LENGTH_SHORT).show();
-//
-//                        // Redirigir a ActivityAdminint
-//                        Intent intent = new Intent(LoginActivity.this, ActivityAdminint.class);
-//                        startActivity(intent);
-//                        finish(); // opcional
-//
-//                    } else {
-//                        Toast.makeText(LoginActivity.this, "Correo o clave incorrectos", Toast.LENGTH_SHORT).show();
-//                    }
-                    Usuario usuario = dbHelper.verificarUsuario(correo, clave);
-                    Intent intent = null;
-                    if (usuario != null) {
-                        int usuarioId = usuario.getId();
-                        Toast.makeText(LoginActivity.this, "Bienvenido, " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
 
-                        // Redirección según perfil
-                        switch (usuario.getPerfil()) {
-                            case "Administrador":
-                                intent = new Intent(LoginActivity.this, ActivityAdminint.class);
-                                break;
-                            case "Cliente":
-                                intent = new Intent(LoginActivity.this, Activity_estacionamientos.class);
-                                break;
+        // Acción de recuperación de contraseña
+        tvRecover.setOnClickListener(v -> {
+            startActivity(new Intent(this, ActivityRecover.class));
+        });
 
-                            default:
-                                Toast.makeText(LoginActivity.this, "Perfil no reconocido", Toast.LENGTH_SHORT).show();
-                        }
+        // Acción de registro
+        btnRegistro.setOnClickListener(v -> {
+            startActivity(new Intent(this, ActivityRegister.class));
+        });
 
-// 🚀 PASAMOS el usuarioId como extra
-                        intent.putExtra("usuarioId", usuarioId);
-                        startActivity(intent);
+        // Acción de inicio de sesión
+        btnLogin.setOnClickListener(v -> {
+            String correo = etCorreo.getText().toString().trim();
+            String clave = etClave.getText().toString().trim();
 
-                        finish(); // Cierra LoginActivity
+            // Validación de campos vacíos
+            if (correo.isEmpty() || clave.isEmpty()) {
+                Toast.makeText(this, "Por favor, ingresa correo y contraseña", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+            try {
+                Usuario usuario = dbHelper.verificarUsuario(correo, clave);
+
+                if (usuario != null) {
+                    int usuarioId = usuario.getId();
+                    String perfil = usuario.getPerfil();
+                    String nombre = usuario.getNombre();
+
+                    Toast.makeText(this, "Bienvenido, " + nombre, Toast.LENGTH_SHORT).show();
+
+                    Intent intent;
+
+                    // Redireccionar según perfil
+                    switch (perfil) {
+                        case "Administrador":
+                            intent = new Intent(this, ActivityAdminint.class);
+                            break;
+                        case "Cliente":
+                            intent = new Intent(this, Activity_estacionamientos.class);
+                            break;
+                        default:
+                            Toast.makeText(this, "Perfil no reconocido", Toast.LENGTH_SHORT).show();
+                            return;
                     }
-                } catch (Exception e) {
-                    Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
+
+                    // Pasar ID del usuario
+                    intent.putExtra("usuarioId", usuarioId);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(this, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                 }
+            } catch (Exception e) {
+                Toast.makeText(this, "Error al iniciar sesión: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                e.printStackTrace();
             }
         });
     }

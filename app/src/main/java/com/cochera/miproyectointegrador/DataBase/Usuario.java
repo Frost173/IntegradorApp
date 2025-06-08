@@ -15,10 +15,26 @@ public class Usuario {
         this.perfil = perfil;
     }
 
+    public Usuario() {
+
+    }
+
     // Getters
     public int getId() { return id; }
     public String getNombre() { return nombre; }
     public String getApellido() { return apellido; }
     public String getCorreo() { return correo; }
     public String getPerfil() { return perfil; }
+
+    public void setId(int id) {
+    }
+
+    public void setNombre(String nombre) {
+    }
+
+    public void setApellido(String apellido) {
+    }
+
+    public void setEdad(int edad) {
+    }
 }

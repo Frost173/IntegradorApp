@@ -18,7 +18,7 @@ import java.util.Map;
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
-        super(context, "tu_basedatos_2.db", null, 13);
+        super(context, "tu_basedatos_2.db", null, 16);
     }
 
     @Override
@@ -28,13 +28,16 @@ public class DBHelper extends SQLiteOpenHelper {
                 "nombreperfil TEXT NOT NULL);");
 
         db.execSQL("CREATE TABLE Usuarios (" +
-                "usuarioid INTEGER PRIMARY KEY," +
+                "usuarioid INTEGER PRIMARY KEY AUTOINCREMENT," +  // <-- AUTOINCREMENT añadido
                 "perfilid INTEGER," +
                 "nombre TEXT NOT NULL," +
                 "apellido TEXT NOT NULL," +
                 "correo TEXT UNIQUE NOT NULL," +
                 "contrasena TEXT NOT NULL," +
+                "celular TEXT," +
                 "FOREIGN KEY (perfilid) REFERENCES Perfiles(perfilid));");
+
+
 
         db.execSQL("CREATE TABLE Estacionamientos (" +
                 "estacionamientoid INTEGER PRIMARY KEY," +
@@ -231,6 +234,27 @@ public class DBHelper extends SQLiteOpenHelper {
             onCreate(db);
         }
     }
+    public Usuario obtenerUsuarioPorId(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("Usuarios", new String[]{"id", "nombre", "apellido", "edad"},
+                "id = ?", new String[]{String.valueOf(id)}, null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                Usuario usuario = new Usuario();
+                usuario.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                usuario.setNombre(cursor.getString(cursor.getColumnIndexOrThrow("nombre")));
+                usuario.setApellido(cursor.getString(cursor.getColumnIndexOrThrow("apellido")));
+                usuario.setEdad(cursor.getInt(cursor.getColumnIndexOrThrow("edad")));
+                cursor.close();
+                return usuario;
+            }
+            cursor.close();
+        }
+        return null;
+    }
+
 
 
     public void mostrarUsuarios() {
@@ -453,8 +477,37 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return lista;
     }
+    public boolean insertarUsuario(String nombre, String apellido, String correo, String contrasena, String celular, int perfilid) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        Cursor cursor = db.rawQuery("SELECT usuarioid FROM usuarios WHERE correo = ?", new String[]{correo});
+        if (cursor.moveToFirst()) {
+            cursor.close();
+            db.close();
+            Log.e("DBHelper", "Correo ya registrado");
+            return false;
+        }
+        cursor.close();
 
+        ContentValues values = new ContentValues();
+        values.put("nombre", nombre);
+        values.put("apellido", apellido);
+        values.put("correo", correo);
+        values.put("contrasena", contrasena);
+        values.put("celular", celular);
+        values.put("perfilid", perfilid);
+
+        long resultado = db.insert("usuarios", null, values);
+        db.close();
+
+        if (resultado == -1) {
+            Log.e("DBHelper", "Error al insertar usuario");
+        } else {
+            Log.d("DBHelper", "Usuario insertado con ID: " + resultado);
+        }
+
+        return resultado != -1;
+    }
 
 
 
