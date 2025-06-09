@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +40,7 @@ public class EspacioAdapter extends RecyclerView.Adapter<EspacioAdapter.ViewHold
         holder.tvEstado.setText("Estado: " + espacio.getEstado());
 
         holder.itemView.setOnClickListener(v -> {
+            Toast.makeText( context,espacio.getEstacionamientoId(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(context, TarifarioActivity.class); // Reemplaza con la clase que quieras abrir
             intent.putExtra("estacionamientoid", espacio.getEstacionamientoId()); // Si tienes el ID en tu modelo
             intent.putExtra("espacioid", espacio.getEspacioId());

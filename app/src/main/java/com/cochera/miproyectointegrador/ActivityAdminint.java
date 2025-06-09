@@ -1,9 +1,8 @@
 package com.cochera.miproyectointegrador;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -11,55 +10,51 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ActivityAdminint extends AppCompatActivity {
 
+    private Button btnTarifas, btnGestionEspacio;
+    private ImageButton btnHome, btnHistorial, btnPerfil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adminint);
 
-        // Inicializando botones
-        Button btnTarifas = findViewById(R.id.btnTarifas);
-        Button btnGestionEspacio = findViewById(R.id.btnGestionEspacio);
-        ImageButton btnPerfil = findViewById(R.id.btnPerfil); // Botón para ir al perfil
-        ImageButton btnCalendario = findViewById(R.id.btnCalendario);
+        btnTarifas = findViewById(R.id.btnTarifas);
+        btnGestionEspacio = findViewById(R.id.btnGestionEspacio);
 
+        btnHome = findViewById(R.id.btnHome);
+        btnHistorial = findViewById(R.id.btnHistorial);
+        btnPerfil = findViewById(R.id.btnPerfil);
 
-
-        // Acción botón Tarifas
-        btnTarifas.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ActivityAdminint.this, TarifarioActivity.class);
-                startActivity(intent);
-            }
+        btnTarifas.setOnClickListener(v -> {
+            Intent tarifasIntent = new Intent(ActivityAdminint.this, TarifasActivity.class);
+            startActivity(tarifasIntent);
         });
 
-        // Acción botón Gestión de Espacio
-        btnGestionEspacio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ActivityAdminint.this, activity_control_espacios.class);
-                startActivity(intent);
-            }
+        btnGestionEspacio.setOnClickListener(v -> {
+            Intent gestionIntent = new Intent(ActivityAdminint.this, ActivityAdminint.class); // Cambia a tu clase real
+            startActivity(gestionIntent);
         });
 
-        // Acción botón Perfil
-        btnPerfil.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ActivityAdminint.this, Perfil.class);
-                startActivity(intent);
-            }
+        btnHome.setOnClickListener(v -> {
+            Intent homeIntent = new Intent(ActivityAdminint.this, ActivityAdminint.class); // Cambia a tu actividad principal
+            startActivity(homeIntent);
         });
-        // Acción botón Perfil
-        btnCalendario.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ActivityAdminint.this, Activity_reservas.class);
-                startActivity(intent);
-            }
+
+        if (btnHistorial != null) {
+            btnHistorial.setOnClickListener(v -> {
+                Intent historialIntent = new Intent(ActivityAdminint.this, ActivityHistorialReserva.class);
+                startActivity(historialIntent);
+            });
+        } else {
+            Log.e("ActivityAdminint", "btnHistorial no encontrado en el layout");
+        }
+
+        // Aquí agregamos el listener para btnPerfil
+        btnPerfil.setOnClickListener(v -> {
+            Intent perfilIntent = new Intent(ActivityAdminint.this, ActivityPerfilAdmin.class);
+            startActivity(perfilIntent);
         });
     }
 }
-
 
 

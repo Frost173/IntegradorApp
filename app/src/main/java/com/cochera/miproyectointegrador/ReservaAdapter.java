@@ -1,12 +1,10 @@
 package com.cochera.miproyectointegrador;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,78 +13,74 @@ import com.cochera.miproyectointegrador.R;
 
 import java.util.List;
 
-public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ViewHolder> {
+public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaViewHolder> {
 
-    private List<Reserva> reservas;  // Lista mutable para actualizar
-    private final Context context;
+    private Context context;
+    private List<Reserva> reservaList;
 
-    public ReservaAdapter(Context context, List<Reserva> reservas) {
+    public ReservaAdapter(Context context, List<Reserva> reservaList) {
         this.context = context;
-        this.reservas = reservas;
-    }
-
-    public void setListaReservas(List<Reserva> nuevasReservas) {
-        this.reservas = nuevasReservas;
-        notifyDataSetChanged();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvPlaca, tvHoraEntrada, tvHoraSalida, tvFecha, tvPagoHora, tvUbicacion, tvReservaDetalle;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            tvPlaca = itemView.findViewById(R.id.tvPlaca);
-            tvHoraEntrada = itemView.findViewById(R.id.tvHoraEntrada);
-            tvHoraSalida = itemView.findViewById(R.id.tvHoraSalida);
-            tvFecha = itemView.findViewById(R.id.tvFecha);
-            tvPagoHora = itemView.findViewById(R.id.tvPagoHora);
-            tvUbicacion = itemView.findViewById(R.id.tvUbicacion);
-            tvReservaDetalle = itemView.findViewById(R.id.tvReservaDetalle);
-        }
+        this.reservaList = reservaList;
     }
 
     @NonNull
     @Override
-    public ReservaAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ReservaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_reserva, parent, false);
-        return new ViewHolder(view);
+        return new ReservaViewHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull ReservaAdapter.ViewHolder holder, int position) {
-        if (reservas == null || reservas.isEmpty()) return;
+    public void onBindViewHolder(@NonNull ReservaViewHolder holder, int position) {
+        Reserva reserva = reservaList.get(position); // 🔁 CORREGIDO
 
-        Reserva r = reservas.get(position);
+        // Mostrar placa
+        holder.tvPlaca.setText("Placa: " + reserva.getPlaca());
 
-        holder.tvPlaca.setText("Placa: " + safeString(r.getPlaca()));
-        holder.tvHoraEntrada.setText("Hora Entrada: " + safeString(r.getHoraEntrada()));
-        holder.tvHoraSalida.setText("Hora Salida: " + safeString(r.getHoraSalida()));
-        holder.tvFecha.setText("Fecha: " + safeString(r.getFecha()));
-        holder.tvPagoHora.setText("Pago/hora: S/" + r.getPagoHora());
-        holder.tvUbicacion.setText("Ubicación: " + safeString(r.getUbicacion()));
+        // Mostrar tipo de vehículo
+        holder.tvTipoVehiculo.setText("Tipo: " + reserva.getTipoVehiculo());
 
-        String detalle = "Reserva registrada correctamente para el vehículo con placa "
-                + safeString(r.getPlaca()) + " en " + safeString(r.getUbicacion()) + ".";
-        holder.tvReservaDetalle.setText(detalle);
-        holder.tvReservaDetalle.setVisibility(View.VISIBLE);
+        // Mostrar fecha y hora
+        holder.tvFecha.setText("Fecha: " + reserva.getFecha());
+        holder.tvHoraEntrada.setText("Entrada: " + reserva.getHoraEntrada());
+        holder.tvHoraSalida.setText("Salida: " + reserva.getHoraSalida());
 
-        // Si quieres agregar listener de click en el ítem, descomenta y adapta:
-        /*
-        holder.itemView.setOnClickListener(v -> {
-            // Código para manejar click, e.g. mostrar detalles o editar reserva
-        });
-        */
+        // Mostrar ubicación (si existe en el layout)
+        if (holder.tvUbicacion != null && reserva.getUbicacion() != null) {
+            holder.tvUbicacion.setText("Ubicación: " + reserva.getUbicacion());
+        }
+
+        // Mostrar pago total
+        holder.tvPagoTotal.setText("Pago: S/ " + reserva.getPago());
+
+        // Mostrar nombre y apellido del usuario (si existe en el layout)
+        if (holder.tvUsuario != null) {
+            holder.tvUsuario.setText("Usuario: " + reserva.getNombreUsuario() + " " + reserva.getApellidoUsuario());
+        }
     }
 
     @Override
     public int getItemCount() {
-        return (reservas != null) ? reservas.size() : 0;
+        return reservaList.size();
     }
 
-    // Método auxiliar para evitar nulls y mostrar string vacío
-    private String safeString(String s) {
-        return s != null ? s : "";
+    public static class ReservaViewHolder extends RecyclerView.ViewHolder {
+        TextView tvPlaca, tvTipoVehiculo, tvHoraEntrada, tvHoraSalida, tvFecha, tvPagoTotal,
+                tvUbicacion, tvEstado, tvReservaDetalle, tvUsuario; //  CORREGIDO: tvUsuario agregado
+
+        public ReservaViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvPlaca = itemView.findViewById(R.id.tvPlaca);
+            tvTipoVehiculo = itemView.findViewById(R.id.tvTipoVehiculo);
+            tvHoraEntrada = itemView.findViewById(R.id.tvHoraEntrada);
+            tvHoraSalida = itemView.findViewById(R.id.tvHoraSalida);
+            tvFecha = itemView.findViewById(R.id.tvFecha);
+            tvPagoTotal = itemView.findViewById(R.id.tvPagoTotal);
+            tvUbicacion = itemView.findViewById(R.id.tvUbicacion);
+            tvEstado = itemView.findViewById(R.id.tvEstado);
+            tvReservaDetalle = itemView.findViewById(R.id.tvReservaDetalle);
+            tvUsuario = itemView.findViewById(R.id.tvUsuario);
+        }
     }
 }
 

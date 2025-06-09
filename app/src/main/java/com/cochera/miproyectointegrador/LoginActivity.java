@@ -1,6 +1,7 @@
 package com.cochera.miproyectointegrador;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -64,6 +65,12 @@ public class LoginActivity extends AppCompatActivity {
                     String perfil = usuario.getPerfil();
                     String nombre = usuario.getNombre();
 
+                    // GUARDAR usuario_id EN SharedPreferences
+                    SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putInt("usuario_id", usuarioId);
+                    editor.apply();
+
                     Toast.makeText(this, "Bienvenido, " + nombre, Toast.LENGTH_SHORT).show();
 
                     Intent intent;
@@ -81,8 +88,9 @@ public class LoginActivity extends AppCompatActivity {
                             return;
                     }
 
-                    // Pasar ID del usuario
+                    // También se puede pasar el ID por intent si lo necesitas
                     intent.putExtra("usuarioId", usuarioId);
+
                     startActivity(intent);
                     finish();
                 } else {
@@ -95,3 +103,4 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 }
+

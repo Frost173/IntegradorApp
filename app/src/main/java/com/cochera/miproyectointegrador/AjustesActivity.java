@@ -25,7 +25,7 @@ public class AjustesActivity extends AppCompatActivity {
         layoutSeguridad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AjustesActivity.this,Activity_seguridad.class);
+                Intent intent = new Intent(AjustesActivity.this, Activity_seguridad.class);
                 startActivity(intent);
             }
         });
@@ -53,15 +53,21 @@ public class AjustesActivity extends AppCompatActivity {
         btnCerrarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Aquí pones la lógica para cerrar sesión
+                // Limpiar SharedPreferences donde guardas sesión (ajusta el nombre "userPrefs" al que uses)
+                getSharedPreferences("userPrefs", MODE_PRIVATE)
+                        .edit()
+                        .clear()
+                        .apply();
+
                 Toast.makeText(AjustesActivity.this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
-                // Por ejemplo, limpiar preferencias, cerrar sesión en Firebase, etc.
-                // Luego puedes volver a la pantalla de login:
-                // Intent intent = new Intent(AjustesActivity.this, LoginActivity.class);
-                // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                // startActivity(intent);
-                // finish();
+
+                // Ir a LoginActivity y limpiar la pila para que no pueda volver con back
+                Intent intent = new Intent(AjustesActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
             }
         });
+
     }
 }

@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Usuario;
 
-public class acitivity_perfil extends AppCompatActivity {
+public class ActivityPerfil extends AppCompatActivity {
 
     private EditText editTextNombre, editTextCorreo, editTextDescripcion;
     private SharedPreferences sharedPreferences;
@@ -22,9 +22,6 @@ public class acitivity_perfil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
-
-        // Obtener ID del usuario del Intent
-        usuarioId = getIntent().getIntExtra("usuarioId", -1);
 
         // Inicializar vistas
         editTextNombre = findViewById(R.id.editTextNombre);
@@ -78,9 +75,11 @@ public class acitivity_perfil extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // Guardar la descripción cuando la actividad pasa a segundo plano
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("descripcion_" + usuarioId, editTextDescripcion.getText().toString());
-        editor.apply();
+        if (sharedPreferences != null) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("descripcion_" + usuarioId, editTextDescripcion.getText().toString());
+            editor.apply();
+        }
     }
+
 }

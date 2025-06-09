@@ -18,7 +18,7 @@
         android:theme="@style/Theme.MiApp"
         tools:targetApi="31">
 
-        <!-- Actividad principal / launcher -->
+        <!-- Actividad principal -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -28,17 +28,17 @@
             </intent-filter>
         </activity>
 
-        <!-- Otras actividades, exportadas false para restringir acceso externo -->
+        <!-- Actividades internas -->
         <activity android:name=".Activity_estacionamientos" android:exported="false" />
         <activity android:name=".CalendarioActivity" android:exported="false" />
         <activity android:name=".Activity_reservas" android:exported="false" />
-        <activity android:name=".Perfil" android:exported="false" />
+        <activity android:name=".ActivityPerfil" android:exported="false" />
         <activity android:name=".ActivityAdminint" android:exported="false" />
         <activity android:name=".InterfazCliente" android:exported="false" />
         <activity android:name=".activity_control_espacios" android:exported="false" tools:ignore="Instantiatable" />
         <activity android:name=".Tarifario" android:exported="false" tools:ignore="MissingClass" />
         <activity android:name=".TarifarioActivity" android:exported="false" />
-
+        <activity android:name=".TarifasActivity" android:exported="false" />
         <activity android:name=".MainActivity" android:exported="false" />
         <activity android:name=".Activity_seguridad" android:exported="false" />
         <activity android:name=".CambiarTemaActivity" android:exported="false" />
@@ -46,9 +46,17 @@
         <activity android:name=".AjustesActivity" android:exported="false" />
         <activity android:name=".ChatActivity" android:exported="false" />
         <activity android:name=".ActivityRegister" android:exported="false" />
+        <activity android:name=".ActivityCambiarContrasena" android:exported="false" />
+        <activity android:name=".DetalleEstacionamientoActivity" />
+        <activity android:name=".ActivityHistorialReserva" />
+        <activity android:name=".ActivityPerfilAdmin"
+            tools:ignore="Instantiatable" />
+
+
+
+
 
 
     </application>
 
 </manifest>
-

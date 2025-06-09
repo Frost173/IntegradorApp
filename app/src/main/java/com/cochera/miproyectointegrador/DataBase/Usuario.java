@@ -1,5 +1,8 @@
 package com.cochera.miproyectointegrador.DataBase;
 
+import com.cochera.miproyectointegrador.DataBase.Usuario;
+
+
 public class Usuario {
     private int id;
     private String nombre;
@@ -36,5 +39,11 @@ public class Usuario {
     }
 
     public void setEdad(int edad) {
+    }
+
+    public void setCorreo(String string) {
+    }
+
+    public void setPerfil(String string) {
     }
 }

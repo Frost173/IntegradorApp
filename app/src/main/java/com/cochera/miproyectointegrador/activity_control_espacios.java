@@ -33,14 +33,12 @@ public class activity_control_espacios extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Activa EdgeToEdge si usas esa librería (asegúrate de tenerla)
-        // EdgeToEdge.enable(activity_control_espacios.this); // Comenta si da error
 
         setContentView(R.layout.activity_control_espacios);
 
-        // Obtener datos del Intent
+        // Obtener datos del Intent con claves correctas (mayúsculas y minúsculas)
         usuarioId = getIntent().getIntExtra("usuarioId", -1);
-        estacionamientoId = getIntent().getIntExtra("estacionamientoid", -1);
+        estacionamientoId = getIntent().getIntExtra("estacionamientoId", -1); // CORREGIDO aquí
 
         // Ajustar padding para sistema de barras (status, navegación)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
@@ -68,7 +66,8 @@ public class activity_control_espacios extends AppCompatActivity {
             if (espacioSeleccionado != null) {
                 Intent intent = new Intent(activity_control_espacios.this, Activity_reservas.class);
                 intent.putExtra("espacioid", espacioSeleccionado.getEspacioId());
-                intent.putExtra("estacionamientoid", espacioSeleccionado.getEstacionamientoId());
+                intent.putExtra("estacionamientoId", espacioSeleccionado.getEstacionamientoId()); // Usa misma clave aquí
+                Toast.makeText(this, String.valueOf(espacioSeleccionado.getEstacionamientoId())+"valorees de coolores", Toast.LENGTH_SHORT).show();
                 intent.putExtra("codigo", espacioSeleccionado.getCodigo());
                 intent.putExtra("usuarioId", usuarioId);
                 startActivity(intent);
@@ -88,27 +87,18 @@ public class activity_control_espacios extends AppCompatActivity {
             TextView tvCodigo = espacioView.findViewById(R.id.tvCodigo);
             tvCodigo.setText(espacio.getCodigo());
 
-            // Opcional: cambiar color según estado
-            /*
-            if (espacio.isOcupado()) {
-                tvCodigo.setBackgroundColor(Color.RED);
-            } else {
-                tvCodigo.setBackgroundColor(Color.GREEN);
-            }
-            */
-
             espacioView.setOnClickListener(v -> {
                 espacioSeleccionado = espacio;
                 btnContinuar.setEnabled(true);
                 Toast.makeText(activity_control_espacios.this,
                         "Seleccionado: " + espacio.getCodigo(), Toast.LENGTH_SHORT).show();
 
-                // Resaltar el espacio seleccionado
+                // Resaltar el espacio seleccionado y desmarcar los demás
                 for (int i = 0; i < gridLayout.getChildCount(); i++) {
                     View child = gridLayout.getChildAt(i);
                     child.setBackgroundColor(getResources().getColor(android.R.color.transparent));
                 }
-                espacioView.setBackgroundColor(getResources().getColor(R.color.purple_200)); // Cambia por color deseado
+                espacioView.setBackgroundColor(getResources().getColor(R.color.purple_200));
             });
 
             gridLayout.addView(espacioView);

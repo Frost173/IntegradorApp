@@ -7,61 +7,76 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Estacionamiento;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EstacionamientoAdapter extends RecyclerView.Adapter<EstacionamientoAdapter.ViewHolder> {
-    private List<Estacionamiento> lista;
-    private Context context;
 
+    private List<Estacionamiento> lista;           // Lista actual (filtrada)
+    private List<Estacionamiento> listaOriginal;   // Lista completa original
+    private Context context;
     private int usuarioId;
-    DBHelper dbHelper;
+
     public EstacionamientoAdapter(Context context, List<Estacionamiento> lista, int usuarioId) {
         this.context = context;
-        this.lista = lista;
+        this.lista = new ArrayList<>(lista);
+        this.listaOriginal = new ArrayList<>(lista);
         this.usuarioId = usuarioId;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nombreTextView;
-        public TextView direccionTextView;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            nombreTextView = itemView.findViewById(R.id.nombreEstacionamiento);
-            //direccionTextView = itemView.findViewById(R.id.direccionEstacionamiento);
-
-        }
-
-    }
-
+    @NonNull
     @Override
-    public EstacionamientoAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EstacionamientoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_estacionamiento, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(EstacionamientoAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull EstacionamientoAdapter.ViewHolder holder, int position) {
         Estacionamiento estacionamiento = lista.get(position);
-        holder.nombreTextView.setText(estacionamiento.getNombre());
-        //holder.direccionTextView.setText(estacionamiento.getDireccion());
+        holder.tvNombre.setText(estacionamiento.getNombre());
+        holder.tvDireccion.setText(estacionamiento.getDireccion());
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, activity_control_espacios.class);
-            intent.putExtra("estacionamientoid", estacionamiento.getEstacionamientoId());
+            Intent intent = new Intent(v.getContext(), activity_control_espacios.class);
+            intent.putExtra("estacionamientoId", estacionamiento.getEstacionamientoId());
             intent.putExtra("usuarioId", usuarioId);
-            //dbHelper.insertarReserva(2, 1,1, "14/05/2025","14:00","16:00","Pendiente");
-            context.startActivity(intent);
+            v.getContext().startActivity(intent);
         });
+
     }
 
     @Override
     public int getItemCount() {
         return lista.size();
+    }
+
+    // Método para filtrar lista en tiempo real
+    public void filtrarLista(String texto) {
+        texto = texto.toLowerCase();
+        List<Estacionamiento> listaFiltrada = new ArrayList<>();
+        for (Estacionamiento e : listaOriginal) {
+            if (e.getNombre().toLowerCase().contains(texto)) {
+                listaFiltrada.add(e);
+            }
+        }
+        lista = listaFiltrada;
+        notifyDataSetChanged();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tvNombre, tvDireccion;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvNombre = itemView.findViewById(R.id.nombreEstacionamiento);
+            tvDireccion = itemView.findViewById(R.id.espaciosLibres);
+
+        }
     }
 }

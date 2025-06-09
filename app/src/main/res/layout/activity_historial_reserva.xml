@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="#F5F5F5">
 
     <!-- Barra superior -->
@@ -14,13 +14,13 @@
         android:background="#D18A00"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Historial de Clientes"
+        android:text="Historial de Reservas"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
@@ -28,9 +28,9 @@
         app:layout_constraintBottom_toBottomOf="@id/topBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center"/>
+        android:gravity="center" />
 
-    <!-- Lista dinámica con RecyclerView -->
+    <!-- RecyclerView para mostrar las reservas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerReservas"
         android:layout_width="0dp"
@@ -41,7 +41,8 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_reserva" />
 
     <!-- Barra inferior -->
     <LinearLayout
@@ -53,22 +54,39 @@
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="8dp">
 
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+        <ImageButton
+            android:id="@+id/btnHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:src="@drawable/home"
-            android:layout_weight="1"/>
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:contentDescription="Inicio" />
+
+        <ImageButton
+            android:id="@+id/btnCalendario"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:src="@drawable/calendario"
-            android:layout_weight="1"/>
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:contentDescription="Calendario" />
+
+        <ImageButton
+            android:id="@+id/btnPerfil"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:src="@drawable/perfil"
-            android:layout_weight="1"/>
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:contentDescription="Perfil" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+

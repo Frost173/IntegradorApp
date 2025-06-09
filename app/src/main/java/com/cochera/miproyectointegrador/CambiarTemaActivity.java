@@ -2,6 +2,7 @@ package com.cochera.miproyectointegrador;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -24,12 +25,23 @@ public class CambiarTemaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_oscuro_claro);
 
+        // Activar flecha para volver atrás en la ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Cambiar Tema");
+        }
+
+        // Referencias
         radioGroupTema = findViewById(R.id.radioGroupTema);
         rbSistema = findViewById(R.id.rbSistema);
         rbClaro = findViewById(R.id.rbClaro);
         rbOscuro = findViewById(R.id.rbOscuro);
+        ImageButton btnBack = findViewById(R.id.btnBack); // 🔹 Añadido
 
-        // Seleccionar radioButton según preferencia guardada
+        // Manejar clic en el botón atrás (ImageButton personalizado)
+        btnBack.setOnClickListener(v -> finish()); // 🔹 Añadido
+
+        // Cargar tema guardado
         int temaGuardado = obtenerTemaGuardado();
         switch (temaGuardado) {
             case AppCompatDelegate.MODE_NIGHT_NO:
@@ -43,6 +55,7 @@ public class CambiarTemaActivity extends AppCompatActivity {
                 break;
         }
 
+        // Cambiar tema al seleccionar
         radioGroupTema.setOnCheckedChangeListener((group, checkedId) -> {
             int modo;
             if (checkedId == R.id.rbClaro) {
@@ -52,11 +65,19 @@ public class CambiarTemaActivity extends AppCompatActivity {
             } else {
                 modo = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
             }
+
             guardarTema(modo);
             AppCompatDelegate.setDefaultNightMode(modo);
-            // Opcional: reiniciar actividad para aplicar cambios inmediatamente
-            recreate();
+            recreate(); // Reinicia para aplicar cambios
         });
+    }
+
+
+    // Método para manejar la flecha de "atrás"
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish(); // Finaliza esta actividad
+        return true;
     }
 
     private void aplicarTemaGuardado() {
@@ -74,4 +95,3 @@ public class CambiarTemaActivity extends AppCompatActivity {
         prefs.edit().putInt(KEY_TEMA, modo).apply();
     }
 }
-

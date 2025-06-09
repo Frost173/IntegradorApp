@@ -8,6 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,7 +29,6 @@ import java.util.Locale;
 public class Activity_reservas extends AppCompatActivity {
 
     private DBHelper dbHelper;
-
     private TextView tvNombreEstacionamiento;
     private EditText etFecha, etHoraEntrada, etHoraSalida, etTarifa, etHoras, etPrecio, etPlaca;
     private Spinner spTipoVehiculo;
@@ -39,7 +45,18 @@ public class Activity_reservas extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
 
-        // Referencias UI
+        inicializarComponentes();
+        recibirDatosIntent();
+        cargarTiposVehiculo();
+
+        // Listeners
+        etFecha.setOnClickListener(v -> mostrarDatePicker());
+        etHoraEntrada.setOnClickListener(v -> mostrarTimePicker(etHoraEntrada));
+        etHoraSalida.setOnClickListener(v -> mostrarTimePicker(etHoraSalida));
+        btnReservar.setOnClickListener(v -> guardarReserva());
+    }
+
+    private void inicializarComponentes() {
         tvNombreEstacionamiento = findViewById(R.id.tvNombreEstacionamiento);
         etFecha = findViewById(R.id.etFecha);
         etHoraEntrada = findViewById(R.id.etHoraEntrada);
@@ -50,25 +67,18 @@ public class Activity_reservas extends AppCompatActivity {
         etPlaca = findViewById(R.id.etPlaca);
         spTipoVehiculo = findViewById(R.id.spTipoVehiculo);
         btnReservar = findViewById(R.id.btnReservar);
+    }
 
-        // Obtener datos del Intent
+    private void recibirDatosIntent() {
         usuarioId = getIntent().getIntExtra("usuarioId", -1);
-        estacionamientoId = getIntent().getIntExtra("estacionamientoid", -1);
+        estacionamientoId = getIntent().getIntExtra("estacionamientoId", -1);
+        Toast.makeText(this, String.valueOf(estacionamientoId), Toast.LENGTH_SHORT).show();
         espacioId = getIntent().getIntExtra("espacioid", -1);
 
         if (estacionamientoId != -1) {
             String nombre = dbHelper.obtenerNombreEstacionamientoPorId(estacionamientoId);
             tvNombreEstacionamiento.setText(nombre != null ? nombre : "Estacionamiento");
         }
-
-        cargarTiposVehiculo();
-
-        // Listeners para fecha y hora
-        etFecha.setOnClickListener(v -> mostrarDatePicker());
-        etHoraEntrada.setOnClickListener(v -> mostrarTimePicker(etHoraEntrada));
-        etHoraSalida.setOnClickListener(v -> mostrarTimePicker(etHoraSalida));
-
-        btnReservar.setOnClickListener(v -> guardarReserva());
     }
 
     private void cargarTiposVehiculo() {
@@ -79,12 +89,12 @@ public class Activity_reservas extends AppCompatActivity {
             return;
         }
 
-        List<String> tiposVehiculo = new ArrayList<>();
+        List<String> tipos = new ArrayList<>();
         for (Tarifa t : tarifas) {
-            tiposVehiculo.add(t.getTipoVehiculo());
+            tipos.add(t.getTipoVehiculo());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tiposVehiculo);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tipos);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTipoVehiculo.setAdapter(adapter);
 
@@ -110,8 +120,8 @@ public class Activity_reservas extends AppCompatActivity {
         Calendar max = (Calendar) hoy.clone();
         max.add(Calendar.DAY_OF_YEAR, 7);
 
-        DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-            String fecha = String.format(Locale.getDefault(), "%02d/%02d/%04d", dayOfMonth, month + 1, year);
+        DatePickerDialog dialog = new DatePickerDialog(this, (view, y, m, d) -> {
+            String fecha = String.format(Locale.getDefault(), "%02d/%02d/%04d", d, m + 1, y);
             etFecha.setText(fecha);
         }, hoy.get(Calendar.YEAR), hoy.get(Calendar.MONTH), hoy.get(Calendar.DAY_OF_MONTH));
 
@@ -120,22 +130,19 @@ public class Activity_reservas extends AppCompatActivity {
         dialog.show();
     }
 
-    private void mostrarTimePicker(EditText editText) {
-        Calendar calendar = Calendar.getInstance();
-        int hora = calendar.get(Calendar.HOUR_OF_DAY);
-        int minuto = (calendar.get(Calendar.MINUTE) / 15) * 15;
+    private void mostrarTimePicker(EditText campoHora) {
+        Calendar cal = Calendar.getInstance();
+        int hora = cal.get(Calendar.HOUR_OF_DAY);
+        int minuto = (cal.get(Calendar.MINUTE) / 15) * 15;
 
-        // Usar formato 12h para AM/PM
-        TimePickerDialog dialog = new TimePickerDialog(this, (view, h, m) -> {
+        new TimePickerDialog(this, (view, h, m) -> {
             m = (m / 15) * 15;
-            String periodo = h < 12 ? "AM" : "PM";
+            String ampm = h < 12 ? "AM" : "PM";
             int hora12 = h % 12 == 0 ? 12 : h % 12;
-            String textoHora = String.format(Locale.getDefault(), "%02d:%02d %s", hora12, m, periodo);
-            editText.setText(textoHora);
+            String horaFormateada = String.format(Locale.getDefault(), "%02d:%02d %s", hora12, m, ampm);
+            campoHora.setText(horaFormateada);
             calcularHorasYPrecio();
-        }, hora, minuto, false);
-
-        dialog.show();
+        }, hora, minuto, false).show();
     }
 
     private int convertirHoraAMinutos(String hora) {
@@ -144,8 +151,10 @@ public class Activity_reservas extends AppCompatActivity {
             String[] hm = partes[0].split(":");
             int h = Integer.parseInt(hm[0]);
             int m = Integer.parseInt(hm[1]);
-            if (partes[1].equalsIgnoreCase("PM") && h < 12) h += 12;
+
+            if (partes[1].equalsIgnoreCase("PM") && h != 12) h += 12;
             if (partes[1].equalsIgnoreCase("AM") && h == 12) h = 0;
+
             return h * 60 + m;
         } catch (Exception e) {
             return -1;
@@ -153,11 +162,8 @@ public class Activity_reservas extends AppCompatActivity {
     }
 
     private void calcularHorasYPrecio() {
-        String entrada = etHoraEntrada.getText().toString().trim();
-        String salida = etHoraSalida.getText().toString().trim();
-
-        int minEntrada = convertirHoraAMinutos(entrada);
-        int minSalida = convertirHoraAMinutos(salida);
+        int minEntrada = convertirHoraAMinutos(etHoraEntrada.getText().toString().trim());
+        int minSalida = convertirHoraAMinutos(etHoraSalida.getText().toString().trim());
 
         if (minEntrada == -1 || minSalida == -1) return;
 
@@ -166,20 +172,13 @@ public class Activity_reservas extends AppCompatActivity {
 
         double horas = diferencia / 60.0;
         etHoras.setText(String.format(Locale.getDefault(), "%.2f", horas));
-        calcularPrecio();
+        calcularPrecio(horas);
     }
 
-    private void calcularPrecio() {
+    private void calcularPrecio(double horas) {
         if (tarifaSeleccionada == null) return;
-
-        try {
-            double tarifa = tarifaSeleccionada.getPrecio();
-            double horas = Double.parseDouble(etHoras.getText().toString());
-            double precio = tarifa * horas;
-            etPrecio.setText(String.format(Locale.getDefault(), "%.2f", precio));
-        } catch (Exception e) {
-            etPrecio.setText("");
-        }
+        double precio = tarifaSeleccionada.getPrecio() * horas;
+        etPrecio.setText(String.format(Locale.getDefault(), "%.2f", precio));
     }
 
     private void guardarReserva() {
@@ -188,7 +187,7 @@ public class Activity_reservas extends AppCompatActivity {
         String salida = etHoraSalida.getText().toString().trim();
         String placa = etPlaca.getText().toString().trim().toUpperCase(Locale.getDefault());
 
-        if (fecha.isEmpty() || entrada.isEmpty() || salida.isEmpty() || tarifaSeleccionada == null || placa.isEmpty()) {
+        if (fecha.isEmpty() || entrada.isEmpty() || salida.isEmpty() || placa.isEmpty() || tarifaSeleccionada == null) {
             Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -202,14 +201,16 @@ public class Activity_reservas extends AppCompatActivity {
             return;
         }
 
+        // Insertar en la base de datos
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues valores = new ContentValues();
         valores.put("usuarioid", usuarioId);
         valores.put("espacioid", espacioId);
-        valores.put("vehiculoid", tarifaSeleccionada.getIdTarifa());
+        valores.put("vehiculoid", tarifaSeleccionada.getTarifaid());
         valores.put("fechareserva", fecha);
         valores.put("horaentrada", entrada);
         valores.put("horasalida", salida);
+        valores.put("pago", etPrecio.getText().toString().trim());
         valores.put("estado", "Pendiente");
         valores.put("placa", placa);
 
@@ -217,13 +218,13 @@ public class Activity_reservas extends AppCompatActivity {
         db.close();
 
         if (id != -1) {
-            Toast.makeText(this, "Reserva guardada", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Reserva guardada correctamente", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, Activity_estacionamientos.class);
             intent.putExtra("usuarioId", usuarioId);
             startActivity(intent);
             finish();
         } else {
-            Toast.makeText(this, "Error al guardar", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error al guardar la reserva", Toast.LENGTH_LONG).show();
         }
     }
 }

@@ -67,7 +67,7 @@
             android:id="@+id/spinnerFecha"
             android:layout_width="150dp"
             android:layout_height="40dp"
-            android:background="@drawable/back_franja"/>
+            android:background="@drawable/backdos_franja"/>
 
         <!-- Placa -->
         <TextView
@@ -79,7 +79,7 @@
             android:id="@+id/etPlaca"
             android:layout_width="150dp"
             android:layout_height="40dp"
-            android:background="@drawable/back_franja"
+            android:background="@drawable/backdos_franja"
             android:hint="ABC-000"
             android:inputType="text"/>
 
@@ -93,7 +93,7 @@
             android:id="@+id/spinnerHoraEntrada"
             android:layout_width="150dp"
             android:layout_height="40dp"
-            android:background="@drawable/back_franja"/>
+            android:background="@drawable/backdos_franja"/>
 
         <!-- Tipo de Vehículo -->
         <TextView
@@ -105,7 +105,7 @@
             android:id="@+id/spinnerTipoVehiculo"
             android:layout_width="150dp"
             android:layout_height="40dp"
-            android:background="@drawable/back_franja"/>
+            android:background="@drawable/backdos_franja"/>
 
         <!-- Código de Entrada -->
         <TextView
@@ -117,7 +117,7 @@
             android:id="@+id/etCodigoEntrada"
             android:layout_width="150dp"
             android:layout_height="40dp"
-            android:background="@drawable/back_franja"
+            android:background="@drawable/backdos_franja"
             android:hint="AAADDDD"
             android:inputType="text"/>
 
@@ -133,7 +133,7 @@
             android:layout_height="40dp"
             android:enabled="false"
             android:text="S/. 10.00"
-            android:background="@drawable/back_franja"/>
+            android:background="@drawable/backdos_franja"/>
 
         <!-- Color -->
         <TextView
@@ -145,7 +145,7 @@
             android:id="@+id/etColor"
             android:layout_width="150dp"
             android:layout_height="40dp"
-            android:background="@drawable/back_franja"
+            android:background="@drawable/backdos_franja"
             android:hint="Rojo"
             android:inputType="text"/>
 

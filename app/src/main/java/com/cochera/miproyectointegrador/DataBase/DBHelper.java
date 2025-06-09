@@ -1,13 +1,21 @@
 package com.cochera.miproyectointegrador.DataBase;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -234,6 +242,7 @@ public class DBHelper extends SQLiteOpenHelper {
             onCreate(db);
         }
     }
+
     public Usuario obtenerUsuarioPorId(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -286,67 +295,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-
-    // Ejemplo: Obtenemos tarifas para un estacionamiento específico
-//    public List<String> obtenerTarifasPorEstacionamiento( int estacionamientoId) {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        List<String> listaTarifas = new ArrayList<>();
-//        String sql = "SELECT tipovehiculo || ' - $' || precio as descripcion FROM Tarifas WHERE estacionamientoid = ?";
-//        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(estacionamientoId)});
-//
-//        if (cursor.moveToFirst()) {
-//            do {
-//                String descripcion = cursor.getString(cursor.getColumnIndexOrThrow("descripcion"));
-//                listaTarifas.add(descripcion);
-//            } while (cursor.moveToNext());
-//        }
-//
-//        cursor.close();
-//        return listaTarifas;
-//    }
-//    public Map<String, Double> obtenerTarifasPorEstacionamiento(int estacionamientoId) {
-//        Map<String, Double> tarifasMap = new HashMap<>();
-//        SQLiteDatabase db = this.getReadableDatabase();
-//
-//        String sql = "SELECT tipovehiculo, precio FROM Tarifas WHERE estacionamientoid = ?";
-//        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(estacionamientoId)});
-//
-//        if (cursor.moveToFirst()) {
-//            do {
-//                String tipoVehiculo = cursor.getString(cursor.getColumnIndexOrThrow("tipovehiculo"));
-//                double precio = cursor.getDouble(cursor.getColumnIndexOrThrow("precio"));
-//
-//                tarifasMap.put(tipoVehiculo, precio);
-//            } while (cursor.moveToNext());
-//        }
-//
-//        cursor.close();
-//        db.close();
-//        return tarifasMap;
-//    }
-
-    public List<Tarifa> obtenerTarifasPorEstacionamiento(int estacionamientoId) {
-        List<Tarifa> tarifasList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String sql = "SELECT tarifaid, tipovehiculo, precio FROM Tarifas WHERE estacionamientoid = ?";
-        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(estacionamientoId)});
-
-        if (cursor.moveToFirst()) {
-            do {
-                int idTarifa = cursor.getInt(cursor.getColumnIndexOrThrow("tarifaid"));
-                String tipoVehiculo = cursor.getString(cursor.getColumnIndexOrThrow("tipovehiculo"));
-                double precio = cursor.getDouble(cursor.getColumnIndexOrThrow("precio"));
-
-                tarifasList.add(new Tarifa(idTarifa, tipoVehiculo, precio));
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-        return tarifasList;
-    }
-
     public List<Estacionamiento> obtenerEstacionamientos() {
         List<Estacionamiento> lista = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -387,6 +335,57 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return espacios;
     }
+    public List<Tarifa> obtenerTarifasPorEstacionamiento(int estacionamientoId) {
+        List<Tarifa> listaTarifas = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT tarifaid, estacionamientoid, tipovehiculo, precio FROM Tarifas WHERE estacionamientoid = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(estacionamientoId)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                int estId = cursor.getInt(1);
+                String tipoVehiculo = cursor.getString(2);
+                double precio = cursor.getDouble(3);
+                listaTarifas.add(new Tarifa(id, estId, tipoVehiculo, precio));
+
+                Log.d("DEBUG", "Tarifa encontrada - ID: " + id + ", Tipo: " + tipoVehiculo + ", Precio: " + precio);
+            } while (cursor.moveToNext());
+        } else {
+            Log.d("DEBUG", "No se encontraron tarifas para estacionamientoId: " + estacionamientoId);
+        }
+
+        cursor.close();
+        db.close();
+
+        return listaTarifas;
+    }
+    public boolean insertarTarifa(int estacionamientoId, String tipoVehiculo, double precio) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("estacionamientoid", estacionamientoId);
+        values.put("tipovehiculo", tipoVehiculo);
+        values.put("precio", precio);
+
+        long resultado = db.insert("Tarifas", null, values);
+        return resultado != -1;
+    }
+
+    public String obtenerNombreEstacionamientoPorId(int estacionamientoId) {
+        SQLiteDatabase db = getReadableDatabase();
+        String nombre = null;
+
+        Cursor cursor = db.rawQuery(
+                "SELECT nombre FROM Estacionamientos WHERE estacionamientoid = ?",
+                new String[]{String.valueOf(estacionamientoId)}
+        );
+        if (cursor.moveToFirst()) {
+            nombre = cursor.getString(0);
+        }
+        cursor.close();
+        return nombre;
+    }
 
     public List<String> obtenerTiposVehiculoPorEstacionamiento(int estacionamientoId) {
         List<String> tipos = new ArrayList<>();
@@ -423,60 +422,46 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public List<Reserva> obtenerReservasPorFecha(String fecha) {
         List<Reserva> lista = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
 
-        Cursor cursor = db.rawQuery("SELECT * FROM Reservas WHERE fechareserva = ?", new String[]{fecha});
+        try {
+            db = this.getReadableDatabase();
 
-        if (cursor.moveToFirst()) {
-            int idxPlaca = cursor.getColumnIndex("placa");
-            int idxHoraEntrada = cursor.getColumnIndex("horaentrada");
-            int idxHoraSalida = cursor.getColumnIndex("horasalida");
-            int idxFecha = cursor.getColumnIndex("fechareserva");
-            int idxPago = cursor.getColumnIndex("pago");
-            int idxUbicacion = cursor.getColumnIndex("ubicacion");
+            cursor = db.rawQuery("SELECT * FROM Reservas WHERE fechareserva = ?", new String[]{fecha});
 
-            do {
-                Reserva r = new Reserva();
+            if (cursor.moveToFirst()) {
+                int idxPlaca = cursor.getColumnIndex("placa");
+                int idxHoraEntrada = cursor.getColumnIndex("horaentrada");
+                int idxHoraSalida = cursor.getColumnIndex("horasalida");
+                int idxFecha = cursor.getColumnIndex("fechareserva");
+                int idxPago = cursor.getColumnIndex("pago");
+                int idxUbicacion = cursor.getColumnIndex("ubicacion");
 
-                if (idxPlaca != -1 && !cursor.isNull(idxPlaca))
-                    r.setPlaca(cursor.getString(idxPlaca));
-                else
-                    r.setPlaca("N/A");
+                do {
+                    Reserva r = new Reserva();
 
-                if (idxHoraEntrada != -1 && !cursor.isNull(idxHoraEntrada))
-                    r.setHoraEntrada(cursor.getString(idxHoraEntrada));
-                else
-                    r.setHoraEntrada("00:00");
+                    r.setPlaca((idxPlaca != -1 && !cursor.isNull(idxPlaca)) ? cursor.getString(idxPlaca) : "N/A");
+                    r.setHoraEntrada((idxHoraEntrada != -1 && !cursor.isNull(idxHoraEntrada)) ? cursor.getString(idxHoraEntrada) : "00:00");
+                    r.setHoraSalida((idxHoraSalida != -1 && !cursor.isNull(idxHoraSalida)) ? cursor.getString(idxHoraSalida) : "00:00");
+                    r.setFecha((idxFecha != -1 && !cursor.isNull(idxFecha)) ? cursor.getString(idxFecha) : "00/00/0000");
+                    r.setPago((idxPago != -1 && !cursor.isNull(idxPago)) ? cursor.getDouble(idxPago) : 0.0);
+                    r.setUbicacion((idxUbicacion != -1 && !cursor.isNull(idxUbicacion)) ? cursor.getString(idxUbicacion) : "No definido");
 
-                if (idxHoraSalida != -1 && !cursor.isNull(idxHoraSalida))
-                    r.setHoraSalida(cursor.getString(idxHoraSalida));
-                else
-                    r.setHoraSalida("00:00");
-
-                if (idxFecha != -1 && !cursor.isNull(idxFecha))
-                    r.setFecha(cursor.getString(idxFecha));
-                else
-                    r.setFecha("00/00/0000");
-
-                if (idxPago != -1 && !cursor.isNull(idxPago))
-                    r.setPagoHora(cursor.getDouble(idxPago));
-                else
-                    r.setPagoHora(0.0);
-
-                if (idxUbicacion != -1 && !cursor.isNull(idxUbicacion))
-                    r.setUbicacion(cursor.getString(idxUbicacion));
-                else
-                    r.setUbicacion("No definido");
-
-                lista.add(r);
-            } while (cursor.moveToNext());
-        } else {
-            Log.e("DBHelper", "No se encontraron reservas para la fecha: " + fecha);
+                    lista.add(r);
+                } while (cursor.moveToNext());
+            } else {
+                Log.e("DBHelper", "No se encontraron reservas para la fecha: " + fecha);
+            }
+        } catch (Exception e) {
+            Log.e("DBHelper", "Error al obtener reservas por fecha", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) db.close();
         }
-
-        cursor.close();
         return lista;
     }
+
     public boolean insertarUsuario(String nombre, String apellido, String correo, String contrasena, String celular, int perfilid) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -508,30 +493,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return resultado != -1;
     }
-
-
-
-
-    public String obtenerNombreEstacionamientoPorId(int estacionamientoId) {
+    public boolean validarUsuario(String correo, String contrasena) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String nombre = null;
-        Cursor cursor = db.rawQuery("SELECT nombre FROM Estacionamientos WHERE estacionamientoid = ?",
-                new String[]{String.valueOf(estacionamientoId)});
-        if (cursor.moveToFirst()) {
-            nombre = cursor.getString(0);
-        }
+
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?",
+                new String[]{correo, contrasena}
+        );
+
+        boolean existe = cursor.moveToFirst();
         cursor.close();
-        db.close();
-        return nombre;
+        db.close(); // No olvides cerrar la base de datos
+        return existe;
     }
 
-    public Usuario  verificarUsuario(String correo, String contrasena) {
 
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.rawQuery("SELECT * FROM Usuarios WHERE correo = ? AND contrasena = ?", new String[]{correoss,contrasena});
-//        boolean existe = cursor.getCount() > 0;
-//        cursor.close();
-//        return existe;
+    public Usuario verificarUsuario(String correo, String contrasena) {
         SQLiteDatabase db = this.getReadableDatabase();
         Usuario usuario = null;
 
@@ -580,17 +557,42 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
-    public boolean actualizarContrasena(String email, String newPassword) {
+    public boolean actualizarContrasena(String correo, String newPassword) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("contrasena", newPassword);
 
-        int filasActualizadas = db.update("usuarios", values, "email = ?", new String[]{email});
+        // Cambiado "email" por "correo" para que coincida con el esquema de la tabla
+        int filasActualizadas = db.update("Usuarios", values, "correo = ?", new String[]{correo});
         db.close();
 
         return filasActualizadas > 0;
     }
+    public double obtenerTarifaPorTipo(String tipoVehiculo) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT precio FROM Tarifas WHERE tipovehiculo = ?", new String[]{tipoVehiculo});
+        if (cursor.moveToFirst()) {
+            double tarifa = cursor.getDouble(0);
+            cursor.close();
+            return tarifa;
+        }
+        cursor.close();
+        return 0.0;
+    }
 
+    public void actualizarTarifa(String tipoVehiculo, double nuevaTarifa) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("precio", nuevaTarifa);
+        db.update("Tarifas", values, "tipovehiculo = ?", new String[]{tipoVehiculo});
+    }
+
+    public Cursor obtenerDatosUsuario(int usuarioId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Cambiado "id" por "usuarioid"
+        String query = "SELECT nombre, correo FROM Usuarios WHERE usuarioid = ?";
+        return db.rawQuery(query, new String[]{String.valueOf(usuarioId)});
+    }
 
     // Método opcional para agregar un usuario de prueba
     public void insertarUsuario( String nombre, String apellido, String correo, String contraseña, int id) {
@@ -603,56 +605,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("perfilid", id);
         db.insert("Usuarios", null, values);
     }
-/*
-    public boolean tieneReservasEnFecha(String fecha) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = null;
-        boolean tieneReservas = false;
 
-        try {
-            cursor = db.rawQuery("SELECT 1 FROM Reserva WHERE fechareserva = ? LIMIT 1", new String[]{fecha});
-            tieneReservas = cursor.moveToFirst();
-        } finally {
-            if (cursor != null) cursor.close();
-            db.close();
-
-        }
-        return tieneReservas;
-    }
-
-    public List<Reserva> obtenerReservasPorFecha(String fechareserva) {
-        List<Reserva> lista = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase(); // Ahora OK
-        Cursor cursor = null;
-
-        try {
-            cursor = db.rawQuery("SELECT * FROM Reserva WHERE fechareserva = ? ORDER BY horaentrada ASC", new String[]{fechareserva});
-
-            if (cursor.moveToFirst()) {
-                do {
-                    Reserva reserva = new Reserva();
-                    reserva.setReservaid(cursor.getInt(cursor.getColumnIndexOrThrow("reservaid")));
-                    reserva.setUsuarioId(cursor.getInt(cursor.getColumnIndexOrThrow("usuarioid")));
-                    reserva.setEspacioId(cursor.getInt(cursor.getColumnIndexOrThrow("espacioid")));
-                    reserva.setVehiculoId(cursor.getInt(cursor.getColumnIndexOrThrow("vehiculoid")));
-                    reserva.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fechareserva")));
-                    reserva.setHoraEntrada(cursor.getString(cursor.getColumnIndexOrThrow("horaentrada")));
-                    reserva.setHoraSalida(cursor.getString(cursor.getColumnIndexOrThrow("horasalida")));
-                    reserva.setEstado(cursor.getString(cursor.getColumnIndexOrThrow("estado")));
-                    // Más campos si los hay...
-
-                    lista.add(reserva);
-                } while (cursor.moveToNext());
-            }
-        } finally {
-            if (cursor != null) cursor.close();
-            db.close();
-        }
-
-        Log.d("DEBUG_DB", "Reservas encontradas en fecha " + fechareserva + ": " + lista.size());
-        return lista;
-    }
-*/
     public void insertarReserva( int usuarioid, int espacioid, int vehiculoid, String fechareserva, String horaentrada,String horasalida,String estado) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -710,43 +663,6 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("precio", precio);
         db.insert("Tarifas", null, values);
     }
-        /*
-    public Usuario obtenerUsuarioPorId(int usuarioId) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Usuario usuario = null;
 
-        String query = "SELECT u.usuarioid, u.nombre, u.apellido, u.correo, p.nombreperfil " +
-                "FROM Usuarios u " +
-                "INNER JOIN Perfiles p ON u.perfilid = p.perfilid " +
-                "WHERE u.usuarioid = ?";
-
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(usuarioId)});
-
-        if (cursor.moveToFirst()) {
-            int id = cursor.getInt(0);
-            String nombre = cursor.getString(1);
-            String apellido = cursor.getString(2);
-            String correo = cursor.getString(3);
-            String perfil = cursor.getString(4);
-
-            usuario = new Usuario(id, nombre, apellido, correo, perfil);
-        }
-
-        cursor.close();
-        db.close();
-        return usuario;
-    }
-    public boolean actualizarContrasena(String email, String nuevaContrasena) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("contrasena", nuevaContrasena);
-
-        int rowsAffected = db.update("Usuarios", values, "correo = ?", new String[]{email});
-        db.close();
-
-        return rowsAffected > 0;
-    }*/
-
-}
-
+ }
 

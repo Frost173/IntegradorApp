@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
-    <!-- ScrollView principal -->
+    <!-- ScrollView principal que contiene calendario y lista de reservas -->
     <ScrollView
         android:id="@+id/scrollViewContenido"
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Encabezado Mes/Año con botones de navegación -->
+            <!-- Encabezado con botones de navegación mes/año -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless" />
             </LinearLayout>
 
-            <!-- Días de la semana (puedes llenarlo dinámicamente si deseas) -->
+            <!-- Días de la semana (rellenar dinámicamente) -->
             <GridLayout
                 android:id="@+id/gridDiasSemana"
                 android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                 android:rowCount="1"
                 android:background="@android:color/transparent" />
 
-            <!-- Calendario -->
+            <!-- Calendario (celdas del mes) -->
             <GridLayout
                 android:id="@+id/gridCalendario"
                 android:layout_width="match_parent"
@@ -85,7 +85,7 @@
                 android:clipToPadding="false"
                 android:columnOrderPreserved="false" />
 
-            <!-- Título Reservas -->
+            <!-- Título para la sección de reservas -->
             <TextView
                 android:id="@+id/tvReservasTitulo"
                 android:layout_width="match_parent"
@@ -97,7 +97,7 @@
                 android:layout_marginBottom="8dp"
                 android:textColor="#1976A6" />
 
-            <!-- Lista de reservas -->
+            <!-- RecyclerView para mostrar lista de reservas -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvReservas"
                 android:layout_width="match_parent"
@@ -108,7 +108,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Barra inferior fija -->
+    <!-- Barra inferior fija con botones principales -->
     <LinearLayout
         android:id="@+id/barraInferior"
         android:layout_width="match_parent"

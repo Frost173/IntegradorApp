@@ -23,7 +23,7 @@
         android:id="@+id/tvNombreUsuario"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bienvenido, Usuario"
+        android:text="Bienvenido, Admin"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginTop="8dp"
@@ -158,5 +158,3 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
