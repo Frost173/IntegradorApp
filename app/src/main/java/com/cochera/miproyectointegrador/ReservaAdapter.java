@@ -32,32 +32,38 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
 
     @Override
     public void onBindViewHolder(@NonNull ReservaViewHolder holder, int position) {
-        Reserva reserva = reservaList.get(position); // 🔁 CORREGIDO
+        Reserva reserva = reservaList.get(position);
 
         // Mostrar placa
-        holder.tvPlaca.setText("Placa: " + reserva.getPlaca());
+        holder.tvPlaca.setText("Placa: " + (reserva.getPlaca() != null ? reserva.getPlaca() : "N/A"));
 
         // Mostrar tipo de vehículo
-        holder.tvTipoVehiculo.setText("Tipo: " + reserva.getTipoVehiculo());
+        holder.tvTipoVehiculo.setText("Tipo: " + (reserva.getTipoVehiculo() != null ? reserva.getTipoVehiculo() : "N/A"));
 
         // Mostrar fecha y hora
-        holder.tvFecha.setText("Fecha: " + reserva.getFecha());
-        holder.tvHoraEntrada.setText("Entrada: " + reserva.getHoraEntrada());
-        holder.tvHoraSalida.setText("Salida: " + reserva.getHoraSalida());
+        holder.tvFecha.setText("Fecha: " + (reserva.getFecha() != null ? reserva.getFecha() : "N/A"));
+        holder.tvHoraEntrada.setText("Entrada: " + (reserva.getHoraEntrada() != null ? reserva.getHoraEntrada() : "00:00"));
+        holder.tvHoraSalida.setText("Salida: " + (reserva.getHoraSalida() != null ? reserva.getHoraSalida() : "00:00"));
 
         // Mostrar ubicación (si existe en el layout)
-        if (holder.tvUbicacion != null && reserva.getUbicacion() != null) {
-            holder.tvUbicacion.setText("Ubicación: " + reserva.getUbicacion());
+        if (holder.tvUbicacion != null) {
+            String ubicacion = reserva.getUbicacion();
+            holder.tvUbicacion.setText("Ubicación: " + (ubicacion != null && !ubicacion.isEmpty() ? ubicacion : "No definida"));
         }
 
-        // Mostrar pago total
-        holder.tvPagoTotal.setText("Pago: S/ " + reserva.getPago());
+        // Mostrar pago total con formato decimal
+        holder.tvPagoTotal.setText(String.format("Pago: S/ %.2f", reserva.getPago()));
 
         // Mostrar nombre y apellido del usuario (si existe en el layout)
         if (holder.tvUsuario != null) {
-            holder.tvUsuario.setText("Usuario: " + reserva.getNombreUsuario() + " " + reserva.getApellidoUsuario());
+            String nombre = reserva.getNombreUsuario() != null ? reserva.getNombreUsuario() : "";
+            String apellido = reserva.getApellidoUsuario() != null ? reserva.getApellidoUsuario() : "";
+            String usuarioCompleto = (nombre + " " + apellido).trim();
+            holder.tvUsuario.setText("Usuario: " + (usuarioCompleto.isEmpty() ? "No definido" : usuarioCompleto));
         }
     }
+
+
 
     @Override
     public int getItemCount() {

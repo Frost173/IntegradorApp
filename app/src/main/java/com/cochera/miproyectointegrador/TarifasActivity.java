@@ -24,7 +24,7 @@ public class TarifasActivity extends AppCompatActivity {
 
     private DBHelper dbHelper;
 
-    private final String[] tiposVehiculo = {"Auto", "Moto", "Camión"};
+    private final String[] tiposVehiculo = {"Carro", "Moto", "Camión"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

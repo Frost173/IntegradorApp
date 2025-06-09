@@ -30,7 +30,7 @@ public class ActivityHistorialReserva extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historial_reserva);
 
-        // Inicializar RecyclerView
+        // Inicializar RecyclerView y LayoutManager
         recyclerReservas = findViewById(R.id.recyclerReservas);
         recyclerReservas.setLayoutManager(new LinearLayoutManager(this));
 
@@ -38,56 +38,53 @@ public class ActivityHistorialReserva extends AppCompatActivity {
         btnHome = findViewById(R.id.btnHome);
         btnHome.setOnClickListener(v -> finish());
 
-        // Inicializar base de datos y lista
+        // Inicializar base de datos y lista de reservas
         dbHelper = new DBHelper(this);
         reservaList = new ArrayList<>();
 
-        try {
-            cargarReservasDesdeBD();
-        } catch (Exception e) {
-            Toast.makeText(this, "Error al cargar reservas: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-
-        // Configurar adapter
+        // Configurar adapter con la lista vacía inicialmente
         reservaAdapter = new ReservaAdapter(this, reservaList);
         recyclerReservas.setAdapter(reservaAdapter);
+
+        // Cargar reservas desde la base de datos
+        cargarReservasDesdeBD();
     }
 
     private void cargarReservasDesdeBD() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String query = "SELECT reservaid, usuarioId, espacioId, vehiculoId, " +
-                "nombreUsuario, apellidoUsuario, placa, tipoVehiculo, fecha, " +
-                "horaEntrada, horaSalida, pagoHora, pago, ubicacion, estado " +
-                "FROM reservas ORDER BY fecha DESC, horaEntrada DESC";
+        // Consulta solo con columnas que existen en la tabla Reservas
+        String query = "SELECT reservaid, usuarioid, espacioid, vehiculoid, fechareserva, horaentrada, horasalida, estado, placa, pago, ubicacion " +
+                "FROM Reservas ORDER BY fechareserva DESC, horaentrada DESC";
 
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
+            reservaList.clear(); // Limpiar lista antes de agregar nuevos datos
+
             do {
                 Reserva reserva = new Reserva();
                 reserva.setReservaid(cursor.getInt(cursor.getColumnIndexOrThrow("reservaid")));
-                reserva.setUsuarioId(cursor.getInt(cursor.getColumnIndexOrThrow("usuarioId")));
-                reserva.setEspacioId(cursor.getInt(cursor.getColumnIndexOrThrow("espacioId")));
-                reserva.setVehiculoId(cursor.getInt(cursor.getColumnIndexOrThrow("vehiculoId")));
-                reserva.setNombreUsuario(cursor.getString(cursor.getColumnIndexOrThrow("nombreUsuario")));
-                reserva.setApellidoUsuario(cursor.getString(cursor.getColumnIndexOrThrow("apellidoUsuario")));
+                reserva.setUsuarioId(cursor.getInt(cursor.getColumnIndexOrThrow("usuarioid")));
+                reserva.setEspacioId(cursor.getInt(cursor.getColumnIndexOrThrow("espacioid")));
+                reserva.setVehiculoId(cursor.getInt(cursor.getColumnIndexOrThrow("vehiculoid")));
+                reserva.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fechareserva")));
+                reserva.setHoraEntrada(cursor.getString(cursor.getColumnIndexOrThrow("horaentrada")));
+                reserva.setHoraSalida(cursor.getString(cursor.getColumnIndexOrThrow("horasalida")));
+                reserva.setEstado(cursor.getString(cursor.getColumnIndexOrThrow("estado")));
                 reserva.setPlaca(cursor.getString(cursor.getColumnIndexOrThrow("placa")));
-                reserva.setTipoVehiculo(cursor.getString(cursor.getColumnIndexOrThrow("tipoVehiculo")));
-                reserva.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fecha")));
-                reserva.setHoraEntrada(cursor.getString(cursor.getColumnIndexOrThrow("horaEntrada")));
-                reserva.setHoraSalida(cursor.getString(cursor.getColumnIndexOrThrow("horaSalida")));
-                reserva.setPagoHora(cursor.getDouble(cursor.getColumnIndexOrThrow("pagoHora")));
                 reserva.setPago(cursor.getDouble(cursor.getColumnIndexOrThrow("pago")));
                 reserva.setUbicacion(cursor.getString(cursor.getColumnIndexOrThrow("ubicacion")));
-                reserva.setEstado(cursor.getString(cursor.getColumnIndexOrThrow("estado")));
 
                 reservaList.add(reserva);
             } while (cursor.moveToNext());
+
+            // Notificar al adapter que los datos cambiaron para refrescar la vista
+            reservaAdapter.notifyDataSetChanged();
         } else {
             Toast.makeText(this, "No hay reservas registradas.", Toast.LENGTH_SHORT).show();
         }
+
         cursor.close();
         db.close();
     }
