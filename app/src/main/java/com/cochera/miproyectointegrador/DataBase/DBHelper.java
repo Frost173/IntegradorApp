@@ -26,7 +26,7 @@ import java.util.Map;
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
-        super(context, "tu_basedatos_2.db", null, 16);
+        super(context, "tu_basedatos_2.db", null, 18);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "nombreperfil TEXT NOT NULL);");
 
         db.execSQL("CREATE TABLE Usuarios (" +
-                "usuarioid INTEGER PRIMARY KEY AUTOINCREMENT," +  // <-- AUTOINCREMENT añadido
+                "usuarioid INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "perfilid INTEGER," +
                 "nombre TEXT NOT NULL," +
                 "apellido TEXT NOT NULL," +
@@ -44,7 +44,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 "contrasena TEXT NOT NULL," +
                 "celular TEXT," +
                 "FOREIGN KEY (perfilid) REFERENCES Perfiles(perfilid));");
-
 
 
         db.execSQL("CREATE TABLE Estacionamientos (" +
@@ -246,15 +245,20 @@ public class DBHelper extends SQLiteOpenHelper {
     public Usuario obtenerUsuarioPorId(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query("Usuarios", new String[]{"id", "nombre", "apellido", "edad"},
+        Cursor cursor = db.query("Usuarios",
+                new String[]{"id", "uid", "nombre", "apellido", "correo", "perfil", "estado", "edad"},
                 "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 Usuario usuario = new Usuario();
                 usuario.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                usuario.setUid(cursor.getString(cursor.getColumnIndexOrThrow("uid"))); // 🔥 importante
                 usuario.setNombre(cursor.getString(cursor.getColumnIndexOrThrow("nombre")));
                 usuario.setApellido(cursor.getString(cursor.getColumnIndexOrThrow("apellido")));
+                usuario.setCorreo(cursor.getString(cursor.getColumnIndexOrThrow("correo")));
+                usuario.setPerfil(cursor.getString(cursor.getColumnIndexOrThrow("perfil")));
+                usuario.setEstado(cursor.getString(cursor.getColumnIndexOrThrow("estado")));
                 usuario.setEdad(cursor.getInt(cursor.getColumnIndexOrThrow("edad")));
                 cursor.close();
                 return usuario;
@@ -263,6 +267,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return null;
     }
+
 
 
 
@@ -663,6 +668,20 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("precio", precio);
         db.insert("Tarifas", null, values);
     }
+    public long insertarUsuarioYRetornarID(String nombre, String apellido, String correo, String contrasena, String celular, int perfilid) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("nombre", nombre);
+        values.put("apellido", apellido);
+        values.put("correo", correo);
+        values.put("contrasena", contrasena);
+        values.put("celular", celular);
+        values.put("perfilid", perfilid);
 
- }
+        // insert() devuelve el ID del nuevo registro, o -1 si hubo error
+        return db.insert("usuarios", null, values);
+    }
+
+
+}
 

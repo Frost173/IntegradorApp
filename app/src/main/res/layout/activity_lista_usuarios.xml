@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chatLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- Encabezado y usuarios conectados -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF">
+
+        <!-- Botón de retroceso -->
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnFlecha"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/chat_flecha"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Botón flecha"
+            android:rotation="180"
+            android:scaleType="centerInside"
+            app:tint="#216896"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp" />
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mensajería"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnFlecha"
+            app:layout_constraintEnd_toStartOf="@id/ivUsers"
+            app:layout_constraintBottom_toBottomOf="@id/btnFlecha"
+            app:layout_constraintHorizontal_bias="0.5"
+            android:gravity="center"/>
+
+        <!-- Perfil -->
+        <ImageView
+            android:id="@+id/ivUsers"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/perfil"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"/>
+
+        <!-- Texto Usuarios -->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- CardView azul con título 'Chats' y lista de usuarios -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardChats"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="4dp"
+        android:layout_margin="16dp"
+        android:backgroundTint="#507EA4">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#507EA4">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chats"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- RecyclerView de chats -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerUsuarios"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingTop="4dp"
+                android:clipToPadding="false"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
+

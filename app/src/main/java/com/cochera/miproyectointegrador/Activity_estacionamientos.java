@@ -83,9 +83,7 @@ public class Activity_estacionamientos extends AppCompatActivity {
                 intent.putExtra("usuarioId", usuarioId);
                 startActivity(intent);
             } else if (id == R.id.nav_chats) {
-                Intent intent = new Intent(this, ChatActivity.class);
-                intent.putExtra("usuarioId", usuarioId);
-                startActivity(intent);
+                startActivity(new Intent(this, ListaUsuariosActivity.class));
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;

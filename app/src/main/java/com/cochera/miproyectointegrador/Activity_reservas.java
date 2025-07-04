@@ -18,6 +18,12 @@ import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Tarifa;
 
@@ -219,6 +225,9 @@ public class Activity_reservas extends AppCompatActivity {
 
         if (id != -1) {
             Toast.makeText(this, "Reserva guardada correctamente", Toast.LENGTH_LONG).show();
+
+            // ✅ Subir a Firebase
+            subirReservaAFirebase(id, usuarioId, espacioId, tarifaSeleccionada.getTarifaid(), fecha, entrada, salida, etPrecio.getText().toString().trim(), "Pendiente", placa);
             Intent intent = new Intent(this, Activity_estacionamientos.class);
             intent.putExtra("usuarioId", usuarioId);
             startActivity(intent);
@@ -227,4 +236,31 @@ public class Activity_reservas extends AppCompatActivity {
             Toast.makeText(this, "Error al guardar la reserva", Toast.LENGTH_LONG).show();
         }
     }
+    private void subirReservaAFirebase(long idReserva, int usuarioId, int espacioId, int vehiculoId, String fecha, String entrada, String salida, String pago, String estado, String placa) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        Map<String, Object> reservaMap = new HashMap<>();
+        reservaMap.put("usuarioid", usuarioId);
+        reservaMap.put("espacioid", espacioId);
+        reservaMap.put("vehiculoid", vehiculoId);
+        reservaMap.put("fechareserva", fecha);
+        reservaMap.put("horaentrada", entrada);
+        reservaMap.put("horasalida", salida);
+        reservaMap.put("pago", pago);
+        reservaMap.put("estado", estado);
+        reservaMap.put("placa", placa);
+
+        // Convertimos el ID numérico en String para Firestore
+        String idFirestore = String.valueOf(idReserva);
+
+        firestore.collection("reservas").document(idFirestore)
+                .set(reservaMap)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Reserva también subida a Firebase", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al subir a Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
 }

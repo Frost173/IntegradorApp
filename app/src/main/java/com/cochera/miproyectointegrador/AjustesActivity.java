@@ -1,19 +1,23 @@
 package com.cochera.miproyectointegrador;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class AjustesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ajustes); // Cambia por el nombre real de tu layout
+        setContentView(R.layout.ajustes); // Asegúrate que este layout existe
 
         // Referencias a los layouts y botón
         LinearLayout layoutSeguridad = findViewById(R.id.layoutSeguridad);
@@ -22,52 +26,39 @@ public class AjustesActivity extends AppCompatActivity {
         Button btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
 
         // Seguridad
-        layoutSeguridad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AjustesActivity.this, Activity_seguridad.class);
-                startActivity(intent);
-            }
+        layoutSeguridad.setOnClickListener(v -> {
+            Intent intent = new Intent(AjustesActivity.this, Activity_seguridad.class);
+            startActivity(intent);
         });
 
-
         // Cambiar tema
-        layoutTema.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AjustesActivity.this, CambiarTemaActivity.class);
-                startActivity(intent);
-            }
+        layoutTema.setOnClickListener(v -> {
+            Intent intent = new Intent(AjustesActivity.this, CambiarTemaActivity.class);
+            startActivity(intent);
         });
 
         // Política de privacidad
-        layoutPolitica.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AjustesActivity.this, PoliticaPrivacidadActivity.class);
-                startActivity(intent);
-            }
+        layoutPolitica.setOnClickListener(v -> {
+            Intent intent = new Intent(AjustesActivity.this, PoliticaPrivacidadActivity.class);
+            startActivity(intent);
         });
 
-        // Cerrar sesión
-        btnCerrarSesion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Limpiar SharedPreferences donde guardas sesión (ajusta el nombre "userPrefs" al que uses)
-                getSharedPreferences("userPrefs", MODE_PRIVATE)
-                        .edit()
-                        .clear()
-                        .apply();
+        // ✅ Cerrar sesión
+        btnCerrarSesion.setOnClickListener(v -> {
+            // Cerrar sesión en Firebase Auth
+            FirebaseAuth.getInstance().signOut();
 
-                Toast.makeText(AjustesActivity.this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
+            // Limpiar SharedPreferences locales
+            SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+            prefs.edit().clear().apply();
 
-                // Ir a LoginActivity y limpiar la pila para que no pueda volver con back
-                Intent intent = new Intent(AjustesActivity.this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            }
+            Toast.makeText(AjustesActivity.this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
+
+            // Redirigir al Login y borrar historial de navegación
+            Intent intent = new Intent(AjustesActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         });
-
     }
 }
