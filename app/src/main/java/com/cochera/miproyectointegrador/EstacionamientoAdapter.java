@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,8 +18,8 @@ import java.util.List;
 
 public class EstacionamientoAdapter extends RecyclerView.Adapter<EstacionamientoAdapter.ViewHolder> {
 
-    private List<Estacionamiento> lista;           // Lista actual (filtrada)
-    private List<Estacionamiento> listaOriginal;   // Lista completa original
+    private List<Estacionamiento> lista;
+    private List<Estacionamiento> listaOriginal;
     private Context context;
     private int usuarioId;
 
@@ -42,13 +43,15 @@ public class EstacionamientoAdapter extends RecyclerView.Adapter<Estacionamiento
         holder.tvNombre.setText(estacionamiento.getNombre());
         holder.tvDireccion.setText(estacionamiento.getDireccion());
 
+        //  Mostrar imagen local desde drawable
+        holder.ivImagen.setImageResource(R.drawable.estacionamiento_icon);
+
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), activity_control_espacios.class);
             intent.putExtra("estacionamientoId", estacionamiento.getEstacionamientoId());
             intent.putExtra("usuarioId", usuarioId);
             v.getContext().startActivity(intent);
         });
-
     }
 
     @Override
@@ -56,7 +59,6 @@ public class EstacionamientoAdapter extends RecyclerView.Adapter<Estacionamiento
         return lista.size();
     }
 
-    // Método para filtrar lista en tiempo real
     public void filtrarLista(String texto) {
         texto = texto.toLowerCase();
         List<Estacionamiento> listaFiltrada = new ArrayList<>();
@@ -71,12 +73,14 @@ public class EstacionamientoAdapter extends RecyclerView.Adapter<Estacionamiento
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre, tvDireccion;
+        ImageView ivImagen;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNombre = itemView.findViewById(R.id.nombreEstacionamiento);
             tvDireccion = itemView.findViewById(R.id.espaciosLibres);
-
+            ivImagen = itemView.findViewById(R.id.imagenEstacionamiento);
         }
     }
 }
+

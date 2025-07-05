@@ -3,6 +3,7 @@ package com.cochera.miproyectointegrador;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -14,72 +15,104 @@ import com.cochera.miproyectointegrador.DataBase.Usuario;
 
 public class ActivityPerfil extends AppCompatActivity {
 
-    private EditText editTextNombre, editTextCorreo, editTextDescripcion;
+    private EditText editTextNombre, editTextCorreo, editTextTelefono;
     private SharedPreferences sharedPreferences;
     private int usuarioId;
+//    private static final String TAG = "ActivityPerfil"; // 👈 Etiqueta para Logcat
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
+        Toast.makeText(this, "Ya estás en pERFIL", Toast.LENGTH_SHORT).show();
+
+        // Obtener el ID del usuario desde el intent
+        usuarioId = getIntent().getIntExtra("usuarioId", -1);
 
         // Inicializar vistas
         editTextNombre = findViewById(R.id.editTextNombre);
         editTextCorreo = findViewById(R.id.editTextCorreo);
-        editTextDescripcion = findViewById(R.id.editTextDescripcion);
+        editTextTelefono = findViewById(R.id.editTextTelefono);
 
         // Configurar barra inferior
-        setupBottomBar();
+          setupBottomBar();
 
         // Cargar datos del usuario
-        cargarDatosUsuario();
+            cargarDatosUsuario();
     }
 
+
     private void setupBottomBar() {
-        ImageButton btnHome = findViewById(R.id.btnHome);
-        ImageButton btnCalendario = findViewById(R.id.btnCalendario);
-        ImageButton btnPerfil = findViewById(R.id.btnPerfil);
+        try {
+            ImageButton btnHome = findViewById(R.id.btnHome);
+            ImageButton btnCalendario = findViewById(R.id.btnCalendario);
+            ImageButton btnPerfil = findViewById(R.id.btnPerfil);
 
-        btnHome.setOnClickListener(v -> {
-            startActivity(new Intent(this, Activity_estacionamientos.class)
-                    .putExtra("usuarioId", usuarioId));
-            finish();
-        });
+            btnHome.setOnClickListener(v -> {
+                Intent intent = new Intent(this, Activity_estacionamientos.class);
+                intent.putExtra("usuarioId", usuarioId);
+                startActivity(intent);
+                finish();
+            });
 
-        btnCalendario.setOnClickListener(v -> {
-            // Aquí iría la actividad del calendario
-            Toast.makeText(this, "Funcionalidad de calendario", Toast.LENGTH_SHORT).show();
-        });
+            btnCalendario.setOnClickListener(v ->
+                    Toast.makeText(this, "Funcionalidad de calendario", Toast.LENGTH_SHORT).show());
 
-        btnPerfil.setOnClickListener(v -> {
-            // Ya estamos en el perfil
-        });
+            btnPerfil.setOnClickListener(v ->
+                    Toast.makeText(this, "Ya estás en el perfil", Toast.LENGTH_SHORT).show());
+
+        } catch (Exception e) {
+            Log.e("", "Error en la barra inferior: " + e.getMessage());
+        }
     }
 
     private void cargarDatosUsuario() {
-        // Obtener datos del usuario desde la base de datos
-        DBHelper dbHelper = new DBHelper(this);
-        Usuario usuario = dbHelper.obtenerUsuarioPorId(usuarioId);
+        try {
+            DBHelper dbHelper = new DBHelper(this);
+            Usuario usuario = dbHelper.obtenerUsuarioPorId(usuarioId);
 
-        if (usuario != null) {
-            editTextNombre.setText(usuario.getNombre() + " " + usuario.getApellido());
-            editTextCorreo.setText(usuario.getCorreo());
+            if (usuario != null) {
+                Log.d("TAG", "Usuario encontrado: " + usuario.getNombre());
 
-            // Cargar descripción desde SharedPreferences
-            sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-            String descripcion = sharedPreferences.getString("descripcion_" + usuarioId, "");
-            editTextDescripcion.setText(descripcion);
+                String nombre = usuario.getNombre() != null ? usuario.getNombre() : "";
+                String apellido = usuario.getApellido() != null ? usuario.getApellido() : "";
+                editTextNombre.setText(nombre + " " + apellido);
+
+                String correo = usuario.getCorreo() != null ? usuario.getCorreo() : "";
+                editTextCorreo.setText(correo);
+
+                // SharedPreferences para cargar teléfono
+                sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                if (sharedPreferences != null) {
+                    String telefono = sharedPreferences.getString("telefono_" + usuarioId, "");
+                    editTextTelefono.setText(telefono);
+                } else {
+                    Log.w("TAG", "SharedPreferences es null");
+                }
+
+            } else {
+                Log.e("", "Usuario no encontrado con ID: " + usuarioId);
+                Toast.makeText(this, "No se encontró el usuario", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (Exception e) {
+            Log.e("TAG", "Error al cargar datos del usuario", e);
+            Toast.makeText(this, "Error al cargar perfil: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (sharedPreferences != null) {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("descripcion_" + usuarioId, editTextDescripcion.getText().toString());
-            editor.apply();
+        try {
+            if (sharedPreferences != null) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("telefono_" + usuarioId, editTextTelefono.getText().toString());
+                editor.apply();
+            }
+        } catch (Exception e) {
+            Log.e("TAG", "Error al guardar teléfono en SharedPreferences: " + e.getMessage());
         }
     }
-
 }

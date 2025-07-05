@@ -29,11 +29,15 @@ public class ActivityPerfilAdmin extends AppCompatActivity {
         btnCalendario.setOnClickListener(v -> {
             Intent intent = new Intent(ActivityPerfilAdmin.this, ActivityHistorialReserva.class);
             startActivity(intent);
+            finish(); // opcional: evita que se acumule esta actividad en la pila
         });
 
 
         btnPerfil.setOnClickListener(v -> {
-            Toast.makeText(ActivityPerfilAdmin.this, "Ya estás en Perfil", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(ActivityPerfilAdmin.this, "Ya estás en Perfil", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(ActivityPerfilAdmin.this, ActivityPerfil.class);
+            startActivity(intent);
+            finish();
         });
     }
 }

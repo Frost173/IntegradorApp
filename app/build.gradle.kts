@@ -46,6 +46,9 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth:22.3.1")
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
 
+    implementation ("com.squareup.picasso:picasso:2.8")
+
+
     // Dependencias generales
     implementation(libs.appcompat)
     implementation(libs.material)

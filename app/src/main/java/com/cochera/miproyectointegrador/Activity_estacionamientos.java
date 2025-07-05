@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -20,7 +21,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Estacionamiento;
+import com.cochera.miproyectointegrador.DataBase.Usuario;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import android.view.View;
 
 import java.util.List;
 
@@ -36,6 +43,11 @@ public class Activity_estacionamientos extends AppCompatActivity {
     private DBHelper dbHelper;
     private List<Estacionamiento> estacionamientos;
     private int usuarioId;
+
+    // 🔵 Añadido para mostrar nombre dinámico
+    private TextView tvUsername;
+    private FirebaseUser userFirebase;
+    private FirebaseFirestore firestore;
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -74,6 +86,28 @@ public class Activity_estacionamientos extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
+
+        // Mostrar nombre del usuario logueado 🔵 (Firebase Firestore)
+        View headerView = navigationView.getHeaderView(0);
+        tvUsername = headerView.findViewById(R.id.tv_username);
+        userFirebase = FirebaseAuth.getInstance().getCurrentUser();
+        firestore = FirebaseFirestore.getInstance();
+
+        if (userFirebase != null) {
+            String uid = userFirebase.getUid();
+            firestore.collection("usuarios").document(uid).get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String nombre = documentSnapshot.getString("nombre");
+                            if (nombre != null && !nombre.isEmpty()) {
+                                tvUsername.setText(nombre);
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "No se pudo cargar el nombre del usuario", Toast.LENGTH_SHORT).show();
+                    });
+        }
 
         // Navegación en el menú lateral
         navigationView.setNavigationItemSelectedListener(item -> {
@@ -129,16 +163,11 @@ public class Activity_estacionamientos extends AppCompatActivity {
         btnHome.setOnClickListener(v -> Toast.makeText(this, "Ya estás en Inicio", Toast.LENGTH_SHORT).show()
         );
         btnPerfil.setOnClickListener(v -> {
-            if (usuarioId != -1) {
-                Intent intent = new Intent(Activity_estacionamientos.this, ActivityPerfil.class);
+
+//            Toast.makeText(ActivityPerfilAdmin.this, "Ya estás en Perfil", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, ActivityPerfil.class);
                 intent.putExtra("usuarioId", usuarioId);
                 startActivity(intent);
-            } else {
-                Toast.makeText(Activity_estacionamientos.this, "Usuario no válido", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-
+            });
     }
 }

@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 public class RegisterPresenter implements RegisterContract.Presenter {
 
     private static final String TAG = "RegisterPresenter";
-
     private RegisterContract.View view;
     private DBHelper dbHelper;
     private Context context;
@@ -67,6 +66,8 @@ public class RegisterPresenter implements RegisterContract.Presenter {
                     if (task.isSuccessful()) {
                         FirebaseUser user = auth.getCurrentUser();
                         if (user != null) {
+                            String uid = user.getUid();
+
                             user.sendEmailVerification()
                                     .addOnCompleteListener(verifyTask -> {
                                         if (verifyTask.isSuccessful()) {
@@ -78,7 +79,9 @@ public class RegisterPresenter implements RegisterContract.Presenter {
 
                             long usuarioId;
                             try {
-                                usuarioId = dbHelper.insertarUsuarioYRetornarID(nombre, apellido, correo, contrasena, celular, perfilid);
+                                // ✅ PASAR uid también a SQLite
+                                usuarioId = dbHelper.insertarUsuarioYRetornarID(
+                                        nombre, apellido, correo, contrasena, celular, perfilid, uid);
                             } catch (Exception e) {
                                 Log.e(TAG, "Error en SQLite: " + e.getMessage());
                                 view.showRegisterError("Error interno al registrar");
@@ -87,12 +90,11 @@ public class RegisterPresenter implements RegisterContract.Presenter {
 
                             if (usuarioId != -1) {
                                 String perfilTexto = (perfilid == 1) ? "admin" : "usuario";
-                                subirUsuarioAFirebase(nombre, apellido, correo, celular, perfilTexto, usuarioId, user.getUid());
+                                subirUsuarioAFirebase(nombre, apellido, correo, celular, perfilTexto, usuarioId, uid);
+                                view.showRegisterSuccess();
                             } else {
                                 view.showRegisterError("El correo ya está registrado localmente");
                             }
-
-                            view.showRegisterSuccess();
 
                         } else {
                             view.showRegisterError("No se pudo obtener el usuario actual");
@@ -104,10 +106,11 @@ public class RegisterPresenter implements RegisterContract.Presenter {
                 });
     }
 
-    private void subirUsuarioAFirebase(String nombre, String apellido, String correo, String celular, String perfilTexto, long usuarioId, String uid) {
+    private void subirUsuarioAFirebase(String nombre, String apellido, String correo, String celular,
+                                       String perfilTexto, long usuarioId, String uid) {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
-        // Subir a Firestore
+        // Firestore
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("idUsuario", usuarioId);
         userMap.put("uid", uid);
@@ -115,21 +118,21 @@ public class RegisterPresenter implements RegisterContract.Presenter {
         userMap.put("apellido", apellido);
         userMap.put("correo", correo);
         userMap.put("celular", celular);
-        userMap.put("perfil", perfilTexto);  // ✅ SOLO perfil como texto
+        userMap.put("perfil", perfilTexto);
 
         firestore.collection("usuarios").document(uid)
                 .set(userMap)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Usuario subido a Firestore"))
                 .addOnFailureListener(e -> Log.e(TAG, "Error Firestore: " + e.getMessage()));
 
-        // Subir también a Realtime Database si lo necesitas
+        // RTDB
         Usuario usuarioRTDB = new Usuario();
         usuarioRTDB.setId((int) usuarioId);
         usuarioRTDB.setUid(uid);
         usuarioRTDB.setNombre(nombre);
         usuarioRTDB.setApellido(apellido);
         usuarioRTDB.setCorreo(correo);
-        usuarioRTDB.setPerfil(perfilTexto);  // ✅ perfil como texto
+        usuarioRTDB.setPerfil(perfilTexto);
         usuarioRTDB.setEstado("activo");
 
         FirebaseDatabase.getInstance().getReference("usuarios")

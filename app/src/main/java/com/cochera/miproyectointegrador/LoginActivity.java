@@ -4,12 +4,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.*;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Usuario;
 import com.cochera.miproyectointegrador.Recover.ActivityRecover;
-import com.cochera.miproyectointegrador.Register.RegisterPresenter;
 import com.cochera.miproyectointegrador.Register.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,8 +33,11 @@ public class LoginActivity extends AppCompatActivity {
         tvRecover = findViewById(R.id.textRecover);
         dbHelper = new DBHelper(this);
 
-        tvRecover.setOnClickListener(v -> startActivity(new Intent(this, ActivityRecover.class)));
-        btnRegistro.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
+        tvRecover.setOnClickListener(v ->
+                startActivity(new Intent(this, ActivityRecover.class)));
+
+        btnRegistro.setOnClickListener(v ->
+                startActivity(new Intent(this, RegisterActivity.class)));
 
         btnLogin.setOnClickListener(v -> {
             String correo = etCorreo.getText().toString().trim();
@@ -51,7 +54,10 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser firebaseUser = auth.getCurrentUser();
                             if (firebaseUser != null && firebaseUser.isEmailVerified()) {
-                                Usuario usuario = dbHelper.verificarUsuario(correo, clave);
+
+                                //  Aquí usamos el UID para buscar en SQLite
+                                Usuario usuario = dbHelper.obtenerUsuarioPorUid(firebaseUser.getUid());
+
                                 if (usuario != null) {
                                     int usuarioId = usuario.getId();
                                     String perfil = usuario.getPerfil();
@@ -80,7 +86,11 @@ public class LoginActivity extends AppCompatActivity {
                                     intent.putExtra("usuarioId", usuarioId);
                                     startActivity(intent);
                                     finish();
+
+                                } else {
+                                    Toast.makeText(this, "No se encontró el usuario local", Toast.LENGTH_SHORT).show();
                                 }
+
                             } else {
                                 Toast.makeText(this, "Verifica tu correo electrónico", Toast.LENGTH_LONG).show();
                             }

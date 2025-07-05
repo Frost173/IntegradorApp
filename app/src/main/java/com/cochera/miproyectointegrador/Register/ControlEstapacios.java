@@ -1,5 +1,6 @@
 package com.cochera.miproyectointegrador.Register;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -12,6 +13,7 @@ import com.cochera.miproyectointegrador.R;
 
 public class ControlEstapacios extends AppCompatActivity {
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
