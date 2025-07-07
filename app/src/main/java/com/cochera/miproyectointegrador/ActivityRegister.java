@@ -17,7 +17,8 @@ public class ActivityRegister extends AppCompatActivity implements RegisterContr
     private Button btnRegistrar;
     private RegisterPresenter presenter;
 
-    public static final int ROL_CONDUCTOR = 2;
+    // Puedes cambiar esto según si quieres registrar clientes o admins
+    private static final String ROL_CLIENTE = "Cliente";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,33 +64,31 @@ public class ActivityRegister extends AppCompatActivity implements RegisterContr
                 return;
             }
 
-            presenter.registrarUsuario(nombre, apellido, correo, contrasena, celular, ROL_CONDUCTOR);
+            presenter.registrarUsuario(nombre, apellido, correo, contrasena, celular, ROL_CLIENTE);
         });
 
         Button btnIrLogin = findViewById(R.id.buttonInicioSesion);
         btnIrLogin.setOnClickListener(v -> {
-            Intent intent = new Intent(ActivityRegister.this, LoginActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
     }
 
     @Override
     public void showRegisterSuccess() {
-        Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        Toast.makeText(this, "Registro exitoso. Verifica tu correo.", Toast.LENGTH_LONG).show();
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
     @Override
     public void showRegisterError(String mensaje) {
-        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void showSuccess(String message) { }
+
     @Override
     public void showError(String message) { }
 }
-

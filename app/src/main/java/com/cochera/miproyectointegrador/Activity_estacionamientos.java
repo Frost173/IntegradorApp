@@ -1,3 +1,4 @@
+// Paquete original
 package com.cochera.miproyectointegrador;
 
 import android.annotation.SuppressLint;
@@ -21,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Estacionamiento;
-import com.cochera.miproyectointegrador.DataBase.Usuario;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -44,7 +44,6 @@ public class Activity_estacionamientos extends AppCompatActivity {
     private List<Estacionamiento> estacionamientos;
     private int usuarioId;
 
-    // 🔵 Añadido para mostrar nombre dinámico
     private TextView tvUsername;
     private FirebaseUser userFirebase;
     private FirebaseFirestore firestore;
@@ -55,10 +54,27 @@ public class Activity_estacionamientos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estacionamientos);
 
-        // Obtener usuarioId
         usuarioId = getIntent().getIntExtra("usuarioId", -1);
 
-        // Inicializar vistas
+        // Validación inicial del usuarioId
+        if (usuarioId == -1) {
+            Toast.makeText(this, "Error al obtener el ID de usuario", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        // Verificar si se regresó de reservas sin confirmar
+        boolean reservaExitosa = getIntent().getBooleanExtra("reservaExitosa", true);
+        if (!reservaExitosa) {
+            Toast.makeText(this, "No se realizó ninguna reserva. Regresando al formulario...", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, Activity_reservas.class);
+            intent.putExtra("usuarioId", usuarioId);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        // Referencias UI
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         menuIcon = findViewById(R.id.menuIcon);
@@ -70,15 +86,12 @@ public class Activity_estacionamientos extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerEstacionamientos);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Cargar datos
         dbHelper = new DBHelper(this);
         estacionamientos = dbHelper.obtenerEstacionamientos();
-
-        // Configurar adapter con lista completa
         adapter = new EstacionamientoAdapter(this, estacionamientos, usuarioId);
         recyclerView.setAdapter(adapter);
 
-        // Drawer - abrir y cerrar
+        // Menú lateral
         menuIcon.setOnClickListener(view -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -87,7 +100,6 @@ public class Activity_estacionamientos extends AppCompatActivity {
             }
         });
 
-        // Mostrar nombre del usuario logueado 🔵 (Firebase Firestore)
         View headerView = navigationView.getHeaderView(0);
         tvUsername = headerView.findViewById(R.id.tv_username);
         userFirebase = FirebaseAuth.getInstance().getCurrentUser();
@@ -109,7 +121,6 @@ public class Activity_estacionamientos extends AppCompatActivity {
                     });
         }
 
-        // Navegación en el menú lateral
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_ajustes) {
@@ -117,57 +128,53 @@ public class Activity_estacionamientos extends AppCompatActivity {
                 intent.putExtra("usuarioId", usuarioId);
                 startActivity(intent);
             } else if (id == R.id.nav_chats) {
-                startActivity(new Intent(this, ListaUsuariosActivity.class));
+                Intent intent = new Intent(this, ListaUsuariosActivity.class);
+                intent.putExtra("usuarioId", usuarioId);
+                startActivity(intent);
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
 
-        // Filtrado en tiempo real con TextWatcher
         etBuscador.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 adapter.filtrarLista(s.toString());
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
+            @Override public void afterTextChanged(Editable s) {}
         });
 
-        // Opcional: onEditorActionListener para buscar con teclado
         etBuscador.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
                 String texto = etBuscador.getText().toString().trim();
                 if (texto.isEmpty()) {
-                    Toast.makeText(this, "Escribe para buscar", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Escribe algo para buscar", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             }
             return false;
         });
 
-        // Botones inferiores
         btnCalendario.setOnClickListener(v -> {
             Intent intent = new Intent(this, CalendarioActivity.class);
             intent.putExtra("usuarioId", usuarioId);
             startActivity(intent);
         });
+
         btnReservas.setOnClickListener(v -> {
             Intent intent = new Intent(this, Activity_reservas.class);
-            intent.putExtra("usuarioId", usuarioId);
+            intent.putExtra("usuarioId", usuarioId); // ✅ Aquí aseguramos que se envía
             startActivity(intent);
         });
-        btnHome.setOnClickListener(v -> Toast.makeText(this, "Ya estás en Inicio", Toast.LENGTH_SHORT).show()
-        );
-        btnPerfil.setOnClickListener(v -> {
 
-//            Toast.makeText(ActivityPerfilAdmin.this, "Ya estás en Perfil", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, ActivityPerfil.class);
-                intent.putExtra("usuarioId", usuarioId);
-                startActivity(intent);
-            });
+        btnHome.setOnClickListener(v -> {
+            Toast.makeText(this, "Ya estás en Inicio", Toast.LENGTH_SHORT).show();
+        });
+
+        btnPerfil.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ActivityPerfil.class);
+            intent.putExtra("usuarioId", usuarioId); // ✅ Aquí también se envía
+            startActivity(intent);
+        });
     }
 }

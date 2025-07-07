@@ -42,14 +42,13 @@ public class EstacionamientoAdapter extends RecyclerView.Adapter<Estacionamiento
         Estacionamiento estacionamiento = lista.get(position);
         holder.tvNombre.setText(estacionamiento.getNombre());
         holder.tvDireccion.setText(estacionamiento.getDireccion());
-
-        //  Mostrar imagen local desde drawable
-        holder.ivImagen.setImageResource(R.drawable.estacionamiento_icon);
+        holder.ivImagen.setImageResource(R.drawable.estacionamiento_icon); // Imagen fija
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), activity_control_espacios.class);
-            intent.putExtra("estacionamientoId", estacionamiento.getEstacionamientoId());
+            Intent intent = new Intent(v.getContext(), Activity_reservas.class);
             intent.putExtra("usuarioId", usuarioId);
+            intent.putExtra("estacionamientoId", estacionamiento.getEstacionamientoId());
+            intent.putExtra("espacioid", 1); // puedes reemplazar 1 por el ID real si lo tienes
             v.getContext().startActivity(intent);
         });
     }

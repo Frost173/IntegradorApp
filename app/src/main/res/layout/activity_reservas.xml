@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- TÍTULO CENTRAL -->
+        <!-- TÍTULO -->
         <TextView
             android:id="@+id/tvNombreEstacionamiento"
             android:layout_width="match_parent"
@@ -20,12 +20,12 @@
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
-        <!-- CAMPO: Fecha -->
+        <!-- FECHA -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Fecha"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
         <EditText
             android:id="@+id/etFecha"
             android:layout_width="match_parent"
@@ -34,14 +34,14 @@
             android:focusable="false"
             android:background="@drawable/field_background"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
-        <!-- CAMPO: Hora de Entrada -->
+        <!-- HORA DE ENTRADA -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hora de Entrada"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
         <EditText
             android:id="@+id/etHoraEntrada"
             android:layout_width="match_parent"
@@ -50,14 +50,14 @@
             android:focusable="false"
             android:background="@drawable/field_background"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
-        <!-- CAMPO: Hora de Salida -->
+        <!-- HORA DE SALIDA -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hora de Salida"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
         <EditText
             android:id="@+id/etHoraSalida"
             android:layout_width="match_parent"
@@ -66,28 +66,28 @@
             android:focusable="false"
             android:background="@drawable/field_background"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
-        <!-- CAMPO: Tipo de Vehículo -->
+        <!-- TIPO DE VEHÍCULO -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tipo de Vehículo"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
         <Spinner
             android:id="@+id/spTipoVehiculo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/field_background"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
-        <!-- CAMPO: Tarifa por hora -->
+        <!-- TARIFA -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tarifa por hora"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
         <EditText
             android:id="@+id/etTarifa"
             android:layout_width="match_parent"
@@ -96,14 +96,14 @@
             android:enabled="false"
             android:background="@drawable/field_background"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
-        <!-- CAMPO: Horas estimadas -->
+        <!-- HORAS ESTIMADAS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Horas estimadas"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
         <EditText
             android:id="@+id/etHorasEstimadas"
             android:layout_width="match_parent"
@@ -112,14 +112,14 @@
             android:enabled="false"
             android:background="@drawable/field_background"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
-        <!-- CAMPO: Precio Total -->
+        <!-- PRECIO TOTAL -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Precio Total"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
         <EditText
             android:id="@+id/etPrecio"
             android:layout_width="match_parent"
@@ -128,14 +128,14 @@
             android:enabled="false"
             android:background="@drawable/field_background"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
-        <!-- CAMPO: Placa del vehículo -->
+        <!-- PLACA -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Placa del vehículo"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
         <EditText
             android:id="@+id/etPlaca"
             android:layout_width="match_parent"
@@ -143,16 +143,23 @@
             android:inputType="text"
             android:background="@drawable/field_background"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="24dp"/>
-
-        <!-- BOTÓN FINAL -->
+            android:layout_marginBottom="24dp" />
+        <!-- BOTÓN SELECCIONAR ESPACIO -->
+        <Button
+            android:id="@+id/btnSeleccionarEspacio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seleccionar Espacio"
+            android:backgroundTint="#5C6BC0"
+            android:textColor="#FFFFFF" />
+        <!-- BOTÓN RESERVAR -->
         <Button
             android:id="@+id/btnReservar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Reservar"
             android:backgroundTint="#1976A6"
-            android:textColor="#FFFFFF" />
-
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="12dp" />
     </LinearLayout>
 </ScrollView>

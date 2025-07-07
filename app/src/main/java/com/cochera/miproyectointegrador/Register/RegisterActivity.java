@@ -1,5 +1,6 @@
 package com.cochera.miproyectointegrador.Register;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -7,11 +8,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.cochera.miproyectointegrador.LoginActivity;
 import com.cochera.miproyectointegrador.R;
 
 public class RegisterActivity extends AppCompatActivity implements RegisterContract.View {
 
-    private EditText etNombre, etApellido, etCorreo, etContraseña, etCelular;
+    private EditText etNombre, etApellido, etCorreo, etContrasena, etCelular;
     private Button btnRegistrar;
     private RegisterPresenter presenter;
 
@@ -20,11 +22,11 @@ public class RegisterActivity extends AppCompatActivity implements RegisterContr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Vincula todos los campos
+        // Enlazar elementos del layout
         etNombre = findViewById(R.id.editTextName);
-        etApellido = findViewById(R.id.editTextApellido);  // este campo ya está en tu XML
+        etApellido = findViewById(R.id.editTextApellido);
         etCorreo = findViewById(R.id.editTextCorreo);
-        etContraseña = findViewById(R.id.editTextContrasena);
+        etContrasena = findViewById(R.id.editTextContrasena);
         etCelular = findViewById(R.id.editTextPhone);
         btnRegistrar = findViewById(R.id.buttonRegistrarse);
 
@@ -34,24 +36,36 @@ public class RegisterActivity extends AppCompatActivity implements RegisterContr
             String nombre = etNombre.getText().toString().trim();
             String apellido = etApellido.getText().toString().trim();
             String correo = etCorreo.getText().toString().trim();
-            String contraseña = etContraseña.getText().toString().trim();
+            String contrasena = etContrasena.getText().toString().trim();
             String celular = etCelular.getText().toString().trim();
-            int perfilid = 2; // cliente por defecto
+            String perfil = "Cliente"; // Por defecto al registrarse
 
-            // Llamamos al Presenter
-            presenter.registrarUsuario(nombre, apellido, correo, contraseña, celular, perfilid);
+            if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() || contrasena.isEmpty() || celular.isEmpty()) {
+                Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            presenter.registrarUsuario(nombre, apellido, correo, contrasena, celular, perfil);
+        });
+
+        // Botón para volver al login (opcional)
+        Button btnIrLogin = findViewById(R.id.buttonInicioSesion);
+        btnIrLogin.setOnClickListener(v -> {
+            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            finish();
         });
     }
 
     @Override
     public void showRegisterSuccess() {
-        Toast.makeText(this, "✅ Registro exitoso. Verifica tu correo", Toast.LENGTH_LONG).show();
-        finish(); // Regresar al login
+        Toast.makeText(this, "✅ Registro exitoso. Revisa tu correo.", Toast.LENGTH_LONG).show();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     @Override
     public void showRegisterError(String msg) {
-        Toast.makeText(this, "❌ Error: " + msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "❌ " + msg, Toast.LENGTH_LONG).show();
     }
 
     @Override

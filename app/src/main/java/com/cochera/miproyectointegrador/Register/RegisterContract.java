@@ -9,7 +9,7 @@ public interface RegisterContract {
     }
 
     interface Presenter {
-        // Aquí debe llamarse registrarUsuario y con 6 parámetros
-        void registrarUsuario(String nombre, String apellido, String correo, String contrasena, String celular, int perfilid);
+        // Usamos "perfil" como String, no int
+        void registrarUsuario(String nombre, String apellido, String correo, String contrasena, String celular, String perfil);
     }
 }

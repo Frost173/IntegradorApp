@@ -10,9 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Espacio;
@@ -27,30 +24,23 @@ public class activity_control_espacios extends AppCompatActivity {
     private Button btnContinuar;
 
     private Espacio espacioSeleccionado = null;
-    private int usuarioId;
-    private int estacionamientoId;
+    private int usuarioId, estacionamientoId;
+    private String fecha, horaEntrada, horaSalida;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_control_espacios);
 
-        // Obtener datos del Intent con claves correctas (mayúsculas y minúsculas)
         usuarioId = getIntent().getIntExtra("usuarioId", -1);
-        estacionamientoId = getIntent().getIntExtra("estacionamientoId", -1); // CORREGIDO aquí
+        estacionamientoId = getIntent().getIntExtra("estacionamientoId", -1);
+        fecha = getIntent().getStringExtra("fecha");
+        horaEntrada = getIntent().getStringExtra("horaEntrada");
+        horaSalida = getIntent().getStringExtra("horaSalida");
 
-        // Ajustar padding para sistema de barras (status, navegación)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-        // Referencias a vistas
         gridLayout = findViewById(R.id.gridEspacios);
         btnContinuar = findViewById(R.id.btnContinuar);
-        btnContinuar.setEnabled(false); // Deshabilitado al inicio
+        btnContinuar.setEnabled(false);
 
         dbHelper = new DBHelper(this);
 
@@ -58,21 +48,18 @@ public class activity_control_espacios extends AppCompatActivity {
             listaEspacios = dbHelper.obtenerEspaciosPorEstacionamiento(estacionamientoId);
             llenarGridLayout(listaEspacios);
         } else {
-            Toast.makeText(this, "Error al recibir el ID del estacionamiento", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error: estacionamientoId inválido", Toast.LENGTH_SHORT).show();
         }
 
-        // Evento botón continuar
         btnContinuar.setOnClickListener(v -> {
             if (espacioSeleccionado != null) {
-                Intent intent = new Intent(activity_control_espacios.this, Activity_reservas.class);
-                intent.putExtra("espacioid", espacioSeleccionado.getEspacioId());
-                intent.putExtra("estacionamientoId", espacioSeleccionado.getEstacionamientoId()); // Usa misma clave aquí
-                Toast.makeText(this, String.valueOf(espacioSeleccionado.getEstacionamientoId())+"valorees de coolores", Toast.LENGTH_SHORT).show();
-                intent.putExtra("codigo", espacioSeleccionado.getCodigo());
-                intent.putExtra("usuarioId", usuarioId);
-                startActivity(intent);
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("espacioid", espacioSeleccionado.getEspacioId());
+                resultIntent.putExtra("codigo", espacioSeleccionado.getCodigo());
+                setResult(RESULT_OK, resultIntent);
+                finish();
             } else {
-                Toast.makeText(activity_control_espacios.this, "Selecciona un espacio primero", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Selecciona un espacio", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -83,23 +70,40 @@ public class activity_control_espacios extends AppCompatActivity {
 
         for (Espacio espacio : espacios) {
             View espacioView = inflater.inflate(R.layout.item_espacio, gridLayout, false);
-
             TextView tvCodigo = espacioView.findViewById(R.id.tvCodigo);
-            tvCodigo.setText(espacio.getCodigo());
+            TextView tvEstado = espacioView.findViewById(R.id.tvEstado);
 
-            espacioView.setOnClickListener(v -> {
-                espacioSeleccionado = espacio;
-                btnContinuar.setEnabled(true);
-                Toast.makeText(activity_control_espacios.this,
-                        "Seleccionado: " + espacio.getCodigo(), Toast.LENGTH_SHORT).show();
+            tvCodigo.setText(espacio.getUbicacion());
 
-                // Resaltar el espacio seleccionado y desmarcar los demás
-                for (int i = 0; i < gridLayout.getChildCount(); i++) {
-                    View child = gridLayout.getChildAt(i);
-                    child.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-                }
-                espacioView.setBackgroundColor(getResources().getColor(R.color.purple_200));
-            });
+            boolean ocupado = dbHelper.existeReservaEnEspacio(
+                    espacio.getEspacioId(),
+                    estacionamientoId,
+                    fecha,
+                    horaEntrada,
+                    horaSalida
+            );
+
+            if (ocupado) {
+                espacioView.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+                tvEstado.setText("Ocupado");
+                espacioView.setEnabled(false);
+            } else {
+                tvEstado.setText("Disponible");
+
+                espacioView.setOnClickListener(v -> {
+                    espacioSeleccionado = espacio;
+                    btnContinuar.setEnabled(true);
+
+                    Toast.makeText(this, "Seleccionado: " + espacio.getUbicacion(), Toast.LENGTH_SHORT).show();
+
+                    for (int i = 0; i < gridLayout.getChildCount(); i++) {
+                        View child = gridLayout.getChildAt(i);
+                        child.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+                    }
+
+                    espacioView.setBackgroundColor(getResources().getColor(R.color.purple_200));
+                });
+            }
 
             gridLayout.addView(espacioView);
         }

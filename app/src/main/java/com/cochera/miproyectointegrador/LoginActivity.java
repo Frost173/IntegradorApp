@@ -13,6 +13,9 @@ import com.cochera.miproyectointegrador.Recover.ActivityRecover;
 import com.cochera.miproyectointegrador.Register.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -54,48 +57,60 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser firebaseUser = auth.getCurrentUser();
                             if (firebaseUser != null && firebaseUser.isEmailVerified()) {
+                                String uid = firebaseUser.getUid();
 
-                                //  Aquí usamos el UID para buscar en SQLite
-                                Usuario usuario = dbHelper.obtenerUsuarioPorUid(firebaseUser.getUid());
+                                FirebaseFirestore.getInstance()
+                                        .collection("Usuarios")
+                                        .document(uid)
+                                        .get()
+                                        .addOnSuccessListener(documentSnapshot -> {
+                                            if (documentSnapshot.exists()) {
+                                                String perfilFirebase = documentSnapshot.getString("perfil");
 
-                                if (usuario != null) {
-                                    int usuarioId = usuario.getId();
-                                    String perfil = usuario.getPerfil();
-                                    String nombre = usuario.getNombre();
+                                                if (perfilFirebase == null) {
+                                                    Toast.makeText(this, "Perfil no encontrado en Firestore", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
 
-                                    SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = prefs.edit();
-                                    editor.putInt("usuario_id", usuarioId);
-                                    editor.apply();
+                                                Usuario usuario = dbHelper.obtenerUsuarioPorUid(uid);
 
-                                    Toast.makeText(this, "Bienvenido, " + nombre, Toast.LENGTH_SHORT).show();
+                                                if (usuario != null && usuario.getPerfil().equalsIgnoreCase(perfilFirebase)) {
+                                                    int usuarioId = usuario.getId();
+                                                    String nombre = usuario.getNombre();
 
-                                    Intent intent;
-                                    switch (perfil) {
-                                        case "Administrador":
-                                            intent = new Intent(this, ActivityAdminint.class);
-                                            break;
-                                        case "Cliente":
-                                            intent = new Intent(this, Activity_estacionamientos.class);
-                                            break;
-                                        default:
-                                            Toast.makeText(this, "Perfil no reconocido", Toast.LENGTH_SHORT).show();
-                                            return;
-                                    }
+                                                    SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                                                    SharedPreferences.Editor editor = prefs.edit();
+                                                    editor.putInt("usuario_id", usuarioId);
+                                                    editor.apply();
 
-                                    intent.putExtra("usuarioId", usuarioId);
-                                    startActivity(intent);
-                                    finish();
+                                                    Toast.makeText(this, "Bienvenido, " + nombre, Toast.LENGTH_SHORT).show();
 
-                                } else {
-                                    Toast.makeText(this, "No se encontró el usuario local", Toast.LENGTH_SHORT).show();
-                                }
+                                                    Intent intent;
+                                                    if ("Administrador".equalsIgnoreCase(perfilFirebase)) {
+                                                        intent = new Intent(this, ActivityAdminint.class);
+                                                    } else {
+                                                        intent = new Intent(this, Activity_estacionamientos.class);
+                                                    }
+
+                                                    intent.putExtra("usuarioId", usuarioId);
+                                                    startActivity(intent);
+                                                    finish();
+                                                } else {
+                                                    Toast.makeText(this, "Usuario local no encontrado o perfil no coincide", Toast.LENGTH_SHORT).show();
+                                                }
+                                            } else {
+                                                Toast.makeText(this, "No existe el documento del usuario en Firestore", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(this, "Error al obtener el perfil desde Firestore", Toast.LENGTH_SHORT).show();
+                                        });
 
                             } else {
                                 Toast.makeText(this, "Verifica tu correo electrónico", Toast.LENGTH_LONG).show();
                             }
                         } else {
-                            Toast.makeText(this, "Correo o clave incorrectos (Firebase)", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                         }
                     });
         });

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -26,7 +27,7 @@ import java.util.Map;
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
-        super(context, "tu_basedatos_2.db", null, 23);
+        super(context, "tu_basedatos_2.db", null, 25);
     }
 
     @Override
@@ -61,6 +62,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "estacionamientoid INTEGER," +
                 "codigo TEXT NOT NULL," +
                 "estado TEXT CHECK(estado IN ('Disponible', 'Ocupado', 'Reservado')) NOT NULL," +
+                "ubicacion TEXT," +
                 "FOREIGN KEY (estacionamientoid) REFERENCES Estacionamientos(estacionamientoid));");
 
         db.execSQL("CREATE TABLE Vehiculos (" +
@@ -80,12 +82,14 @@ public class DBHelper extends SQLiteOpenHelper {
                 "horaentrada TEXT," +
                 "horasalida TEXT," +
                 "estado TEXT CHECK(estado IN ('Pendiente', 'Confirmada', 'Cancelada', 'Finalizada')) NOT NULL," +
-                "placa TEXT," +           // columna nueva versión 2
-                "pago REAL DEFAULT 0," +  // columna nueva versión 3
-                "ubicacion TEXT," +       // columna nueva versión 3
+                "placa TEXT," +
+                "pago REAL DEFAULT 0," +
+                "ubicacion TEXT," +
+                "estacionamientoid INTEGER," +
                 "FOREIGN KEY (usuarioid) REFERENCES Usuarios(usuarioid)," +
                 "FOREIGN KEY (espacioid) REFERENCES Espacios(espacioid)," +
-                "FOREIGN KEY (vehiculoid) REFERENCES Vehiculos(vehiculoid));");
+                "FOREIGN KEY (vehiculoid) REFERENCES Vehiculos(vehiculoid)," +
+                "FOREIGN KEY (estacionamientoid) REFERENCES Estacionamientos(estacionamientoid));"); // Opcional
 
 
         db.execSQL("CREATE TABLE Pagos (" +
@@ -136,43 +140,47 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO Estacionamientos (estacionamientoid, nombre, direccion, propietarioid) " +
                 "VALUES (4, 'Chaclacayo', 'Calle 456', 1);");
 
-// Tabla Espacios
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (1, 1, 'A1', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (2, 1, 'A2', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (3, 1, 'A3', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (4, 1, 'A4', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (5, 1, 'A5', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (6, 1, 'A6', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (7, 1, 'A7', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (8, 1, 'A8', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (9, 2, 'B1', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (10, 2, 'B2', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (11, 2, 'B3', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (12, 2, 'B4', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (13, 3, 'C1', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (14, 3, 'C2', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (15, 3, 'C3', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (16, 4, 'D1', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (17, 4, 'D2', 'Disponible');");
-        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado) " +
-                "VALUES (18, 4, 'D3', 'Disponible');");
+// Tabla Espacios con ubicación
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (1, 1, 'A1', 'Disponible', '1A');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (2, 1, 'A2', 'Disponible', '1B');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (3, 1, 'A3', 'Disponible', '1C');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (4, 1, 'A4', 'Disponible', '1D');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (5, 1, 'A5', 'Disponible', '1E');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (6, 1, 'A6', 'Disponible', '1F');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (7, 1, 'A7', 'Disponible', '1G');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (8, 1, 'A8', 'Disponible', '1H');");
+
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (9, 2, 'B1', 'Disponible', '2A');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (10, 2, 'B2', 'Disponible', '2B');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (11, 2, 'B3', 'Disponible', '2C');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (12, 2, 'B4', 'Disponible', '2D');");
+
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (13, 3, 'C1', 'Disponible', '3A');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (14, 3, 'C2', 'Disponible', '3B');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (15, 3, 'C3', 'Disponible', '3C');");
+
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (16, 4, 'D1', 'Disponible', '4A');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (17, 4, 'D2', 'Disponible', '4B');");
+        db.execSQL("INSERT INTO Espacios (espacioid, estacionamientoid, codigo, estado, ubicacion) " +
+                "VALUES (18, 4, 'D3', 'Disponible', '4C');");
+
 
 // Tabla Vehiculos
         db.execSQL("INSERT INTO Vehiculos (vehiculoid, usuarioid, placa, tipo, color) " +
@@ -295,22 +303,32 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
-    public boolean insertarUsuario(Usuario usuario) {
+    public boolean insertarUsuarioCompleto(Usuario usuario) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+
         values.put("uid", usuario.getUid());
-        values.put("perfil", "Cliente");
+        values.put("perfil", usuario.getPerfil());
         values.put("nombre", usuario.getNombre());
         values.put("apellido", usuario.getApellido());
         values.put("correo", usuario.getCorreo());
-        values.put("contrasena", ""); // si lo tienes
-        values.put("celular", "");    // si lo tienes
+        values.put("contrasena", usuario.getContrasena()); // si no tienes, pon ""
+        values.put("celular", usuario.getCelular());       // si no tienes, pon ""
         values.put("estado", usuario.getEstado());
         values.put("edad", usuario.getEdad());
 
         long result = db.insert("Usuarios", null, values);
-        return result != -1;
+        db.close();
+
+        if (result == -1) {
+            Log.e("DBHelper", "Error al insertar usuario con UID");
+            return false;
+        } else {
+            Log.d("DBHelper", "Usuario insertado con UID: " + usuario.getUid());
+            return true;
+        }
     }
+
 
     public void mostrarUsuarios() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -429,9 +447,12 @@ public class DBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             nombre = cursor.getString(0);
         }
+
         cursor.close();
+        db.close();
         return nombre;
     }
+
 
     public List<String> obtenerTiposVehiculoPorEstacionamiento(int estacionamientoId) {
         List<String> tipos = new ArrayList<>();
@@ -508,50 +529,57 @@ public class DBHelper extends SQLiteOpenHelper {
         return lista;
     }
 
-    public boolean insertarUsuario(String nombre, String apellido, String correo, String contrasena, String celular, int perfilid) {
+    public boolean insertarUsuario(String nombre, String apellido, String correo, String celular, String perfil, String uid) {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT usuarioid FROM usuarios WHERE correo = ?", new String[]{correo});
-        if (cursor.moveToFirst()) {
-            cursor.close();
-            db.close();
-            Log.e("DBHelper", "Correo ya registrado");
-            return false;
-        }
-        cursor.close();
-
         ContentValues values = new ContentValues();
+
+        values.put("uid", uid);
         values.put("nombre", nombre);
         values.put("apellido", apellido);
         values.put("correo", correo);
-        values.put("contrasena", contrasena);
         values.put("celular", celular);
-        values.put("perfilid", perfilid);
 
-        long resultado = db.insert("usuarios", null, values);
+        // Obtener el ID del perfil desde la tabla Perfiles
+        int perfilId = obtenerPerfilId(perfil); // Este método lo explico abajo
+        values.put("perfilid", perfilId);
+
+        // Puedes agregar valores por defecto si quieres:
+        values.put("estado", "activo");
+        values.put("edad", 0);
+
+        long resultado = db.insert("Usuarios", null, values);
         db.close();
-
-        if (resultado == -1) {
-            Log.e("DBHelper", "Error al insertar usuario");
-        } else {
-            Log.d("DBHelper", "Usuario insertado con ID: " + resultado);
-        }
 
         return resultado != -1;
     }
+    private int obtenerPerfilId(String nombrePerfil) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int perfilId = -1;
+
+        Cursor cursor = db.rawQuery("SELECT perfilid FROM Perfiles WHERE nombreperfil = ?", new String[]{nombrePerfil});
+
+        if (cursor.moveToFirst()) {
+            perfilId = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return perfilId;
+    }
+
     public boolean validarUsuario(String correo, String contrasena) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(
-                "SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?",
+                "SELECT 1 FROM Usuarios WHERE correo = ? AND contrasena = ?",
                 new String[]{correo, contrasena}
         );
 
         boolean existe = cursor.moveToFirst();
         cursor.close();
-        db.close(); // No olvides cerrar la base de datos
+        db.close();
         return existe;
     }
+
 
 
     public Usuario verificarUsuario(String correo, String contrasena) {
@@ -579,6 +607,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return usuario;
     }
+
 
     public boolean insertarReserva(Reserva r) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -641,16 +670,34 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     // Método opcional para agregar un usuario de prueba
-    public void insertarUsuario( String nombre, String apellido, String correo, String contraseña, int id) {
+    public boolean insertarUsuario(String nombre, String apellido, String correo, String celular, String perfil, String uid, String contrasena) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+
+        values.put("uid", uid);
         values.put("nombre", nombre);
-        values.put("correo", correo);
         values.put("apellido", apellido);
-        values.put("contrasena", contraseña);
-        values.put("perfilid", id);
-        db.insert("Usuarios", null, values);
+        values.put("correo", correo);
+        values.put("celular", celular);
+        values.put("contrasena", contrasena);
+        values.put("estado", "activo");
+        values.put("edad", 0);
+        values.put("perfil", perfil);  // 👈 guardar como texto (no como ID)
+
+        long resultado = db.insert("Usuarios", null, values);
+
+        if (resultado == -1) {
+            Log.e("DBHelper", "❌ Error al insertar usuario en SQLite");
+        } else {
+            Log.d("DBHelper", "✅ Usuario insertado con éxito, ID: " + resultado + ", UID: " + uid);
+        }
+
+        db.close();
+        return resultado != -1;
     }
+
+
+
 
     public void insertarReserva( int usuarioid, int espacioid, int vehiculoid, String fechareserva, String horaentrada,String horasalida,String estado) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -723,6 +770,76 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return db.insert("Usuarios", null, values);
     }
+
+    // reservas duplicadas
+
+    public boolean existeReservaEnEspacio(int espacioId, int estacionamientoId, String fecha, String nuevaEntrada, String nuevaSalida) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        int nuevaEntradaMin = convertirHoraAMinutos(nuevaEntrada);
+        int nuevaSalidaMin = convertirHoraAMinutos(nuevaSalida);
+
+        Cursor cursor = db.rawQuery(
+                "SELECT r.horaentrada, r.horasalida " +
+                        "FROM Reservas r " +
+                        "JOIN Espacios e ON r.espacioid = e.espacioid " +
+                        "WHERE r.espacioid = ? AND e.estacionamientoid = ? AND r.fechareserva = ?",
+                new String[]{
+                        String.valueOf(espacioId),
+                        String.valueOf(estacionamientoId),
+                        fecha
+                }
+        );
+
+        boolean conflicto = false;
+
+        while (cursor.moveToNext()) {
+            String entradaExistente = cursor.getString(0);
+            String salidaExistente = cursor.getString(1);
+
+            int entradaExistenteMin = convertirHoraAMinutos(entradaExistente);
+            int salidaExistenteMin = convertirHoraAMinutos(salidaExistente);
+
+            // Verifica traslape de horarios
+            if (!(nuevaSalidaMin <= entradaExistenteMin || nuevaEntradaMin >= salidaExistenteMin)) {
+                conflicto = true;
+                break;
+            }
+        }
+
+        cursor.close();
+        db.close();
+        return conflicto;
+    }
+
+
+    public int convertirHoraAMinutos(String hora) {
+        try {
+            if (hora == null || hora.trim().isEmpty()) return -1;
+
+            String[] partes = hora.trim().split(" ");
+            if (partes.length != 2) return -1;
+
+            String[] hm = partes[0].split(":");
+            if (hm.length != 2) return -1;
+
+            int h = Integer.parseInt(hm[0]);
+            int m = Integer.parseInt(hm[1]);
+
+            String ampm = partes[1].toUpperCase(Locale.getDefault());
+
+            if (ampm.equals("PM") && h != 12) h += 12;
+            if (ampm.equals("AM") && h == 12) h = 0;
+
+            return h * 60 + m;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+
+
+
 
 }
 
