@@ -13,9 +13,7 @@ import com.cochera.miproyectointegrador.Recover.ActivityRecover;
 import com.cochera.miproyectointegrador.Register.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -72,42 +70,58 @@ public class LoginActivity extends AppCompatActivity {
                                                     return;
                                                 }
 
+                                                // 🔹 Buscar en SQLite
                                                 Usuario usuario = dbHelper.obtenerUsuarioPorUid(uid);
 
-                                                if (usuario != null && usuario.getPerfil().equalsIgnoreCase(perfilFirebase)) {
-                                                    int usuarioId = usuario.getId();
-                                                    String nombre = usuario.getNombre();
+                                                // 🔹 Si no está, insertarlo desde Firebase
+                                                if (usuario == null) {
+                                                    Usuario nuevo = new Usuario();
+                                                    nuevo.setUid(uid);
+                                                    nuevo.setPerfil(perfilFirebase);
+                                                    nuevo.setNombre(documentSnapshot.getString("nombre"));
+                                                    nuevo.setApellido(documentSnapshot.getString("apellido"));
+                                                    nuevo.setCorreo(documentSnapshot.getString("correo"));
+                                                    nuevo.setCelular(documentSnapshot.getString("celular"));
+                                                    nuevo.setContrasena(clave);
+                                                    nuevo.setEstado("activo");
+                                                    nuevo.setEdad(18);
 
-                                                    SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-                                                    SharedPreferences.Editor editor = prefs.edit();
-                                                    editor.putInt("usuario_id", usuarioId);
-                                                    editor.apply();
-
-                                                    Toast.makeText(this, "Bienvenido, " + nombre, Toast.LENGTH_SHORT).show();
-
-                                                    Intent intent;
-                                                    if ("Administrador".equalsIgnoreCase(perfilFirebase)) {
-                                                        intent = new Intent(this, ActivityAdminint.class);
+                                                    boolean insertado = dbHelper.insertarUsuarioCompleto(nuevo);
+                                                    if (insertado) {
+                                                        usuario = dbHelper.obtenerUsuarioPorUid(uid);
                                                     } else {
-                                                        intent = new Intent(this, Activity_estacionamientos.class);
+                                                        Toast.makeText(this, "Error al guardar usuario local", Toast.LENGTH_SHORT).show();
+                                                        return;
                                                     }
+                                                }
 
-                                                    intent.putExtra("usuarioId", usuarioId);
+                                                // 🔹 Validar perfil
+                                                if (usuario != null && usuario.getPerfil().equalsIgnoreCase(perfilFirebase)) {
+                                                    SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                                                    prefs.edit().putInt("usuario_id", usuario.getId()).apply();
+
+                                                    Toast.makeText(this, "Bienvenido, " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
+
+                                                    Intent intent = ("Administrador".equalsIgnoreCase(perfilFirebase))
+                                                            ? new Intent(this, ActivityAdminint.class)
+                                                            : new Intent(this, Activity_estacionamientos.class);
+
+                                                    intent.putExtra("usuarioId", usuario.getId());
                                                     startActivity(intent);
                                                     finish();
                                                 } else {
-                                                    Toast.makeText(this, "Usuario local no encontrado o perfil no coincide", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(this, "Perfil no coincide", Toast.LENGTH_SHORT).show();
                                                 }
                                             } else {
-                                                Toast.makeText(this, "No existe el documento del usuario en Firestore", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(this, "Documento de usuario no encontrado en Firestore", Toast.LENGTH_SHORT).show();
                                             }
                                         })
                                         .addOnFailureListener(e -> {
-                                            Toast.makeText(this, "Error al obtener el perfil desde Firestore", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(this, "Error al obtener datos de Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                         });
 
                             } else {
-                                Toast.makeText(this, "Verifica tu correo electrónico", Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, "Verifica tu correo electrónico antes de ingresar", Toast.LENGTH_LONG).show();
                             }
                         } else {
                             Toast.makeText(this, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();

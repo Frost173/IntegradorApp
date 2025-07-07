@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -111,15 +112,30 @@ public class Activity_reservas extends AppCompatActivity {
     }
 
     private void cargarNombreUsuarioDesdeFirebase() {
+        if (uidFirebase == null || uidFirebase.isEmpty()) {
+            Toast.makeText(this, "UID de Firebase no disponible", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         firestore.collection("usuarios").document(uidFirebase)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String nombre = documentSnapshot.getString("nombre");
-                        tvNombreEstacionamiento.setText("Bienvenido, " + nombre);
+                        if (nombre != null && !nombre.isEmpty()) {
+                            tvNombreEstacionamiento.setText("Bienvenido, " + nombre);
+                        } else {
+                            Toast.makeText(this, "El nombre no está definido en Firebase", Toast.LENGTH_SHORT).show();
+                            tvNombreEstacionamiento.setText("Bienvenido");
+                        }
+                    } else {
+                        Toast.makeText(this, "Perfil no encontrado en Firebase", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "Error cargando nombre: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar perfil: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    e.printStackTrace(); // útil para ver el error en logcat
+                });
     }
 
     private void cargarTiposVehiculo() {
@@ -268,6 +284,11 @@ public class Activity_reservas extends AppCompatActivity {
     }
 
     private void subirReservaAFirebase(long idReserva, int usuarioId, int espacioId, int vehiculoId, String fecha, String entrada, String salida, String pago, String estado, String placa, String ubicacion) {
+        if (uidFirebase == null || uidFirebase.isEmpty()) {
+            Toast.makeText(this, "Error: UID de Firebase no disponible", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Map<String, Object> reservaMap = new HashMap<>();
         reservaMap.put("uid", uidFirebase);
         reservaMap.put("usuarioid", usuarioId);
@@ -281,12 +302,21 @@ public class Activity_reservas extends AppCompatActivity {
         reservaMap.put("placa", placa);
         reservaMap.put("ubicacion", ubicacion);
 
+        String idFirestore = String.valueOf(idReserva); // o usa UUID.randomUUID().toString();
+
         firestore.collection("reservas")
-                .document(String.valueOf(idReserva))
+                .document(idFirestore)
                 .set(reservaMap)
-                .addOnSuccessListener(aVoid -> Toast.makeText(this, "Reserva subida a Firebase", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(this, "Error al subir a Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Reserva subida a Firebase", Toast.LENGTH_SHORT).show();
+                    Log.d("FIREBASE_RESERVA", "Reserva subida con ID: " + idFirestore);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al subir a Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e("FIREBASE_RESERVA", "Error al subir reserva", e);
+                });
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

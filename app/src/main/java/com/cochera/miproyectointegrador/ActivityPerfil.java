@@ -12,35 +12,39 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Usuario;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ActivityPerfil extends AppCompatActivity {
 
     private EditText editTextNombre, editTextCorreo, editTextTelefono;
     private SharedPreferences sharedPreferences;
     private int usuarioId;
-//    private static final String TAG = "ActivityPerfil"; // 👈 Etiqueta para Logcat
+
+    private FirebaseFirestore firestore;
+    private FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
-        Toast.makeText(this, "Ya estás en pERFIL", Toast.LENGTH_SHORT).show();
 
-        // Obtener el ID del usuario desde el intent
+        Toast.makeText(this, "Ya estás en PERFIL", Toast.LENGTH_SHORT).show();
+
         usuarioId = getIntent().getIntExtra("usuarioId", -1);
 
-        // Inicializar vistas
+        firestore = FirebaseFirestore.getInstance();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
         editTextNombre = findViewById(R.id.editTextNombre);
         editTextCorreo = findViewById(R.id.editTextCorreo);
         editTextTelefono = findViewById(R.id.editTextTelefono);
 
-        // Configurar barra inferior
-          setupBottomBar();
-
-        // Cargar datos del usuario
-            cargarDatosUsuario();
+        setupBottomBar();
+        cargarDatosUsuario();            // desde SQLite
+        cargarPerfilDesdeFirestore();    // desde Firestore
     }
-
 
     private void setupBottomBar() {
         try {
@@ -62,7 +66,7 @@ public class ActivityPerfil extends AppCompatActivity {
                     Toast.makeText(this, "Ya estás en el perfil", Toast.LENGTH_SHORT).show());
 
         } catch (Exception e) {
-            Log.e("", "Error en la barra inferior: " + e.getMessage());
+            Log.e("BottomBar", "Error en la barra inferior: " + e.getMessage());
         }
     }
 
@@ -72,8 +76,6 @@ public class ActivityPerfil extends AppCompatActivity {
             Usuario usuario = dbHelper.obtenerUsuarioPorId(usuarioId);
 
             if (usuario != null) {
-                Log.d("TAG", "Usuario encontrado: " + usuario.getNombre());
-
                 String nombre = usuario.getNombre() != null ? usuario.getNombre() : "";
                 String apellido = usuario.getApellido() != null ? usuario.getApellido() : "";
                 editTextNombre.setText(nombre + " " + apellido);
@@ -81,24 +83,60 @@ public class ActivityPerfil extends AppCompatActivity {
                 String correo = usuario.getCorreo() != null ? usuario.getCorreo() : "";
                 editTextCorreo.setText(correo);
 
-                // SharedPreferences para cargar teléfono
                 sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
                 if (sharedPreferences != null) {
                     String telefono = sharedPreferences.getString("telefono_" + usuarioId, "");
                     editTextTelefono.setText(telefono);
-                } else {
-                    Log.w("TAG", "SharedPreferences es null");
                 }
-
             } else {
-                Log.e("", "Usuario no encontrado con ID: " + usuarioId);
-                Toast.makeText(this, "No se encontró el usuario", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No se encontró el usuario local", Toast.LENGTH_SHORT).show();
             }
-
         } catch (Exception e) {
-            Log.e("TAG", "Error al cargar datos del usuario", e);
-            Toast.makeText(this, "Error al cargar perfil: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e("SQLite", "Error al cargar datos del usuario", e);
+            Toast.makeText(this, "Error al cargar perfil local: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void cargarPerfilDesdeFirestore() {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (firebaseUser == null) {
+            Toast.makeText(this, "❌ Usuario no autenticado", Toast.LENGTH_SHORT).show();
+            Log.e("Firestore", "FirebaseUser es null");
+            return;
+        }
+
+        String uid = firebaseUser.getUid();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        Log.d("Firestore", "Consultando perfil para UID: " + uid);
+
+        firestore.collection("usuarios").document(uid)
+                .get()
+                .addOnSuccessListener(document -> {
+                    if (document.exists()) {
+                        String nombre = document.getString("nombre");
+                        String apellido = document.getString("apellido");
+                        String correo = document.getString("correo");
+                        String celular = document.getString("celular");
+
+                        Log.d("Firestore", "Datos recibidos: " +
+                                "nombre=" + nombre + ", apellido=" + apellido +
+                                ", correo=" + correo + ", celular=" + celular);
+
+                        editTextNombre.setText((nombre != null ? nombre : "") + " " + (apellido != null ? apellido : ""));
+                        editTextCorreo.setText(correo != null ? correo : "");
+                        editTextTelefono.setText(celular != null ? celular : "");
+
+                    } else {
+                        Toast.makeText(this, "⚠️ Perfil no encontrado en Firebase", Toast.LENGTH_SHORT).show();
+                        Log.w("Firestore", "Documento no existe para UID: " + uid);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "❌ Error al obtener perfil: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e("Firestore", "Fallo en consulta Firestore", e);
+                });
     }
 
 
