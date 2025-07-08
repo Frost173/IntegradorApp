@@ -112,39 +112,19 @@ public class Activity_reservas extends AppCompatActivity {
     }
 
     private void cargarNombreUsuarioDesdeFirebase() {
-        if (uidFirebase == null || uidFirebase.isEmpty()) {
-            Toast.makeText(this, "UID de Firebase no disponible", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        if (uidFirebase == null || uidFirebase.isEmpty()) return;
 
         firestore.collection("usuarios").document(uidFirebase)
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String nombre = documentSnapshot.getString("nombre");
-                        if (nombre != null && !nombre.isEmpty()) {
-                            tvNombreEstacionamiento.setText("Bienvenido, " + nombre);
-                        } else {
-                            Toast.makeText(this, "El nombre no está definido en Firebase", Toast.LENGTH_SHORT).show();
-                            tvNombreEstacionamiento.setText("Bienvenido");
-                        }
-                    } else {
-                        Toast.makeText(this, "Perfil no encontrado en Firebase", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al cargar perfil: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    e.printStackTrace(); // útil para ver el error en logcat
+                .addOnSuccessListener(doc -> {
+                    String nombre = doc.getString("nombre");
+                    tvNombreEstacionamiento.setText(nombre != null ? "Bienvenido, " + nombre : "Bienvenido");
                 });
     }
 
     private void cargarTiposVehiculo() {
         tarifas = dbHelper.obtenerTarifasPorEstacionamiento(estacionamientoId);
-
-        if (tarifas == null || tarifas.isEmpty()) {
-            Toast.makeText(this, "No hay tarifas disponibles", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        if (tarifas == null || tarifas.isEmpty()) return;
 
         List<String> tipos = new ArrayList<>();
         for (Tarifa t : tarifas) tipos.add(t.getTipoVehiculo());
@@ -154,14 +134,12 @@ public class Activity_reservas extends AppCompatActivity {
         spTipoVehiculo.setAdapter(adapter);
 
         spTipoVehiculo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                tarifaSeleccionada = tarifas.get(position);
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                tarifaSeleccionada = tarifas.get(pos);
                 etTarifa.setText(String.format(Locale.getDefault(), "%.2f", tarifaSeleccionada.getPrecio()));
                 calcularHorasYPrecio();
             }
 
-            @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 tarifaSeleccionada = null;
                 etTarifa.setText("");
@@ -185,19 +163,18 @@ public class Activity_reservas extends AppCompatActivity {
         dialog.show();
     }
 
-    private void mostrarTimePicker(EditText campoHora) {
+    private void mostrarTimePicker(EditText campo) {
         Calendar cal = Calendar.getInstance();
-        int hora = cal.get(Calendar.HOUR_OF_DAY);
-        int minuto = (cal.get(Calendar.MINUTE) / 15) * 15;
+        int h = cal.get(Calendar.HOUR_OF_DAY);
+        int m = (cal.get(Calendar.MINUTE) / 15) * 15;
 
-        new TimePickerDialog(this, (view, h, m) -> {
-            m = (m / 15) * 15;
-            String ampm = h < 12 ? "AM" : "PM";
-            int hora12 = h % 12 == 0 ? 12 : h % 12;
-            String horaFormateada = String.format(Locale.getDefault(), "%02d:%02d %s", hora12, m, ampm);
-            campoHora.setText(horaFormateada);
+        new TimePickerDialog(this, (view, hour, minute) -> {
+            String ampm = hour < 12 ? "AM" : "PM";
+            int hour12 = hour % 12 == 0 ? 12 : hour % 12;
+            String time = String.format(Locale.getDefault(), "%02d:%02d %s", hour12, (minute / 15) * 15, ampm);
+            campo.setText(time);
             calcularHorasYPrecio();
-        }, hora, minuto, false).show();
+        }, h, m, false).show();
     }
 
     private int convertirHoraAMinutos(String hora) {
@@ -217,13 +194,12 @@ public class Activity_reservas extends AppCompatActivity {
     private void calcularHorasYPrecio() {
         int minEntrada = convertirHoraAMinutos(etHoraEntrada.getText().toString().trim());
         int minSalida = convertirHoraAMinutos(etHoraSalida.getText().toString().trim());
-
         if (minEntrada == -1 || minSalida == -1) return;
 
-        int diferencia = minSalida - minEntrada;
-        if (diferencia <= 0) diferencia += 24 * 60;
+        int diff = minSalida - minEntrada;
+        if (diff <= 0) diff += 1440;
 
-        double horas = diferencia / 60.0;
+        double horas = diff / 60.0;
         etHoras.setText(String.format(Locale.getDefault(), "%.2f", horas));
         calcularPrecio(horas);
     }
@@ -245,13 +221,13 @@ public class Activity_reservas extends AppCompatActivity {
             return;
         }
 
-        boolean existe = dbHelper.existeReservaEnEspacio(espacioId, estacionamientoId, fecha, entrada, salida);
-        if (existe) {
-            Toast.makeText(this, "❌ Ya existe una reserva para ese espacio en ese horario", Toast.LENGTH_LONG).show();
+        if (dbHelper.existeReservaEnEspacio(espacioId, estacionamientoId, fecha, entrada, salida)) {
+            Toast.makeText(this, "❌ Ya existe una reserva para ese espacio", Toast.LENGTH_LONG).show();
             return;
         }
 
         String ubicacion = estacionamientoId + codigoEspacio;
+        String precioTexto = etPrecio.getText().toString().trim();
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues valores = new ContentValues();
@@ -261,7 +237,7 @@ public class Activity_reservas extends AppCompatActivity {
         valores.put("fechareserva", fecha);
         valores.put("horaentrada", entrada);
         valores.put("horasalida", salida);
-        valores.put("pago", etPrecio.getText().toString().trim());
+        valores.put("pago", precioTexto);
         valores.put("estado", "Pendiente");
         valores.put("placa", placa);
         valores.put("ubicacion", ubicacion);
@@ -270,12 +246,12 @@ public class Activity_reservas extends AppCompatActivity {
         db.close();
 
         if (id != -1) {
-            Toast.makeText(this, "✅ Reserva guardada correctamente", Toast.LENGTH_LONG).show();
-            subirReservaAFirebase(id, usuarioId, espacioId, tarifaSeleccionada.getTarifaid(), fecha, entrada, salida, etPrecio.getText().toString().trim(), "Pendiente", placa, ubicacion);
+            subirReservaAFirebase(id, usuarioId, espacioId, tarifaSeleccionada.getTarifaid(), fecha, entrada, salida, precioTexto, "Pendiente", placa, ubicacion);
 
-            Intent intent = new Intent(this, Activity_estacionamientos.class);
+            double monto = Double.parseDouble(precioTexto);
+            Intent intent = new Intent(this, PagoReservaActivity.class);
+            intent.putExtra("monto", monto);
             intent.putExtra("usuarioId", usuarioId);
-            intent.putExtra("reservaExitosa", true);
             startActivity(intent);
             finish();
         } else {
@@ -284,10 +260,7 @@ public class Activity_reservas extends AppCompatActivity {
     }
 
     private void subirReservaAFirebase(long idReserva, int usuarioId, int espacioId, int vehiculoId, String fecha, String entrada, String salida, String pago, String estado, String placa, String ubicacion) {
-        if (uidFirebase == null || uidFirebase.isEmpty()) {
-            Toast.makeText(this, "Error: UID de Firebase no disponible", Toast.LENGTH_LONG).show();
-            return;
-        }
+        if (uidFirebase == null || uidFirebase.isEmpty()) return;
 
         Map<String, Object> reservaMap = new HashMap<>();
         reservaMap.put("uid", uidFirebase);
@@ -302,26 +275,17 @@ public class Activity_reservas extends AppCompatActivity {
         reservaMap.put("placa", placa);
         reservaMap.put("ubicacion", ubicacion);
 
-        String idFirestore = String.valueOf(idReserva); // o usa UUID.randomUUID().toString();
-
         firestore.collection("reservas")
-                .document(idFirestore)
+                .document(String.valueOf(idReserva))
                 .set(reservaMap)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Reserva subida a Firebase", Toast.LENGTH_SHORT).show();
-                    Log.d("FIREBASE_RESERVA", "Reserva subida con ID: " + idFirestore);
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al subir a Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e("FIREBASE_RESERVA", "Error al subir reserva", e);
-                });
+                .addOnSuccessListener(aVoid -> Log.d("FIREBASE", "Reserva subida"))
+                .addOnFailureListener(e -> Log.e("FIREBASE", "Error al subir reserva", e));
     }
 
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+    protected void onActivityResult(int reqCode, int resCode, @Nullable Intent data) {
+        super.onActivityResult(reqCode, resCode, data);
+        if (reqCode == 1 && resCode == RESULT_OK && data != null) {
             espacioId = data.getIntExtra("espacioid", 0);
             codigoEspacio = data.getStringExtra("codigo");
             Toast.makeText(this, "Espacio seleccionado: " + codigoEspacio, Toast.LENGTH_SHORT).show();

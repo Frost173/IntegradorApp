@@ -64,7 +64,7 @@
                 android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
 
-        <!-- Botón reservas -->
+        <!-- Botón pago -->
         <ImageButton
             android:id="@+id/btnReservas"
             android:layout_width="48dp"
@@ -76,7 +76,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
-            android:visibility="invisible" />
+             />
 
         <!-- Barra de búsqueda -->
         <LinearLayout

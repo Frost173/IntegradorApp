@@ -1,4 +1,3 @@
-// Paquete original
 package com.cochera.miproyectointegrador;
 
 import android.annotation.SuppressLint;
@@ -56,14 +55,12 @@ public class Activity_estacionamientos extends AppCompatActivity {
 
         usuarioId = getIntent().getIntExtra("usuarioId", -1);
 
-        // Validación inicial del usuarioId
         if (usuarioId == -1) {
             Toast.makeText(this, "Error al obtener el ID de usuario", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // Verificar si se regresó de reservas sin confirmar
         boolean reservaExitosa = getIntent().getBooleanExtra("reservaExitosa", true);
         if (!reservaExitosa) {
             Toast.makeText(this, "No se realizó ninguna reserva. Regresando al formulario...", Toast.LENGTH_LONG).show();
@@ -161,9 +158,10 @@ public class Activity_estacionamientos extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // ✅ Botón de pago (QR sin monto)
+        btnReservas.setVisibility(View.VISIBLE);
         btnReservas.setOnClickListener(v -> {
-            Intent intent = new Intent(this, Activity_reservas.class);
-            intent.putExtra("usuarioId", usuarioId); // ✅ Aquí aseguramos que se envía
+            Intent intent = new Intent(this, PagoReservaActivity.class);
             startActivity(intent);
         });
 
@@ -173,7 +171,7 @@ public class Activity_estacionamientos extends AppCompatActivity {
 
         btnPerfil.setOnClickListener(v -> {
             Intent intent = new Intent(this, ActivityPerfil.class);
-            intent.putExtra("usuarioId", usuarioId); // ✅ Aquí también se envía
+            intent.putExtra("usuarioId", usuarioId);
             startActivity(intent);
         });
     }

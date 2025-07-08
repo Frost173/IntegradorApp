@@ -26,6 +26,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- Header superior -->
     <LinearLayout
         android:id="@+id/header"
@@ -50,7 +51,6 @@
             android:adjustViewBounds="true"
             android:contentDescription="Volver" />
 
-
         <TextView
             android:id="@+id/tvTitulo"
             android:layout_width="wrap_content"
@@ -73,7 +73,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Barra inferior de enviar -->
+    <!-- Barra inferior de enviar + cámara -->
     <LinearLayout
         android:id="@+id/messageBar"
         android:layout_width="0dp"
@@ -100,16 +100,26 @@
             android:textSize="15sp"/>
 
         <ImageButton
+            android:id="@+id/btnAbrirCamara"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="8dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="Abrir cámara"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_camera" />
+
+        <ImageButton
             android:id="@+id/btnSend"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/chat_flecha"
             android:background="@android:color/transparent"
             android:contentDescription="Enviar"
-            android:layout_marginStart="8dp"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
             app:tint="@null" />
-
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

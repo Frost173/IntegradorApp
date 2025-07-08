@@ -3,8 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingLeanbackLauncher,MissingLeanbackSupport">
 
+    <!-- PERMISOS (deben ir fuera del <application>) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <uses-feature
-        android:name="android.hardware.touchscreen"
+        android:name="android.hardware.camera"
         android:required="false" />
 
     <application
@@ -18,6 +24,17 @@
         android:theme="@style/Theme.MiApp"
         tools:targetApi="31">
 
+        <!-- PROVIDER PARA CAMARA -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <!-- Actividad principal -->
         <activity
             android:name=".LoginActivity"
@@ -28,7 +45,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Actividades internas -->
+        <!-- Otras actividades -->
         <activity android:name=".Activity_estacionamientos" android:exported="false" />
         <activity android:name=".CalendarioActivity" android:exported="false" />
         <activity android:name=".Activity_reservas" android:exported="false" />
@@ -36,7 +53,6 @@
         <activity android:name=".ActivityAdminint" android:exported="false" />
         <activity android:name=".InterfazCliente" android:exported="false" />
         <activity android:name=".activity_control_espacios" android:exported="false" tools:ignore="Instantiatable" />
-<!--        <activity android:name=".Tarifario" android:exported="false" tools:ignore="MissingClass" />-->
         <activity android:name=".TarifarioActivity" android:exported="false" />
         <activity android:name=".TarifasActivity" android:exported="false" />
         <activity android:name=".MainActivity" android:exported="false" />
@@ -47,12 +63,11 @@
         <activity android:name=".ChatActivity" android:exported="false" />
         <activity android:name=".Register.RegisterActivity" android:exported="false" />
         <activity android:name=".ActivityCambiarContrasena" android:exported="false" />
-        <activity android:name=".DetalleEstacionamientoActivity" />
-        <activity android:name=".ActivityHistorialReserva" />
-        <activity android:name=".ActivityPerfilAdmin"
-            tools:ignore="Instantiatable" />
-        <activity android:name=".ListaUsuariosActivity"/>
+        <activity android:name=".DetalleEstacionamientoActivity" android:exported="false" />
+        <activity android:name=".ActivityHistorialReserva" android:exported="false" />
+        <activity android:name=".ActivityPerfilAdmin" tools:ignore="Instantiatable" />
+        <activity android:name=".ListaUsuariosActivity" android:exported="false" />
+        <activity android:name=".PagoReservaActivity" android:exported="false" />
 
     </application>
-
 </manifest>
