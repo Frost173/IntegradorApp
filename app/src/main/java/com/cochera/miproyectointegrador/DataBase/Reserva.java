@@ -22,11 +22,15 @@ public class Reserva {
 
     // Información de pago y ubicación
     private double pagoHora;
-    private double pago; // este es el que leeremos de la BD
+    private double pago;
     private String ubicacion;
 
-    // Estado de la reserva (ej: "activo", "cancelado", etc.)
+    // Estado de la reserva
     private String estado;
+
+    // Nuevos campos agregados:
+    private String nombreEstacionamiento;
+    private String codigoEspacio;
 
     // Constructor vacío
     public Reserva() {}
@@ -44,9 +48,11 @@ public class Reserva {
     public String getHoraEntrada() { return horaEntrada; }
     public String getHoraSalida() { return horaSalida; }
     public double getPagoHora() { return pagoHora; }
-    public double getPago() { return pago; }  // <--- ahora usamos esto directamente
+    public double getPago() { return pago; }
     public String getUbicacion() { return ubicacion; }
     public String getEstado() { return estado; }
+    public String getNombreEstacionamiento() { return nombreEstacionamiento; }
+    public String getCodigoEspacio() { return codigoEspacio; }
 
     // Setters
     public void setReservaid(int reservaid) { this.reservaid = reservaid; }
@@ -64,6 +70,8 @@ public class Reserva {
     public void setPago(double pago) { this.pago = pago; }
     public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
     public void setEstado(String estado) { this.estado = estado; }
+    public void setNombreEstacionamiento(String nombreEstacionamiento) { this.nombreEstacionamiento = nombreEstacionamiento; }
+    public void setCodigoEspacio(String codigoEspacio) { this.codigoEspacio = codigoEspacio; }
 
     // Alias methods
     public void setId(int id) {
@@ -74,9 +82,7 @@ public class Reserva {
         this.fecha = fechaReserva;
     }
 
-    //  Eliminado el método que calculaba el pago (confundía si los datos no estaban completos)
-    // Si lo necesitas, puedes renombrarlo como getPagoCalculado() y usarlo opcionalmente
-
+    // Cálculo de pago estimado
     public double getPagoCalculado() {
         try {
             String[] entrada = horaEntrada.split(":");
@@ -92,7 +98,4 @@ public class Reserva {
             return 0;
         }
     }
-
-
 }
-

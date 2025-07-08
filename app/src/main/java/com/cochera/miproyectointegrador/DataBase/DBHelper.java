@@ -27,7 +27,7 @@ import java.util.Map;
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
-        super(context, "tu_basedatos_2.db", null, 25);
+        super(context, "tu_basedatos_2.db", null, 26);
     }
 
     @Override
@@ -183,14 +183,27 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 // Tabla Vehiculos
-        db.execSQL("INSERT INTO Vehiculos (vehiculoid, usuarioid, placa, tipo, color) " +
-                "VALUES (1, 2, 'ABC123', 'Carro', 'Rojo');");
-        db.execSQL("INSERT INTO Vehiculos (vehiculoid, usuarioid, placa, tipo, color) " +
-                "VALUES (2, 2, 'XYZ789', 'Moto', 'Negro');");
+        // Tabla Vehiculos (cada uno con su vehiculoid único)
+        db.execSQL("INSERT INTO Vehiculos (vehiculoid, usuarioid, placa, tipo, color) VALUES (1, 2, 'ABC123', 'Carro', 'Rojo');");     // Para La Victoria
+        db.execSQL("INSERT INTO Vehiculos (vehiculoid, usuarioid, placa, tipo, color) VALUES (2, 2, 'XYZ789', 'Moto', 'Negro');");     // Para Los Olivos
+        db.execSQL("INSERT INTO Vehiculos (vehiculoid, usuarioid, placa, tipo, color) VALUES (3, 2, 'CAM456', 'Camion', 'Azul');");    // Para San Borja
+        db.execSQL("INSERT INTO Vehiculos (vehiculoid, usuarioid, placa, tipo, color) VALUES (4, 2, 'CAR999', 'Carro', 'Blanco');");   // Para Chaclacayo
+
 
 // Tabla Reservas
+        // Reservas con cada vehiculoid correspondiente y fechas bien formateadas
         db.execSQL("INSERT INTO Reservas (reservaid, usuarioid, espacioid, vehiculoid, fechareserva, horaentrada, horasalida, estado) " +
-                "VALUES (1, 2, 2, 1, '2025-05-17', '08:00', '10:00', 'Confirmada');");
+                "VALUES (1, 2, 2, 1, '20/07/2025', '08:00', '10:00', 'Confirmada');"); // La Victoria - Carro
+
+        db.execSQL("INSERT INTO Reservas (reservaid, usuarioid, espacioid, vehiculoid, fechareserva, horaentrada, horasalida, estado) " +
+                "VALUES (2, 2, 9, 2, '20/07/2025', '09:00', '11:00', 'Confirmada');"); // Los Olivos - Moto
+
+        db.execSQL("INSERT INTO Reservas (reservaid, usuarioid, espacioid, vehiculoid, fechareserva, horaentrada, horasalida, estado) " +
+                "VALUES (3, 2, 13, 3, '20/07/2025', '10:00', '12:00', 'Confirmada');"); // San Borja - Camion
+
+        db.execSQL("INSERT INTO Reservas (reservaid, usuarioid, espacioid, vehiculoid, fechareserva, horaentrada, horasalida, estado) " +
+                "VALUES (4, 2, 16, 4, '20/07/2025', '07:00', '09:00', 'Confirmada');"); // Chaclacayo - Carro
+
 
 // Tabla Pagos
         db.execSQL("INSERT INTO Pagos (pagoid, reservaid, monto, fechapago) " +
@@ -342,20 +355,25 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
     }
     public boolean tieneReservasEnFecha(String fecha) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM reservas WHERE fechareserva = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{fecha});
-        boolean tieneReserva = false;
+        boolean hayReservas = false;
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
 
-        if (cursor != null) {
+        try {
+            db = this.getReadableDatabase();
+            String query = "SELECT COUNT(*) FROM Reservas WHERE fechareserva = ?";
+            cursor = db.rawQuery(query, new String[]{fecha});
             if (cursor.moveToFirst()) {
                 int count = cursor.getInt(0);
-                tieneReserva = count > 0;
+                hayReservas = count > 0;
             }
-            cursor.close();
+        } catch (Exception e) {
+            Log.e("DBHelper", "Error al verificar reservas en fecha: " + fecha, e);
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) db.close();
         }
-
-        return tieneReserva;
+        return hayReservas;
     }
 
 
@@ -495,33 +513,43 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             db = this.getReadableDatabase();
 
-            cursor = db.rawQuery("SELECT * FROM Reservas WHERE fechareserva = ?", new String[]{fecha});
+            String query = "SELECT r.*, u.nombre, u.apellido, v.tipo, e.codigo, e.ubicacion, est.nombre AS nombre_estacionamiento " +
+                    "FROM Reservas r " +
+                    "LEFT JOIN Usuarios u ON r.usuarioid = u.usuarioid " +
+                    "LEFT JOIN Vehiculos v ON r.vehiculoid = v.vehiculoid " +
+                    "LEFT JOIN Espacios e ON r.espacioid = e.espacioid " +
+                    "LEFT JOIN Estacionamientos est ON e.estacionamientoid = est.estacionamientoid " +  // ⬅️ aquí va el JOIN correcto
+                    "WHERE r.fechareserva = ?";
+
+            cursor = db.rawQuery(query, new String[]{fecha});
 
             if (cursor.moveToFirst()) {
-                int idxPlaca = cursor.getColumnIndex("placa");
-                int idxHoraEntrada = cursor.getColumnIndex("horaentrada");
-                int idxHoraSalida = cursor.getColumnIndex("horasalida");
-                int idxFecha = cursor.getColumnIndex("fechareserva");
-                int idxPago = cursor.getColumnIndex("pago");
-                int idxUbicacion = cursor.getColumnIndex("ubicacion");
-
                 do {
                     Reserva r = new Reserva();
+                    r.setReservaid(cursor.getInt(cursor.getColumnIndexOrThrow("reservaid")));
+                    r.setUsuarioId(cursor.getInt(cursor.getColumnIndexOrThrow("usuarioid")));
+                    r.setEspacioId(cursor.getInt(cursor.getColumnIndexOrThrow("espacioid")));
+                    r.setVehiculoId(cursor.getInt(cursor.getColumnIndexOrThrow("vehiculoid")));
+                    r.setPlaca(cursor.getString(cursor.getColumnIndexOrThrow("placa")));
+                    r.setHoraEntrada(cursor.getString(cursor.getColumnIndexOrThrow("horaentrada")));
+                    r.setHoraSalida(cursor.getString(cursor.getColumnIndexOrThrow("horasalida")));
+                    r.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fechareserva")));
+                    r.setPago(cursor.getDouble(cursor.getColumnIndexOrThrow("pago")));
+                    r.setUbicacion(cursor.getString(cursor.getColumnIndexOrThrow("ubicacion")));
+                    r.setEstado(cursor.getString(cursor.getColumnIndexOrThrow("estado")));
 
-                    r.setPlaca((idxPlaca != -1 && !cursor.isNull(idxPlaca)) ? cursor.getString(idxPlaca) : "N/A");
-                    r.setHoraEntrada((idxHoraEntrada != -1 && !cursor.isNull(idxHoraEntrada)) ? cursor.getString(idxHoraEntrada) : "00:00");
-                    r.setHoraSalida((idxHoraSalida != -1 && !cursor.isNull(idxHoraSalida)) ? cursor.getString(idxHoraSalida) : "00:00");
-                    r.setFecha((idxFecha != -1 && !cursor.isNull(idxFecha)) ? cursor.getString(idxFecha) : "00/00/0000");
-                    r.setPago((idxPago != -1 && !cursor.isNull(idxPago)) ? cursor.getDouble(idxPago) : 0.0);
-                    r.setUbicacion((idxUbicacion != -1 && !cursor.isNull(idxUbicacion)) ? cursor.getString(idxUbicacion) : "No definido");
+                    // Datos del JOIN
+                    r.setNombreUsuario(cursor.getString(cursor.getColumnIndexOrThrow("nombre")));
+                    r.setApellidoUsuario(cursor.getString(cursor.getColumnIndexOrThrow("apellido")));
+                    r.setTipoVehiculo(cursor.getString(cursor.getColumnIndexOrThrow("tipo")));
+                    r.setCodigoEspacio(cursor.getString(cursor.getColumnIndexOrThrow("codigo")));
+                    r.setNombreEstacionamiento(cursor.getString(cursor.getColumnIndexOrThrow("nombre_estacionamiento")));
 
                     lista.add(r);
                 } while (cursor.moveToNext());
-            } else {
-                Log.e("DBHelper", "No se encontraron reservas para la fecha: " + fecha);
             }
         } catch (Exception e) {
-            Log.e("DBHelper", "Error al obtener reservas por fecha", e);
+            Log.e("DBHelper", "Error al obtener reservas con JOIN", e);
         } finally {
             if (cursor != null) cursor.close();
             if (db != null) db.close();
@@ -836,10 +864,6 @@ public class DBHelper extends SQLiteOpenHelper {
             return -1;
         }
     }
-
-
-
-
 
 }
 

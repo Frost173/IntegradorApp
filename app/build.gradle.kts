@@ -48,7 +48,7 @@ dependencies {
 
     implementation ("com.squareup.picasso:picasso:2.8")
 
-
+    implementation ("androidx.cardview:cardview:1.0.0")
     // Dependencias generales
     implementation(libs.appcompat)
     implementation(libs.material)

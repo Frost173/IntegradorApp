@@ -5,18 +5,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cochera.miproyectointegrador.DataBase.Reserva;
-import com.cochera.miproyectointegrador.R;
 
 import java.util.List;
 
 public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaViewHolder> {
 
-    private Context context;
-    private List<Reserva> reservaList;
+    private final Context context;
+    private final List<Reserva> reservaList;
 
     public ReservaAdapter(Context context, List<Reserva> reservaList) {
         this.context = context;
@@ -34,45 +34,33 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     public void onBindViewHolder(@NonNull ReservaViewHolder holder, int position) {
         Reserva reserva = reservaList.get(position);
 
-        // Mostrar placa
-        holder.tvPlaca.setText("Placa: " + (reserva.getPlaca() != null ? reserva.getPlaca() : "N/A"));
-
-        // Mostrar tipo de vehículo
-        holder.tvTipoVehiculo.setText("Tipo: " + (reserva.getTipoVehiculo() != null ? reserva.getTipoVehiculo() : "N/A"));
-
-        // Mostrar fecha y hora
-        holder.tvFecha.setText("Fecha: " + (reserva.getFecha() != null ? reserva.getFecha() : "N/A"));
-        holder.tvHoraEntrada.setText("Entrada: " + (reserva.getHoraEntrada() != null ? reserva.getHoraEntrada() : "00:00"));
-        holder.tvHoraSalida.setText("Salida: " + (reserva.getHoraSalida() != null ? reserva.getHoraSalida() : "00:00"));
-
-        // Mostrar ubicación (si existe en el layout)
-        if (holder.tvUbicacion != null) {
-            String ubicacion = reserva.getUbicacion();
-            holder.tvUbicacion.setText("Ubicación: " + (ubicacion != null && !ubicacion.isEmpty() ? ubicacion : "No definida"));
-        }
-
-        // Mostrar pago total con formato decimal
+        holder.tvPlaca.setText("Placa: " + safeText(reserva.getPlaca(), "N/A"));
+        holder.tvTipoVehiculo.setText("Tipo: " + safeText(reserva.getTipoVehiculo(), "N/A"));
+        holder.tvFecha.setText("Fecha: " + safeText(reserva.getFecha(), "N/A"));
+        holder.tvHoraEntrada.setText("Entrada: " + safeText(reserva.getHoraEntrada(), "00:00"));
+        holder.tvHoraSalida.setText("Salida: " + safeText(reserva.getHoraSalida(), "00:00"));
+        holder.tvUbicacion.setText("Ubicación: " + safeText(reserva.getUbicacion(), "No definida"));
         holder.tvPagoTotal.setText(String.format("Pago: S/ %.2f", reserva.getPago()));
+        holder.tvEstado.setText("Estado: " + safeText(reserva.getEstado(), "Pendiente"));
 
-        // Mostrar nombre y apellido del usuario (si existe en el layout)
-        if (holder.tvUsuario != null) {
-            String nombre = reserva.getNombreUsuario() != null ? reserva.getNombreUsuario() : "";
-            String apellido = reserva.getApellidoUsuario() != null ? reserva.getApellidoUsuario() : "";
-            String usuarioCompleto = (nombre + " " + apellido).trim();
-            holder.tvUsuario.setText("Usuario: " + (usuarioCompleto.isEmpty() ? "No definido" : usuarioCompleto));
-        }
+        String nombre = reserva.getNombreUsuario() != null ? reserva.getNombreUsuario() : "";
+        String apellido = reserva.getApellidoUsuario() != null ? reserva.getApellidoUsuario() : "";
+        String usuarioCompleto = (nombre + " " + apellido).trim();
+        holder.tvUsuario.setText("Usuario: " + (usuarioCompleto.isEmpty() ? "No definido" : usuarioCompleto));
+
+        holder.tvEstacionamiento.setText("Estacionamiento: " + safeText(reserva.getNombreEstacionamiento(), "Desconocido"));
+        holder.tvEspacio.setText("Espacio: " + safeText(reserva.getCodigoEspacio(), "N/A"));
     }
-
-
 
     @Override
     public int getItemCount() {
-        return reservaList.size();
+        return reservaList != null ? reservaList.size() : 0;
     }
 
-    public static class ReservaViewHolder extends RecyclerView.ViewHolder {
+    static class ReservaViewHolder extends RecyclerView.ViewHolder {
         TextView tvPlaca, tvTipoVehiculo, tvHoraEntrada, tvHoraSalida, tvFecha, tvPagoTotal,
-                tvUbicacion, tvEstado, tvReservaDetalle, tvUsuario; //  CORREGIDO: tvUsuario agregado
+                tvUbicacion, tvEstado, tvReservaDetalle, tvUsuario,
+                tvEstacionamiento, tvEspacio;
 
         public ReservaViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,7 +74,12 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             tvEstado = itemView.findViewById(R.id.tvEstado);
             tvReservaDetalle = itemView.findViewById(R.id.tvReservaDetalle);
             tvUsuario = itemView.findViewById(R.id.tvUsuario);
+            tvEstacionamiento = itemView.findViewById(R.id.tvEstacionamiento);
+            tvEspacio = itemView.findViewById(R.id.tvEspacio);
         }
     }
-}
 
+    private String safeText(String text, String defaultText) {
+        return (text != null && !text.trim().isEmpty()) ? text : defaultText;
+    }
+}
