@@ -42,12 +42,19 @@ public class ListaUsuariosActivity extends AppCompatActivity {
     }
 
     private void cargarTodosLosUsuarios(String miUid) {
-        firestore.collection("usuarios").get().addOnSuccessListener(snapshot -> {
+        firestore.collection("Usuarios").get().addOnSuccessListener(snapshot -> {
             for (DocumentSnapshot doc : snapshot.getDocuments()) {
                 String uid = doc.getId();
                 if (uid.equals(miUid)) continue; // no incluirte a ti mismo
 
-                Usuario usuario = doc.toObject(Usuario.class);
+                Usuario usuario = new Usuario();
+                usuario.setUid(uid);
+                usuario.setNombre(doc.getString("nombre"));
+                usuario.setApellido(doc.getString("apellido"));
+                usuario.setCorreo(doc.getString("correo"));
+                usuario.setCelular(doc.getString("celular"));
+                usuario.setPerfil(doc.getString("perfil"));
+
                 if (usuario == null) continue;
                 usuario.setUid(uid);
 

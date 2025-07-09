@@ -122,24 +122,32 @@ public class ChatActivity extends AppCompatActivity {
         String texto = etMessage.getText().toString().trim();
         if (texto.isEmpty()) return;
 
-        Mensaje mensaje = new Mensaje(
-                texto,
-                nombreEmisor,
-                userActual.getUid(),
-                uidDestino,
-                System.currentTimeMillis()
-        );
+        FirebaseFirestore.getInstance()
+                .collection("Usuarios")
+                .document(userActual.getUid())
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    String nombre = snapshot.getString("nombre");
 
-        // Enviar mensaje al chat
-        mensajesRef.push().setValue(mensaje);
+                    Mensaje mensaje = new Mensaje(
+                            texto,
+                            nombre != null ? nombre : "Desconocido",
+                            userActual.getUid(),
+                            uidDestino,
+                            System.currentTimeMillis()
+                    );
 
-        // Limpiar campo de texto
-        etMessage.setText("");
+                    // Enviar mensaje al chat
+                    mensajesRef.push().setValue(mensaje);
 
-        // ✅ Registrar la relación de chat en "usuariosChats"
-        DatabaseReference refUsuariosChats = FirebaseDatabase.getInstance().getReference("usuariosChats");
-        refUsuariosChats.child(userActual.getUid()).child(uidDestino).setValue(true);
-        refUsuariosChats.child(uidDestino).child(userActual.getUid()).setValue(true);
+                    // Limpiar campo de texto
+                    etMessage.setText("");
+
+                    // Registrar relación del chat
+                    DatabaseReference refUsuariosChats = FirebaseDatabase.getInstance().getReference("usuariosChats");
+                    refUsuariosChats.child(userActual.getUid()).child(uidDestino).setValue(true);
+                    refUsuariosChats.child(uidDestino).child(userActual.getUid()).setValue(true);
+                });
     }
 
     private String getChatId(String uid1, String uid2) {
