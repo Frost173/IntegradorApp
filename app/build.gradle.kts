@@ -45,8 +45,11 @@ dependencies {
 
     implementation ("com.google.firebase:firebase-auth:22.3.1")
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
-
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation ("com.squareup.picasso:picasso:2.8")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation ("org.json:json:20210307")
 
     implementation ("androidx.cardview:cardview:1.0.0")
     // Dependencias generales

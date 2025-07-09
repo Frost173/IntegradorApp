@@ -3,10 +3,13 @@ package com.cochera.miproyectointegrador;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,8 +21,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private static final int TIPO_ENVIADO = 1;
     private static final int TIPO_RECIBIDO = 2;
 
-    private List<Mensaje> mensajes;
-    private String uidUsuario;
+    private final List<Mensaje> mensajes;
+    private final String uidUsuario;
 
     public MessageAdapter(List<Mensaje> mensajes, String uidUsuario) {
         this.mensajes = mensajes;
@@ -35,27 +38,44 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view;
-        if (viewType == TIPO_ENVIADO) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mensaje_enviado, parent, false);
-        } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mensaje_recibido, parent, false);
-        }
+        View view = LayoutInflater.from(parent.getContext()).inflate(
+                viewType == TIPO_ENVIADO ? R.layout.item_mensaje_enviado : R.layout.item_mensaje_recibido,
+                parent,
+                false
+        );
         return new MessageViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Mensaje mensaje = mensajes.get(position);
-        holder.tvTexto.setText(mensaje.getTexto());
 
-        if (holder.tvUsuario != null) {
-            holder.tvUsuario.setText(mensaje.getAutor());
+        // Mostrar texto (si existe)
+        if (mensaje.getTexto() != null && !mensaje.getTexto().isEmpty()) {
+            holder.tvTexto.setVisibility(View.VISIBLE);
+            holder.tvTexto.setText(mensaje.getTexto());
+        } else {
+            holder.tvTexto.setVisibility(View.GONE);
         }
 
-        if (holder.tvHora != null) {
-            String horaFormateada = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(mensaje.getTimestamp()));
-            holder.tvHora.setText(horaFormateada);
+        // Mostrar imagen (si existe)
+        if (mensaje.getUrlImagen() != null && !mensaje.getUrlImagen().isEmpty()) {
+            holder.imgMensaje.setVisibility(View.VISIBLE);
+            Glide.with(holder.itemView.getContext())
+                    .load(mensaje.getUrlImagen())
+                    .into(holder.imgMensaje);
+        } else {
+            holder.imgMensaje.setVisibility(View.GONE);
+        }
+
+        // Mostrar hora
+        String hora = new SimpleDateFormat("HH:mm", Locale.getDefault())
+                .format(new Date(mensaje.getTimestamp()));
+        holder.tvHora.setText(hora);
+
+        // Mostrar autor si existe (solo para mensajes recibidos)
+        if (holder.tvUsuario != null) {
+            holder.tvUsuario.setText(mensaje.getAutor());
         }
     }
 
@@ -66,12 +86,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView tvUsuario, tvTexto, tvHora;
+        ImageView imgMensaje;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTexto = itemView.findViewById(R.id.tvTexto);
-            tvUsuario = itemView.findViewById(R.id.tvUsuario); // Puede ser null si es mensaje enviado
-            tvHora = itemView.findViewById(R.id.tvHora);       // Agregado para mostrar la hora
+            tvHora = itemView.findViewById(R.id.tvHora);
+            imgMensaje = itemView.findViewById(R.id.imgMensaje);
+
+            // Solo existe en mensajes recibidos
+            try {
+                tvUsuario = itemView.findViewById(R.id.tvUsuario);
+            } catch (Exception e) {
+                tvUsuario = null;
+            }
         }
     }
 }

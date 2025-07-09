@@ -13,6 +13,28 @@
         android:orientation="vertical"
         android:elevation="2dp">
 
+        <!-- Imagen del mensaje (solo si existe) -->
+        <ImageView
+            android:id="@+id/imgMensaje"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+
+        <!-- Nombre del usuario -->
+        <TextView
+            android:id="@+id/tvUsuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre del autor"
+            android:textColor="#555555"
+            android:textSize="13sp"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="sans-serif-medium" />
+
+
+        <!-- Texto del mensaje -->
         <TextView
             android:id="@+id/tvTexto"
             android:layout_width="wrap_content"
@@ -22,6 +44,7 @@
             android:textSize="15sp"
             android:fontFamily="sans-serif" />
 
+        <!-- Hora -->
         <TextView
             android:id="@+id/tvHora"
             android:layout_width="wrap_content"
@@ -33,4 +56,3 @@
             android:layout_gravity="end" />
     </LinearLayout>
 </LinearLayout>
-
