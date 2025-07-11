@@ -27,7 +27,7 @@ import java.util.Map;
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
-        super(context, "tu_basedatos_2.db", null, 26);
+        super(context, "tu_basedatos_2.db", null, 29);
     }
 
     @Override
@@ -125,10 +125,14 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO Perfiles (perfilid, nombreperfil) VALUES (2, 'Cliente');");
 
 // Insertar datos iniciales en Usuarios con perfil como texto
-        db.execSQL("INSERT INTO Usuarios (usuarioid, perfil, nombre, apellido, correo, contrasena) " +
-                "VALUES (1, 'Administrador', 'admin', 'admin', 'admin@gmail.com', '1234');");
-        db.execSQL("INSERT INTO Usuarios (usuarioid, perfil, nombre, apellido, correo, contrasena) " +
-                "VALUES (2, 'Cliente', 'cliente', 'cliente', 'cliente@gmail.com', '1234');");
+        // Insertar usuario Administrador actualizado con nuevo UID
+        db.execSQL("INSERT INTO Usuarios (usuarioid, perfil, nombre, apellido, correo, contrasena, celular, estado, edad, uid) " +
+                "VALUES (1, 'Administrador', 'Admin', 'Estacionamiento', 'w990592@gmail.com', '1234', '984259223', 'activo', 20, 'zDSrcPTgwXRLJcYPymyMXPsl1EZ2');");
+
+        // Insertar usuario Cliente (se insertará como 'Cliente')
+        db.execSQL("INSERT INTO Usuarios (usuarioid, perfil, nombre, apellido, correo, contrasena, celular, uid) " +
+                "VALUES (2, 'Cliente', 'cliente', 'cliente', 'cliente@gmail.com', '1234', '', '');");
+
 
         // Tabla Estacionamientos
         db.execSQL("INSERT INTO Estacionamientos (estacionamientoid, nombre, direccion, propietarioid) " +
@@ -864,6 +868,102 @@ public class DBHelper extends SQLiteOpenHelper {
             return -1;
         }
     }
+    public int obtenerUsuarioIdPorUid(String uidFirebase) {
+        int usuarioId = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT usuarioid FROM Usuarios WHERE uid = ?", new String[]{uidFirebase});
+        if (cursor.moveToFirst()) {
+            usuarioId = cursor.getInt(0);
+        }
+        cursor.close();
+        return usuarioId;
+    }
+
+    public boolean tieneReservasEnFechaYUsuario(String fecha, int usuarioId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM Reservas WHERE fechareserva = ? AND usuarioid = ?", new String[]{fecha, String.valueOf(usuarioId)});
+        boolean tiene = false;
+        if (cursor.moveToFirst()) {
+            tiene = cursor.getInt(0) > 0;
+        }
+        cursor.close();
+        return tiene;
+    }
+
+    public List<Reserva> obtenerReservasPorFechaYUsuario(String fecha, int usuarioId) {
+        List<Reserva> reservas = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+
+        String query = "SELECT " +
+                "r.reservaid, r.usuarioid, r.espacioid, r.vehiculoid, r.fechareserva, " +
+                "r.horaentrada, r.horasalida, r.estado, r.pago, " +
+                "v.placa AS placa, v.tipo AS tipoVehiculo, " +
+                "e.codigo AS codigoEspacio, e.ubicacion AS ubicacion, " +
+                "est.nombre AS nombreEstacionamiento, " +
+                "u.nombre || ' ' || u.apellido AS nombreUsuario " +
+                "FROM Reservas r " +
+                "LEFT JOIN Vehiculos v ON r.vehiculoid = v.vehiculoid " +
+                "LEFT JOIN Espacios e ON r.espacioid = e.espacioid " +
+                "LEFT JOIN Estacionamientos est ON e.estacionamientoid = est.estacionamientoid " +  // ✅ CORREGIDO
+                "LEFT JOIN Usuarios u ON r.usuarioid = u.usuarioid " +
+                "WHERE r.fechareserva = ? AND r.usuarioid = ? " +
+                "ORDER BY r.horaentrada ASC";
+
+        try {
+            cursor = db.rawQuery(query, new String[]{fecha, String.valueOf(usuarioId)});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Reserva reserva = new Reserva();
+                    reserva.setReservaid(cursor.getInt(cursor.getColumnIndexOrThrow("reservaid")));
+                    reserva.setUsuarioId(cursor.getInt(cursor.getColumnIndexOrThrow("usuarioid")));
+                    reserva.setEspacioId(cursor.getInt(cursor.getColumnIndexOrThrow("espacioid")));
+                    reserva.setVehiculoId(cursor.getInt(cursor.getColumnIndexOrThrow("vehiculoid")));
+                    reserva.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fechareserva")));
+                    reserva.setHoraEntrada(cursor.getString(cursor.getColumnIndexOrThrow("horaentrada")));
+                    reserva.setHoraSalida(cursor.getString(cursor.getColumnIndexOrThrow("horasalida")));
+                    reserva.setEstado(cursor.getString(cursor.getColumnIndexOrThrow("estado")));
+                    reserva.setPago(cursor.getDouble(cursor.getColumnIndexOrThrow("pago")));
+
+                    // JOIN extras
+                    reserva.setPlaca(cursor.getString(cursor.getColumnIndexOrThrow("placa")));
+                    reserva.setTipoVehiculo(cursor.getString(cursor.getColumnIndexOrThrow("tipoVehiculo")));
+                    reserva.setCodigoEspacio(cursor.getString(cursor.getColumnIndexOrThrow("codigoEspacio")));
+                    reserva.setUbicacion(cursor.getString(cursor.getColumnIndexOrThrow("ubicacion")));
+                    reserva.setNombreEstacionamiento(cursor.getString(cursor.getColumnIndexOrThrow("nombreEstacionamiento")));
+                    reserva.setNombreUsuario(cursor.getString(cursor.getColumnIndexOrThrow("nombreUsuario")));
+
+                    reservas.add(reserva);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DBHelper", "Error al obtener reservas por fecha y usuario", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+
+        return reservas;
+    }
+
+    public int obtenerEstacionamientoIdPorUbicacion(String ubicacion) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT estacionamientoid FROM Reservas WHERE ubicacion = ? LIMIT 1",
+                new String[]{ubicacion}
+        );
+
+        int id = -1;
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(cursor.getColumnIndexOrThrow("estacionamientoid"));
+        }
+        cursor.close();
+        return id;
+    }
+
+
+
 
 }
 

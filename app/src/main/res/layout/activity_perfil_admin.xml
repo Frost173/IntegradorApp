@@ -5,20 +5,24 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Perfil">
+    android:background="#F8F8F8"
+    tools:context=".ActivityPerfilAdmin">
 
-    <!-- Imagen de perfil -->
-    <TextView
+    <!-- Imagen redonda de perfil -->
+    <ImageView
         android:id="@+id/imgPerfil"
-        android:layout_width="163dp"
-        android:layout_height="122dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginTop="32dp"
-        android:background="@drawable/perfil_cliente"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/perfil_cliente"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle_background"
+        android:contentDescription="Imagen de perfil"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Texto con nombre de usuario (saludo) -->
+    <!-- Texto de Bienvenida -->
     <TextView
         android:id="@+id/tvNombreUsuario"
         android:layout_width="wrap_content"
@@ -26,95 +30,97 @@
         android:text="Bienvenido, Admin"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:textColor="#333333"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/imgPerfil"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Label para descripción -->
-    <TextView
-        android:id="@+id/textDescripcion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Descripción"
-        android:textSize="13sp"
-        app:layout_constraintTop_toBottomOf="@id/tvNombreUsuario"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp" />
-
-    <!-- EditText para descripción -->
-    <EditText
-        android:id="@+id/editTextDescripcion"
-        android:layout_width="0dp"
-        android:layout_height="119dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/txt_datos"
-        android:hint="Descripción"
-        android:inputType="textMultiLine"
-        android:padding="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textDescripcion" />
-
-    <!-- Label para nombre -->
+    <!-- Etiqueta de nombre -->
     <TextView
         android:id="@+id/textNombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Nombre"
-        android:textSize="13sp"
-        app:layout_constraintTop_toBottomOf="@id/editTextDescripcion"
+        android:text="Nombre completo"
+        android:textSize="14sp"
+        android:textColor="#555555"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/tvNombreUsuario"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp" />
 
-    <!-- EditText para nombre (solo lectura) -->
     <EditText
         android:id="@+id/editTextNombre"
         android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/txt_datos"
-        android:hint="Nombre completo"
-        android:inputType="textPersonName"
+        android:layout_height="wrap_content"
+        android:hint="Nombre"
+        android:background="@drawable/txt_datos2"
         android:padding="12dp"
         android:enabled="false"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/textNombre"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textNombre" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp" />
 
-    <!-- Label para correo -->
+    <!-- Etiqueta de correo -->
     <TextView
         android:id="@+id/textCorreo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Correo electrónico"
+        android:textSize="14sp"
+        android:textColor="#555555"
         android:layout_marginTop="16dp"
-        android:text="Correo"
-        android:textSize="13sp"
         app:layout_constraintTop_toBottomOf="@id/editTextNombre"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp" />
 
-    <!-- EditText para correo (solo lectura) -->
     <EditText
         android:id="@+id/editTextCorreo"
         android:layout_width="0dp"
-        android:layout_height="57dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/txt_datos"
-        android:hint="Correo electrónico"
-        android:inputType="textEmailAddress"
+        android:layout_height="wrap_content"
+        android:hint="Correo"
+        android:background="@drawable/txt_datos2"
         android:padding="12dp"
         android:enabled="false"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/textCorreo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textCorreo" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp" />
 
-    <!-- Barra inferior con botones -->
+    <!-- Etiqueta de perfil -->
+    <TextView
+        android:id="@+id/textPerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tipo de perfil"
+        android:textSize="14sp"
+        android:textColor="#555555"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/editTextCorreo"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <EditText
+        android:id="@+id/editTextPerfil"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Administrador"
+        android:background="@drawable/txt_datos2"
+        android:padding="12dp"
+        android:enabled="false"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/textPerfil"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp" />
+
+    <!-- Barra de navegación inferior -->
     <LinearLayout
         android:id="@+id/barraInferior"
         android:layout_width="0dp"

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MiProyectoIntegrador</string>
+    <string name="app_name">Cochera Sin Techo</string>
 
     <!-- Comandos para accesibilidades -->
     <string name="navigation_drawer_open">Abrir menú lateral</string>

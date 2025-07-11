@@ -62,6 +62,7 @@ public class Activity_reservas extends AppCompatActivity {
         etFecha.setOnClickListener(v -> mostrarDatePicker());
         etHoraEntrada.setOnClickListener(v -> mostrarTimePicker(etHoraEntrada));
         etHoraSalida.setOnClickListener(v -> mostrarTimePicker(etHoraSalida));
+
         btnReservar.setOnClickListener(v -> guardarReserva());
 
         btnSeleccionarEspacio.setOnClickListener(v -> {
@@ -216,7 +217,7 @@ public class Activity_reservas extends AppCompatActivity {
         String salida = etHoraSalida.getText().toString().trim();
         String placa = etPlaca.getText().toString().trim().toUpperCase(Locale.getDefault());
 
-        if (fecha.isEmpty() || entrada.isEmpty() || salida.isEmpty() || placa.isEmpty() || tarifaSeleccionada == null || espacioId == 0) {
+        if (fecha.isEmpty() || entrada.isEmpty() || salida.isEmpty() || placa.isEmpty() || tarifaSeleccionada == null || espacioId == 0 || estacionamientoId == -1) {
             Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -241,12 +242,15 @@ public class Activity_reservas extends AppCompatActivity {
         valores.put("estado", "Pendiente");
         valores.put("placa", placa);
         valores.put("ubicacion", ubicacion);
+        valores.put("estacionamientoid", estacionamientoId);
 
         long id = db.insert("Reservas", null, valores);
         db.close();
 
         if (id != -1) {
-            subirReservaAFirebase(id, usuarioId, espacioId, tarifaSeleccionada.getTarifaid(), fecha, entrada, salida, precioTexto, "Pendiente", placa, ubicacion);
+            Toast.makeText(this, "✅ La reserva se guardó correctamente", Toast.LENGTH_SHORT).show();
+
+            subirReservaAFirebase(id, usuarioId, espacioId, tarifaSeleccionada.getTarifaid(), fecha, entrada, salida, precioTexto, "Pendiente", placa, ubicacion, estacionamientoId);
 
             double monto = Double.parseDouble(precioTexto);
             Intent intent = new Intent(this, PagoReservaActivity.class);
@@ -259,7 +263,7 @@ public class Activity_reservas extends AppCompatActivity {
         }
     }
 
-    private void subirReservaAFirebase(long idReserva, int usuarioId, int espacioId, int vehiculoId, String fecha, String entrada, String salida, String pago, String estado, String placa, String ubicacion) {
+    private void subirReservaAFirebase(long idReserva, int usuarioId, int espacioId, int vehiculoId, String fecha, String entrada, String salida, String pago, String estado, String placa, String ubicacion, int estacionamientoId) {
         if (uidFirebase == null || uidFirebase.isEmpty()) return;
 
         Map<String, Object> reservaMap = new HashMap<>();
@@ -274,6 +278,7 @@ public class Activity_reservas extends AppCompatActivity {
         reservaMap.put("estado", estado);
         reservaMap.put("placa", placa);
         reservaMap.put("ubicacion", ubicacion);
+        reservaMap.put("estacionamientoid", estacionamientoId);
 
         firestore.collection("reservas")
                 .document(String.valueOf(idReserva))
@@ -288,6 +293,11 @@ public class Activity_reservas extends AppCompatActivity {
         if (reqCode == 1 && resCode == RESULT_OK && data != null) {
             espacioId = data.getIntExtra("espacioid", 0);
             codigoEspacio = data.getStringExtra("codigo");
+
+            if (data.hasExtra("estacionamientoId")) {
+                estacionamientoId = data.getIntExtra("estacionamientoId", estacionamientoId);
+            }
+
             Toast.makeText(this, "Espacio seleccionado: " + codigoEspacio, Toast.LENGTH_SHORT).show();
         }
     }

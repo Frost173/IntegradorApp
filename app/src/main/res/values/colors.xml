@@ -10,9 +10,15 @@
     <color name="colorDiaSeleccionado">#1976A6</color> <!-- azul para seleccionado -->
     <color name="colorDiaPresionado">#90CAF9</color>  <!-- azul claro para presionado -->
     <color name="estado_disponible">#4CAF50</color> <!-- Verde -->
-    <color name="estado_reservado">#FF9800</color> <!-- Naranja -->
-    <color name="estado_ocupado">#F44336</color>   <!-- Rojo -->
+    <color name="estado_reservado">#FF9800</color>
+    <color name="estado_ocupado">#F44336</color>
     <color name="verdeReserva">#4CAF50</color>
+    <color name="verdeSeleccionado">#388E3C</color>
+    <color name="colorTextoTitulo">#212121</color>
+
+
+
+
 
 
 </resources>

@@ -2,6 +2,7 @@ package com.cochera.miproyectointegrador;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -16,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cochera.miproyectointegrador.DataBase.DBHelper;
 import com.cochera.miproyectointegrador.DataBase.Reserva;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,10 +35,15 @@ public class CalendarioActivity extends AppCompatActivity {
     private RecyclerView rvReservas;
     private TextView tvMesAnio, tvReservasTitulo;
 
+    private TextView ultimoSeleccionado;
+
     private Calendar calendar;
     private DBHelper dbHelper;
     private ReservaAdapter reservaAdapter;
     private int diaSeleccionado = -1;
+    private int usuarioActualId = -1;
+
+    private FirebaseUser usuarioFirebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +71,16 @@ public class CalendarioActivity extends AppCompatActivity {
     private void inicializarComponentes() {
         calendar = Calendar.getInstance();
         dbHelper = new DBHelper(this);
+
+        usuarioFirebase = FirebaseAuth.getInstance().getCurrentUser();
+        if (usuarioFirebase != null) {
+            usuarioActualId = dbHelper.obtenerUsuarioIdPorUid(usuarioFirebase.getUid());
+            Log.d(TAG, "Usuario Firebase UID: " + usuarioFirebase.getUid() + " | UsuarioID SQLite: " + usuarioActualId);
+        } else {
+            Toast.makeText(this, "No hay sesión iniciada", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         rvReservas.setLayoutManager(new LinearLayoutManager(this));
         diaSeleccionado = calendar.get(Calendar.DAY_OF_MONTH);
@@ -91,7 +110,7 @@ public class CalendarioActivity extends AppCompatActivity {
         });
 
         btnCalendario.setOnClickListener(v -> {
-            Toast.makeText(this, "Ya estás en Calendario", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ya estás en el calendario", Toast.LENGTH_SHORT).show();
         });
 
         btnPerfil.setOnClickListener(v -> {
@@ -104,34 +123,19 @@ public class CalendarioActivity extends AppCompatActivity {
         rvReservas.setAdapter(null);
     }
 
+
     private void mostrarCalendario() {
         gridCalendario.removeAllViews();
         gridDiasSemana.removeAllViews();
 
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat formatoMes = new SimpleDateFormat("MMMM yyyy", new Locale("es", "ES"));
-        tvMesAnio.setText(formatoMes.format(calendar.getTime()).toUpperCase());
+        SimpleDateFormat sdfMes = new SimpleDateFormat("MMMM yyyy", new Locale("es", "ES"));
+        tvMesAnio.setText(sdfMes.format(calendar.getTime()).toUpperCase());
 
-        gridDiasSemana.setColumnCount(7);
-        gridCalendario.setColumnCount(7);
-
-        String[] diasSemana = {"Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"};
-        for (int i = 0; i < 7; i++) {
-            TextView tvDiaEnc = new TextView(this);
-            tvDiaEnc.setText(diasSemana[i]);
-            tvDiaEnc.setGravity(Gravity.CENTER);
-            tvDiaEnc.setTextSize(14);
-            tvDiaEnc.setPadding(4, 4, 4, 4);
-            tvDiaEnc.setTextColor(getResources().getColor(android.R.color.black));
-
-            GridLayout.LayoutParams paramsEnc = new GridLayout.LayoutParams();
-            paramsEnc.rowSpec = GridLayout.spec(0);
-            paramsEnc.columnSpec = GridLayout.spec(i, 1f);
-            paramsEnc.width = 0;
-            paramsEnc.height = GridLayout.LayoutParams.WRAP_CONTENT;
-            tvDiaEnc.setLayoutParams(paramsEnc);
-
-            gridDiasSemana.addView(tvDiaEnc);
+        // Días de la semana
+        String[] dias = {"Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"};
+        for (String dia : dias) {
+            agregarTextoAGrid(dia, gridDiasSemana, 14, R.color.colorTextoTitulo);
         }
 
         Calendar tempCal = (Calendar) calendar.clone();
@@ -142,73 +146,79 @@ public class CalendarioActivity extends AppCompatActivity {
         int mesActual = calendar.get(Calendar.MONTH);
 
         for (int i = 0; i < 42; i++) {
-            TextView tvDia = new TextView(this);
-            int diaDelMes = tempCal.get(Calendar.DAY_OF_MONTH);
-            int mesTemp = tempCal.get(Calendar.MONTH);
+            final Calendar fechaDia = (Calendar) tempCal.clone();
+            final String fechaFormateada = getFechaFormateada(fechaDia);
+            int dia = tempCal.get(Calendar.DAY_OF_MONTH);
 
-            tvDia.setText(String.valueOf(diaDelMes));
-            tvDia.setGravity(Gravity.CENTER);
-            tvDia.setTextSize(16);
-            tvDia.setPadding(12, 16, 12, 16);
-            tvDia.setClickable(true);
+            final TextView tv = new TextView(this);
+            tv.setText(String.valueOf(dia));
+            tv.setGravity(Gravity.CENTER);
+            tv.setTextSize(16);
+            tv.setPadding(16, 16, 16, 16);
+            tv.setTag(fechaFormateada);
 
-            GridLayout.LayoutParams paramsDia = new GridLayout.LayoutParams();
-            paramsDia.width = 0;
-            paramsDia.height = GridLayout.LayoutParams.WRAP_CONTENT;
-            paramsDia.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-            tvDia.setLayoutParams(paramsDia);
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.width = 0;
+            params.height = GridLayout.LayoutParams.WRAP_CONTENT;
+            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f); // distribuir uniformemente
+            params.setMargins(8, 8, 8, 8); // espacio entre celdas
+            tv.setLayoutParams(params);
 
-            Calendar fechaCelda = (Calendar) tempCal.clone();
-            String fechaFormateada = getFechaFormateada(fechaCelda);
-
-            if (mesTemp != mesActual) {
-                tvDia.setTextColor(getResources().getColor(android.R.color.darker_gray));
-                tvDia.setBackgroundResource(android.R.color.transparent);
-                tvDia.setClickable(false);
-            } else if (diaDelMes == diaSeleccionado) {
-                tvDia.setBackgroundResource(R.drawable.fondo_dia_seleccionado);
-                tvDia.setTextColor(getResources().getColor(android.R.color.white));
+            if (tempCal.get(Calendar.MONTH) != mesActual) {
+                tv.setTextColor(getResources().getColor(android.R.color.darker_gray));
             } else {
-                boolean tieneRes = false;
-                try {
-                    tieneRes = dbHelper.tieneReservasEnFecha(fechaFormateada);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error comprobando reservas en " + fechaFormateada, e);
-                }
-
-                if (tieneRes) {
-                    tvDia.setBackgroundColor(getResources().getColor(R.color.verdeReserva));
-                    tvDia.setTextColor(getResources().getColor(android.R.color.black));
+                boolean tieneReserva = dbHelper.tieneReservasEnFechaYUsuario(fechaFormateada, usuarioActualId);
+                if (tieneReserva) {
+                    tv.setBackgroundResource(R.drawable.bg_reserva); // fondo verde claro
                 } else {
-                    tvDia.setBackgroundResource(android.R.drawable.dialog_holo_light_frame);
-                    tvDia.setTextColor(getResources().getColor(android.R.color.black));
+                    tv.setBackgroundResource(R.drawable.bg_normal); // fondo blanco con borde
                 }
-            }
 
-            if (mesTemp == mesActual) {
-                final int diaClick = diaDelMes;
-                final Calendar fechaClick = (Calendar) tempCal.clone();
-                tvDia.setOnClickListener(v -> {
-                    diaSeleccionado = diaClick;
-                    mostrarCalendario();
-                    cargarReservasPorFecha(getFechaFormateada(fechaClick));
+                tv.setOnClickListener(v -> {
+                    if (ultimoSeleccionado != null) {
+                        // Restaurar el anterior
+                        String fechaAnt = (String) ultimoSeleccionado.getTag();
+                        boolean reservaAnt = dbHelper.tieneReservasEnFechaYUsuario(fechaAnt, usuarioActualId);
+                        if (reservaAnt) {
+                            ultimoSeleccionado.setBackgroundResource(R.drawable.bg_reserva);
+                        } else {
+                            ultimoSeleccionado.setBackgroundResource(R.drawable.bg_normal);
+                        }
+                    }
+
+                    // Marcar nuevo
+                    tv.setBackgroundResource(R.drawable.bg_seleccionado);
+                    ultimoSeleccionado = tv;
+
+                    cargarReservasPorFecha(fechaFormateada);
                 });
             }
 
-            gridCalendario.addView(tvDia);
+            gridCalendario.addView(tv);
             tempCal.add(Calendar.DAY_OF_MONTH, 1);
         }
     }
+    private void agregarTextoAGrid(String texto, GridLayout grid, int sizeSp, int color) {
+        TextView tv = new TextView(this);
+        tv.setText(texto);
+        tv.setGravity(Gravity.CENTER);
+        tv.setTextSize(sizeSp);
+        tv.setPadding(8, 8, 8, 8);
+        tv.setTextColor(getResources().getColor(color));
+        grid.addView(tv);
+    }
+
+
 
     private String getFechaFormateada(Calendar cal) {
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         return sdf.format(cal.getTime());
     }
 
-
     private void cargarReservasPorFecha(String fecha) {
         try {
-            List<Reserva> reservas = dbHelper.obtenerReservasPorFecha(fecha);
+            List<Reserva> reservas = dbHelper.obtenerReservasPorFechaYUsuario(fecha, usuarioActualId);
 
             if (reservas == null || reservas.isEmpty()) {
                 tvReservasTitulo.setText("Reservas para " + fecha + ": No hay reservas");
@@ -219,18 +229,14 @@ public class CalendarioActivity extends AppCompatActivity {
                 rvReservas.setAdapter(reservaAdapter);
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error cargando reservas para " + fecha, e);
-            Toast.makeText(this, "No se pudieron cargar las reservas para " + fecha, Toast.LENGTH_SHORT).show();
-            rvReservas.setAdapter(null);
-            tvReservasTitulo.setText("Reservas para " + fecha + ": Error al cargar");
+            Log.e(TAG, "Error cargando reservas", e);
+            Toast.makeText(this, "Error al cargar reservas", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (dbHelper != null) {
-            dbHelper.close();
-        }
+        dbHelper.close();
     }
 }
