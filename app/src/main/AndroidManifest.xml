@@ -70,6 +70,8 @@
         <activity android:name=".ActivityPerfilAdmin" tools:ignore="Instantiatable" />
         <activity android:name=".ListaUsuariosActivity" android:exported="false" />
         <activity android:name=".PagoReservaActivity" android:exported="false" />
+        <activity android:name=".DashboardActivity" android:exported="false" />
+
 
     </application>
 </manifest>

@@ -961,6 +961,118 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return id;
     }
+    public Cursor obtenerEstacionamientoMasSolicitado() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT est.nombre AS estacionamiento, COUNT(*) AS total " +
+                "FROM Reservas r " +
+                "INNER JOIN Estacionamientos est ON r.estacionamientoid = est.estacionamientoid " +
+                "GROUP BY est.nombre " +
+                "ORDER BY total DESC";
+        return db.rawQuery(query, null);
+    }
+    public Cursor obtenerHorarioMasFrecuente() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT horaentrada, COUNT(*) AS cantidad " +
+                "FROM Reservas " +
+                "GROUP BY horaentrada " +
+                "ORDER BY cantidad DESC";
+        return db.rawQuery(query, null);
+    }
+    public Cursor obtenerReservasPorEstacionamiento() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT e.nombre AS estacionamiento, COUNT(r.reservaid) AS total " +
+                "FROM Reservas r " +
+                "INNER JOIN Estacionamientos e ON r.estacionamientoid = e.estacionamientoid " +
+                "GROUP BY e.nombre ORDER BY total DESC";
+        return db.rawQuery(query, null);
+    }
+    public int obtenerReservasHoy() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM Reservas WHERE fechareserva = date('now')";
+        Cursor cursor = db.rawQuery(query, null);
+        int total = 0;
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0);
+        }
+        cursor.close();
+        return total;
+    }
+    public int obtenerReservasDelMes() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM Reservas " +
+                "WHERE strftime('%Y-%m', fechareserva) = strftime('%Y-%m', date('now'))";
+        Cursor cursor = db.rawQuery(query, null);
+        int total = 0;
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0);
+        }
+        cursor.close();
+        return total;
+    }
+    public Cursor obtenerUsuarioConMasReservas() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT u.nombre, COUNT(r.reservaid) AS cantidad " +
+                "FROM reservas r " +
+                "JOIN usuarios u ON r.usuarioid = u.usuarioid " +
+                "GROUP BY r.usuarioid " +
+                "ORDER BY cantidad DESC " +
+                "LIMIT 1";
+        return db.rawQuery(query, null);
+    }
+    public Cursor obtenerReservasPorDiaUltimoMes() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT fechareserva AS fecha, COUNT(*) AS total " +
+                "FROM reservas " +
+                "WHERE fechareserva >= date('now', '-1 month') " +
+                "GROUP BY fechareserva " +
+                "ORDER BY fechareserva ASC";
+        return db.rawQuery(query, null);
+    }
+    public List<String> obtenerTop3Usuarios() {
+        List<String> topUsuarios = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT u.nombre || ' ' || u.apellido AS nombre, COUNT(*) as total " +
+                        "FROM Reservas r " +
+                        "INNER JOIN Usuarios u ON r.usuarioid = u.usuarioid " +
+                        "GROUP BY r.usuarioid ORDER BY total DESC LIMIT 3", null);
+
+        while (cursor.moveToNext()) {
+            String nombre = cursor.getString(0);
+            int total = cursor.getInt(1);
+            topUsuarios.add(nombre + " - " + total + " reservas");
+        }
+
+        cursor.close();
+        return topUsuarios;
+    }
+
+    public String obtenerTipoVehiculoMasUsado() {
+        String tipoMasUsado = "-";
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT v.tipo AS tipovehiculo, COUNT(*) as total " +
+                        "FROM Reservas r " +
+                        "JOIN Vehiculos v ON r.vehiculoid = v.vehiculoid " +
+                        "GROUP BY v.tipo ORDER BY total DESC LIMIT 1", null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            tipoMasUsado = cursor.getString(cursor.getColumnIndexOrThrow("tipovehiculo"));
+            cursor.close();
+        }
+
+        return tipoMasUsado;
+    }
+
+
+
+
+
+
+
+
 
 
 
