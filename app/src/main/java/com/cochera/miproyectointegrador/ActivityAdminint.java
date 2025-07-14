@@ -1,16 +1,18 @@
 package com.cochera.miproyectointegrador;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ActivityAdminint extends AppCompatActivity {
 
     private Button btnDashboard, btnTarifas, btnHistorialReserva, btnReservas;
+    private Button btnChat, btnCerrarSesion;
     private ImageButton btnHome, btnPerfil;
 
     @Override
@@ -22,7 +24,9 @@ public class ActivityAdminint extends AppCompatActivity {
         btnDashboard = findViewById(R.id.btnDashboard);
         btnTarifas = findViewById(R.id.btnTarifas);
         btnHistorialReserva = findViewById(R.id.btnHistorialReserva);
-        btnReservas = findViewById(R.id.btnReservas);  // Botón presente, aún sin funcionalidad
+        btnReservas = findViewById(R.id.btnReservas);
+        btnChat = findViewById(R.id.btnChat);
+        btnCerrarSesion = findViewById(R.id.btnCerrarSesion); // nuevo botón
 
         // Botones inferiores
         btnHome = findViewById(R.id.btnHome);
@@ -30,37 +34,50 @@ public class ActivityAdminint extends AppCompatActivity {
 
         // Ir al Dashboard
         btnDashboard.setOnClickListener(v -> {
-            Intent dashboardIntent = new Intent(ActivityAdminint.this, DashboardActivity.class);
-            startActivity(dashboardIntent);
+            startActivity(new Intent(this, DashboardActivity.class));
         });
 
         // Ir a Tarifas
         btnTarifas.setOnClickListener(v -> {
-            Intent tarifasIntent = new Intent(ActivityAdminint.this, TarifasActivity.class);
-            startActivity(tarifasIntent);
+            startActivity(new Intent(this, TarifasActivity.class));
         });
 
         // Ir al historial de reservas
         btnHistorialReserva.setOnClickListener(v -> {
-            Intent historialIntent = new Intent(ActivityAdminint.this, ActivityHistorialReserva.class);
-            startActivity(historialIntent);
+            startActivity(new Intent(this, ActivityHistorialReserva.class));
         });
 
-        // Botón Reservas aún sin funcionalidad
+        // Ir a reservas pendientes
         btnReservas.setOnClickListener(v -> {
-            Log.d("ActivityAdminint", "Botón de Reservas presionado, funcionalidad aún no implementada.");
+            startActivity(new Intent(this, ActivityReservaPendiente.class));
         });
 
-        // Botón inferior Home
+        // Ir al chat
+        btnChat.setOnClickListener(v -> {
+            Intent listaUsuariosIntent = new Intent(this, ListaUsuariosActivity.class);
+            startActivity(listaUsuariosIntent);
+        });
+
+        // Ir a esta misma pantalla (Home)
         btnHome.setOnClickListener(v -> {
-            Intent homeIntent = new Intent(ActivityAdminint.this, ActivityAdminint.class);
-            startActivity(homeIntent);
+            startActivity(new Intent(this, ActivityAdminint.class));
         });
 
-        // Ir al perfil del admin
+        // Ir al perfil
         btnPerfil.setOnClickListener(v -> {
-            Intent perfilIntent = new Intent(ActivityAdminint.this, ActivityPerfilAdmin.class);
-            startActivity(perfilIntent);
+            startActivity(new Intent(this, ActivityPerfilAdmin.class));
+        });
+
+        // Lógica de cierre de sesión
+        btnCerrarSesion.setOnClickListener(v -> {
+            SharedPreferences preferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+            preferences.edit().clear().apply(); // Borra datos de sesión
+            Toast.makeText(this, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Borra el historial de actividades
+            startActivity(intent);
+            finish(); // Finaliza esta actividad
         });
     }
 }

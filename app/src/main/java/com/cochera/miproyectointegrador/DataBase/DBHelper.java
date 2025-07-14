@@ -1065,17 +1065,35 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return tipoMasUsado;
     }
+    public List<Reserva> obtenerReservasPorEstado(String estado) {
+        List<Reserva> lista = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
 
+        Cursor cursor = db.rawQuery("SELECT reservaid, placa, fechareserva, horaentrada, horasalida FROM Reservas WHERE estado = ?", new String[]{estado});
+        if (cursor.moveToFirst()) {
+            do {
+                Reserva r = new Reserva();
+                r.setReservaid(cursor.getInt(0));
+                r.setPlaca(cursor.getString(1));
+                r.setFecha(cursor.getString(2));
+                r.setHoraEntrada(cursor.getString(3));
+                r.setHoraSalida(cursor.getString(4));
+                lista.add(r);
+            } while (cursor.moveToNext());
+        }
 
+        cursor.close();
+        db.close();
+        return lista;
+    }
 
-
-
-
-
-
-
-
-
+    public void actualizarEstadoReserva(int reservaid, String nuevoEstado) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("estado", nuevoEstado);
+        db.update("Reservas", values, "reservaid = ?", new String[]{String.valueOf(reservaid)});
+        db.close();
+    }
 
 }
 

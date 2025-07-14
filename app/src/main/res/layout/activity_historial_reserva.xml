@@ -67,15 +67,7 @@
             android:scaleType="centerInside"
             android:contentDescription="Inicio" />
 
-        <ImageButton
-            android:id="@+id/btnCalendario"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/calendario"
-            android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            android:contentDescription="Calendario" />
+
 
         <ImageButton
             android:id="@+id/btnPerfil"

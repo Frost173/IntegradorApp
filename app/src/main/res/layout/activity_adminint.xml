@@ -83,7 +83,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Barra inferior sin botón de historial -->
+    <!-- Botón Chat -->
+    <Button
+        android:id="@+id/btnChat"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="Chat"
+        android:backgroundTint="#FFA500"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="40dp"
+        app:layout_constraintTop_toBottomOf="@id/btnReservas"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Botón Cerrar Sesión -->
+    <Button
+        android:id="@+id/btnCerrarSesion"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="Cerrar Sesión"
+        android:backgroundTint="#D32F2F"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="40dp"
+        app:layout_constraintTop_toBottomOf="@id/btnChat"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Barra inferior -->
     <LinearLayout
         android:id="@+id/barraInferior"
         android:layout_width="0dp"

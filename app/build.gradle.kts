@@ -47,6 +47,8 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("org.json:json:20210307")
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
 
     // Librerías Android (usando alias `libs`)
     implementation(libs.appcompat)

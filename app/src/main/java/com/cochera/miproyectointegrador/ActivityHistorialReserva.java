@@ -1,5 +1,6 @@
 package com.cochera.miproyectointegrador;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -23,45 +24,59 @@ public class ActivityHistorialReserva extends AppCompatActivity {
     private ReservaAdapter reservaAdapter;
     private List<Reserva> reservaList;
     private DBHelper dbHelper;
-    private ImageButton btnHome; // Botón para regresar
+    private ImageButton btnHome, btnPerfil, btnCalendario;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historial_reserva);
 
-        // Inicializar RecyclerView y LayoutManager
         recyclerReservas = findViewById(R.id.recyclerReservas);
         recyclerReservas.setLayoutManager(new LinearLayoutManager(this));
 
-        // Inicializar botón Home y asignar listener para regresar
+        // Vincular botones inferiores
         btnHome = findViewById(R.id.btnHome);
-        btnHome.setOnClickListener(v -> finish());
+        btnPerfil = findViewById(R.id.btnPerfil);
 
-        // Inicializar base de datos y lista de reservas
+        // Acciones navegación inferior
+        btnHome.setOnClickListener(v -> {
+            startActivity(new Intent(this, ActivityAdminint.class));
+            finish(); // para no acumular en el back stack
+        });
+
+        btnPerfil.setOnClickListener(v -> {
+            startActivity(new Intent(this, ActivityPerfilAdmin.class));
+            finish();
+        });
+
+
         dbHelper = new DBHelper(this);
         reservaList = new ArrayList<>();
-
-        // Configurar adapter con la lista vacía inicialmente
         reservaAdapter = new ReservaAdapter(this, reservaList);
         recyclerReservas.setAdapter(reservaAdapter);
 
-        // Cargar reservas desde la base de datos
-        cargarReservasDesdeBD();
+        cargarTodasLasReservas();
     }
 
-    private void cargarReservasDesdeBD() {
+    private void cargarTodasLasReservas() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Consulta solo con columnas que existen en la tabla Reservas
-        String query = "SELECT reservaid, usuarioid, espacioid, vehiculoid, fechareserva, horaentrada, horasalida, estado, placa, pago, ubicacion " +
-                "FROM Reservas ORDER BY fechareserva DESC, horaentrada DESC";
+        String query = "SELECT R.reservaid, R.usuarioid, R.espacioid, R.vehiculoid, R.fechareserva, R.horaentrada, R.horasalida, R.estado, R.placa, R.pago, R.ubicacion, " +
+                "U.nombre AS nombreUsuario, U.apellido AS apellidoUsuario, " +
+                "V.tipo AS tipoVehiculo, " +
+                "E.nombre AS nombreEstacionamiento, " +
+                "ES.codigo AS codigoEspacio " +
+                "FROM Reservas R " +
+                "LEFT JOIN Usuarios U ON R.usuarioid = U.usuarioid " +
+                "LEFT JOIN Vehiculos V ON R.vehiculoid = V.vehiculoid " +
+                "LEFT JOIN Espacios ES ON R.espacioid = ES.espacioid " +
+                "LEFT JOIN Estacionamientos E ON ES.estacionamientoid = E.estacionamientoid " +
+                "ORDER BY R.fechareserva DESC, R.horaentrada DESC";
 
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            reservaList.clear(); // Limpiar lista antes de agregar nuevos datos
-
+            reservaList.clear();
             do {
                 Reserva reserva = new Reserva();
                 reserva.setReservaid(cursor.getInt(cursor.getColumnIndexOrThrow("reservaid")));
@@ -76,10 +91,16 @@ public class ActivityHistorialReserva extends AppCompatActivity {
                 reserva.setPago(cursor.getDouble(cursor.getColumnIndexOrThrow("pago")));
                 reserva.setUbicacion(cursor.getString(cursor.getColumnIndexOrThrow("ubicacion")));
 
+                // Nuevos datos que tu Adapter necesita
+                reserva.setNombreUsuario(cursor.getString(cursor.getColumnIndexOrThrow("nombreUsuario")));
+                reserva.setApellidoUsuario(cursor.getString(cursor.getColumnIndexOrThrow("apellidoUsuario")));
+                reserva.setTipoVehiculo(cursor.getString(cursor.getColumnIndexOrThrow("tipoVehiculo")));
+                reserva.setNombreEstacionamiento(cursor.getString(cursor.getColumnIndexOrThrow("nombreEstacionamiento")));
+                reserva.setCodigoEspacio(cursor.getString(cursor.getColumnIndexOrThrow("codigoEspacio")));
+
                 reservaList.add(reserva);
             } while (cursor.moveToNext());
 
-            // Notificar al adapter que los datos cambiaron para refrescar la vista
             reservaAdapter.notifyDataSetChanged();
         } else {
             Toast.makeText(this, "No hay reservas registradas.", Toast.LENGTH_SHORT).show();
@@ -88,4 +109,5 @@ public class ActivityHistorialReserva extends AppCompatActivity {
         cursor.close();
         db.close();
     }
+
 }
