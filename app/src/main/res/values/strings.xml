@@ -5,6 +5,20 @@
     <string name="navigation_drawer_open">Abrir menú lateral</string>
     <string name="navigation_drawer_close">Cerrar menú lateral</string>
     <string name="banner_desc">Banner de búsqueda</string>
+    <string-array name="filtros_array">
+        <item>Todos</item>
+        <item>Nombre</item>
+        <item>Estacionamiento</item>
+        <item>Estado</item>
+    </string-array>
+
+    <string name="historial_reservas">Historial de Reservas</string>
+    <string name="buscar_hint">Buscar...</string>
+    <string name="inicio">Inicio</string>
+    <string name="perfil">Perfil</string>
+    <string name="lista_reservas">Lista de Reservas</string>
+
+
     <string name="politica_seguridad">
     Última actualización: 5 de junio de 2025
 

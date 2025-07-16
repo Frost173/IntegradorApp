@@ -1,7 +1,7 @@
 package com.cochera.miproyectointegrador.DataBase;
 
 public class Reserva {
-    // Datos de relación
+
     private int reservaid;
     private int usuarioId;
     private int espacioId;
@@ -21,14 +21,12 @@ public class Reserva {
     private String horaSalida;
 
     // Información de pago y ubicación
-    private double pagoHora;
-    private double pago;
+    private double pagoHora; // Esto es para cálculo estimado (si usas tarifa por hora)
+    private double pago;     // Esto es el total registrado en la BD
     private String ubicacion;
 
-    // Estado de la reserva
+    // Estado y descripción
     private String estado;
-
-    // Nuevos campos agregados:
     private String nombreEstacionamiento;
     private String codigoEspacio;
 
@@ -73,7 +71,7 @@ public class Reserva {
     public void setNombreEstacionamiento(String nombreEstacionamiento) { this.nombreEstacionamiento = nombreEstacionamiento; }
     public void setCodigoEspacio(String codigoEspacio) { this.codigoEspacio = codigoEspacio; }
 
-    // Alias methods
+    // Alias opcionales (por compatibilidad con otras clases o adaptadores)
     public void setId(int id) {
         this.reservaid = id;
     }
@@ -82,18 +80,23 @@ public class Reserva {
         this.fecha = fechaReserva;
     }
 
-    // Cálculo de pago estimado
+    // Cálculo de pago estimado basado en diferencia de horas
     public double getPagoCalculado() {
         try {
             String[] entrada = horaEntrada.split(":");
             String[] salida = horaSalida.split(":");
+
             int hEntrada = Integer.parseInt(entrada[0]);
             int mEntrada = Integer.parseInt(entrada[1]);
+
             int hSalida = Integer.parseInt(salida[0]);
             int mSalida = Integer.parseInt(salida[1]);
 
+            // Duración en horas con decimales
             double duracion = (hSalida + mSalida / 60.0) - (hEntrada + mEntrada / 60.0);
-            return pagoHora * (duracion > 0 ? duracion : 0);
+
+            // Asegurarse que no sea negativo
+            return pagoHora * Math.max(duracion, 0);
         } catch (Exception e) {
             return 0;
         }

@@ -13,7 +13,7 @@
         android:showDividers="middle"
         android:dividerPadding="8dp">
 
-        <!-- TÍTULO -->
+        <!-- Título -->
         <TextView
             android:text="📊 Panel de Reservas"
             android:textStyle="bold"
@@ -22,40 +22,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <!-- DATOS RESUMIDOS -->
+        <!-- Solo reservas pendientes -->
         <TextView
-            android:id="@+id/txtReservasHoy"
-            android:text="Hoy: 0 reservas"
+            android:id="@+id/txtReservasPendientes"
+            android:text="Reservas pendientes: 0"
             android:textSize="18sp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/txtReservasMes"
-            android:text="Mes: 0 reservas"
-            android:textSize="18sp"
-            android:layout_marginBottom="4dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/txtHorarioTop"
-            android:text="Horario más activo: -"
-            android:textSize="18sp"
-            android:layout_marginBottom="4dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
+        <!-- Tipo de vehículo más usado -->
         <TextView
             android:id="@+id/txtVehiculoTop"
-            android:text="Tipo de vehículo más usado: -"
+            android:text="🚗 Tipo de vehículo más usado: -"
             android:textSize="18sp"
             android:layout_marginBottom="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <!-- TOP 3 USUARIOS -->
+        <!-- Usuarios más frecuentes -->
         <TextView
             android:text="👥 Top 3 usuarios con más reservas"
             android:textStyle="bold"
@@ -89,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <!-- BOTÓN PDF -->
+        <!-- Botón de reporte -->
         <Button
             android:id="@+id/btnExportarPDF"
             android:text="📄 Exportar Reporte en PDF"
@@ -100,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- GRÁFICOS -->
+        <!-- Gráfico de barras -->
         <TextView
             android:text="🏢 Reservas por estacionamiento"
             android:textStyle="bold"
@@ -113,21 +98,6 @@
             android:id="@+id/barChartView"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:text="📆 Reservas por día (último mes)"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:paddingTop="12dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <com.cochera.miproyectointegrador.CustomLineChartView
-            android:id="@+id/lineChartView"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
             android:layout_marginBottom="32dp" />
-
     </LinearLayout>
 </ScrollView>

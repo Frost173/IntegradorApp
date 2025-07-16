@@ -2,8 +2,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp"
-    android:background="@android:color/white">
+    android:padding="24dp"
+    android:background="#FFFFFF">
 
     <!-- Encabezado -->
     <LinearLayout
@@ -14,11 +14,11 @@
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@drawable/flecha"
-            android:background="@null"
-            android:contentDescription="Flecha atrás"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Atrás"
             android:rotation="180"
             android:scaleType="centerInside"
             android:adjustViewBounds="true" />
@@ -29,49 +29,54 @@
             android:text="Cambiar Contraseña"
             android:textColor="#3B2002"
             android:textSize="20sp"
-            android:layout_marginStart="10dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginStart="12dp" />
     </LinearLayout>
 
-    <!-- Formulario -->
+    <!-- Campo: Contraseña Actual -->
     <EditText
         android:id="@+id/etContrasenaActual"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:hint="Contraseña actual"
         android:inputType="textPassword"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/rounded_box"
-        android:padding="12dp" />
+        android:padding="14dp"
+        android:background="@drawable/rounded_box" />
 
+    <!-- Campo: Nueva Contraseña -->
     <EditText
         android:id="@+id/etNuevaContrasena"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:hint="Nueva contraseña"
         android:inputType="textPassword"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_box"
-        android:padding="12dp" />
+        android:padding="14dp"
+        android:background="@drawable/rounded_box" />
 
+    <!-- Campo: Confirmar Contraseña -->
     <EditText
         android:id="@+id/etConfirmarContrasena"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:hint="Confirmar nueva contraseña"
         android:inputType="textPassword"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_box"
-        android:padding="12dp" />
+        android:padding="14dp"
+        android:background="@drawable/rounded_box" />
 
     <!-- Botón Guardar -->
     <Button
         android:id="@+id/btnGuardar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:text="Guardar"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/rounded_button"
+        android:textStyle="bold"
+        android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:paddingVertical="12dp" />
+        android:background="@drawable/rounded_button"
+        android:paddingVertical="14dp" />
 </LinearLayout>
+

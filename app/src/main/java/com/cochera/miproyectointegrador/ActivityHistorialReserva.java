@@ -4,7 +4,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,7 +31,10 @@ public class ActivityHistorialReserva extends AppCompatActivity {
     private ReservaAdapter reservaAdapter;
     private List<Reserva> reservaList;
     private DBHelper dbHelper;
-    private ImageButton btnHome, btnPerfil, btnCalendario;
+    private ImageButton btnHome, btnPerfil;
+
+    private EditText etBuscarPlaca;
+    private Spinner spinnerFiltro;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,14 +44,20 @@ public class ActivityHistorialReserva extends AppCompatActivity {
         recyclerReservas = findViewById(R.id.recyclerReservas);
         recyclerReservas.setLayoutManager(new LinearLayoutManager(this));
 
-        // Vincular botones inferiores
         btnHome = findViewById(R.id.btnHome);
         btnPerfil = findViewById(R.id.btnPerfil);
+        etBuscarPlaca = findViewById(R.id.etBuscarPlaca);
+        spinnerFiltro = findViewById(R.id.spinnerFiltro);
 
-        // Acciones navegación inferior
+        // Filtros: cambiamos "Estado" por "Placa"
+        String[] opcionesFiltro = {"Todos", "Nombre", "Estacionamiento", "Placa"};
+        ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, opcionesFiltro);
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltro.setAdapter(adapterSpinner);
+
         btnHome.setOnClickListener(v -> {
             startActivity(new Intent(this, ActivityAdminint.class));
-            finish(); // para no acumular en el back stack
+            finish();
         });
 
         btnPerfil.setOnClickListener(v -> {
@@ -49,13 +65,34 @@ public class ActivityHistorialReserva extends AppCompatActivity {
             finish();
         });
 
-
         dbHelper = new DBHelper(this);
         reservaList = new ArrayList<>();
         reservaAdapter = new ReservaAdapter(this, reservaList);
         recyclerReservas.setAdapter(reservaAdapter);
 
         cargarTodasLasReservas();
+
+        etBuscarPlaca.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (spinnerFiltro.getSelectedItem() != null) {
+                    filtrarReservas(s.toString(), spinnerFiltro.getSelectedItem().toString());
+                }
+            }
+
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
+        spinnerFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtrarReservas(etBuscarPlaca.getText().toString(), parent.getItemAtPosition(position).toString());
+            }
+
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
     }
 
     private void cargarTodasLasReservas() {
@@ -90,8 +127,6 @@ public class ActivityHistorialReserva extends AppCompatActivity {
                 reserva.setPlaca(cursor.getString(cursor.getColumnIndexOrThrow("placa")));
                 reserva.setPago(cursor.getDouble(cursor.getColumnIndexOrThrow("pago")));
                 reserva.setUbicacion(cursor.getString(cursor.getColumnIndexOrThrow("ubicacion")));
-
-                // Nuevos datos que tu Adapter necesita
                 reserva.setNombreUsuario(cursor.getString(cursor.getColumnIndexOrThrow("nombreUsuario")));
                 reserva.setApellidoUsuario(cursor.getString(cursor.getColumnIndexOrThrow("apellidoUsuario")));
                 reserva.setTipoVehiculo(cursor.getString(cursor.getColumnIndexOrThrow("tipoVehiculo")));
@@ -101,7 +136,7 @@ public class ActivityHistorialReserva extends AppCompatActivity {
                 reservaList.add(reserva);
             } while (cursor.moveToNext());
 
-            reservaAdapter.notifyDataSetChanged();
+            reservaAdapter.actualizarLista(reservaList);
         } else {
             Toast.makeText(this, "No hay reservas registradas.", Toast.LENGTH_SHORT).show();
         }
@@ -110,4 +145,48 @@ public class ActivityHistorialReserva extends AppCompatActivity {
         db.close();
     }
 
+    private void filtrarReservas(String texto, String filtroPor) {
+        List<Reserva> filtradas = new ArrayList<>();
+        String textoLower = texto.toLowerCase();
+
+        for (Reserva reserva : reservaList) {
+            boolean coincide = false;
+
+            switch (filtroPor) {
+                case "Todos":
+                    coincide = safeContains(reserva.getPlaca(), textoLower)
+                            || safeContains(reserva.getNombreUsuario(), textoLower)
+                            || safeContains(reserva.getApellidoUsuario(), textoLower)
+                            || safeContains(reserva.getNombreEstacionamiento(), textoLower);
+                    break;
+
+                case "Nombre":
+                    String nombreCompleto = (safeText(reserva.getNombreUsuario()) + " " + safeText(reserva.getApellidoUsuario())).toLowerCase();
+                    coincide = nombreCompleto.contains(textoLower);
+                    break;
+
+                case "Estacionamiento":
+                    coincide = safeContains(reserva.getNombreEstacionamiento(), textoLower);
+                    break;
+
+                case "Placa":
+                    coincide = safeContains(reserva.getPlaca(), textoLower);
+                    break;
+            }
+
+            if (coincide) {
+                filtradas.add(reserva);
+            }
+        }
+
+        reservaAdapter.actualizarLista(filtradas);
+    }
+
+    private boolean safeContains(String original, String textoBuscado) {
+        return original != null && original.toLowerCase().contains(textoBuscado);
+    }
+
+    private String safeText(String valor) {
+        return valor != null ? valor : "";
+    }
 }

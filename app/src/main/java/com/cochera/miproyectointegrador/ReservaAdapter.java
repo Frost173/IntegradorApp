@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cochera.miproyectointegrador.DataBase.Reserva;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaViewHolder> {
 
     private final Context context;
-    private final List<Reserva> reservaList;
+    private List<Reserva> reservaList;
 
     public ReservaAdapter(Context context, List<Reserva> reservaList) {
         this.context = context;
@@ -43,10 +44,8 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         holder.tvPagoTotal.setText(String.format("Pago: S/ %.2f", reserva.getPago()));
         holder.tvEstado.setText("Estado: " + safeText(reserva.getEstado(), "Pendiente"));
 
-        String nombre = reserva.getNombreUsuario() != null ? reserva.getNombreUsuario() : "";
-        String apellido = reserva.getApellidoUsuario() != null ? reserva.getApellidoUsuario() : "";
-        String usuarioCompleto = (nombre + " " + apellido).trim();
-        holder.tvUsuario.setText("Usuario: " + (usuarioCompleto.isEmpty() ? "No definido" : usuarioCompleto));
+        // Ya se trajo concatenado desde SQL: nombre || ' ' || apellido AS nombreUsuario
+        holder.tvUsuario.setText("Usuario: " + safeText(reserva.getNombreUsuario(), "No definido"));
 
         holder.tvEstacionamiento.setText("Estacionamiento: " + safeText(reserva.getNombreEstacionamiento(), "Desconocido"));
         holder.tvEspacio.setText("Espacio: " + safeText(reserva.getCodigoEspacio(), "N/A"));
@@ -57,10 +56,14 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         return reservaList != null ? reservaList.size() : 0;
     }
 
+    public void actualizarLista(List<Reserva> nuevasReservas) {
+        this.reservaList = new ArrayList<>(nuevasReservas);
+        notifyDataSetChanged();
+    }
+
     static class ReservaViewHolder extends RecyclerView.ViewHolder {
         TextView tvPlaca, tvTipoVehiculo, tvHoraEntrada, tvHoraSalida, tvFecha, tvPagoTotal,
-                tvUbicacion, tvEstado, tvReservaDetalle, tvUsuario,
-                tvEstacionamiento, tvEspacio;
+                tvUbicacion, tvEstado, tvUsuario, tvEstacionamiento, tvEspacio;
 
         public ReservaViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -72,7 +75,6 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             tvPagoTotal = itemView.findViewById(R.id.tvPagoTotal);
             tvUbicacion = itemView.findViewById(R.id.tvUbicacion);
             tvEstado = itemView.findViewById(R.id.tvEstado);
-            tvReservaDetalle = itemView.findViewById(R.id.tvReservaDetalle);
             tvUsuario = itemView.findViewById(R.id.tvUsuario);
             tvEstacionamiento = itemView.findViewById(R.id.tvEstacionamiento);
             tvEspacio = itemView.findViewById(R.id.tvEspacio);

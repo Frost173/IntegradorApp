@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -895,23 +899,36 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = null;
 
+        // Validar si la fecha está en formato yyyy-MM-dd y convertir a dd/MM/yyyy
+        String fechaConvertida = fecha;
+        if (fecha.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            try {
+                SimpleDateFormat formatoEntrada = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat formatoSalida = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                fechaConvertida = formatoSalida.format(formatoEntrada.parse(fecha));
+            } catch (Exception e) {
+                Log.e("DBHelper", "Error al convertir la fecha", e);
+                return reservas;
+            }
+        }
+
         String query = "SELECT " +
                 "r.reservaid, r.usuarioid, r.espacioid, r.vehiculoid, r.fechareserva, " +
                 "r.horaentrada, r.horasalida, r.estado, r.pago, " +
-                "v.placa AS placa, v.tipo AS tipoVehiculo, " +
+                "r.placa AS vehiculoplaca, v.tipo AS vehiculotipo, " + // CAMBIO AQUÍ 👈
                 "e.codigo AS codigoEspacio, e.ubicacion AS ubicacion, " +
                 "est.nombre AS nombreEstacionamiento, " +
-                "u.nombre || ' ' || u.apellido AS nombreUsuario " +
+                "u.nombre AS nombreUsuario, u.apellido AS apellidoUsuario " +
                 "FROM Reservas r " +
                 "LEFT JOIN Vehiculos v ON r.vehiculoid = v.vehiculoid " +
                 "LEFT JOIN Espacios e ON r.espacioid = e.espacioid " +
-                "LEFT JOIN Estacionamientos est ON e.estacionamientoid = est.estacionamientoid " +  // ✅ CORREGIDO
+                "LEFT JOIN Estacionamientos est ON e.estacionamientoid = est.estacionamientoid " +
                 "LEFT JOIN Usuarios u ON r.usuarioid = u.usuarioid " +
                 "WHERE r.fechareserva = ? AND r.usuarioid = ? " +
                 "ORDER BY r.horaentrada ASC";
 
         try {
-            cursor = db.rawQuery(query, new String[]{fecha, String.valueOf(usuarioId)});
+            cursor = db.rawQuery(query, new String[]{fechaConvertida, String.valueOf(usuarioId)});
 
             if (cursor.moveToFirst()) {
                 do {
@@ -926,13 +943,14 @@ public class DBHelper extends SQLiteOpenHelper {
                     reserva.setEstado(cursor.getString(cursor.getColumnIndexOrThrow("estado")));
                     reserva.setPago(cursor.getDouble(cursor.getColumnIndexOrThrow("pago")));
 
-                    // JOIN extras
-                    reserva.setPlaca(cursor.getString(cursor.getColumnIndexOrThrow("placa")));
-                    reserva.setTipoVehiculo(cursor.getString(cursor.getColumnIndexOrThrow("tipoVehiculo")));
+                    // Traer la placa desde Reservas (ya corregido)
+                    reserva.setPlaca(cursor.getString(cursor.getColumnIndexOrThrow("vehiculoplaca")));
+                    reserva.setTipoVehiculo(cursor.getString(cursor.getColumnIndexOrThrow("vehiculotipo")));
                     reserva.setCodigoEspacio(cursor.getString(cursor.getColumnIndexOrThrow("codigoEspacio")));
                     reserva.setUbicacion(cursor.getString(cursor.getColumnIndexOrThrow("ubicacion")));
                     reserva.setNombreEstacionamiento(cursor.getString(cursor.getColumnIndexOrThrow("nombreEstacionamiento")));
                     reserva.setNombreUsuario(cursor.getString(cursor.getColumnIndexOrThrow("nombreUsuario")));
+                    reserva.setApellidoUsuario(cursor.getString(cursor.getColumnIndexOrThrow("apellidoUsuario")));
 
                     reservas.add(reserva);
                 } while (cursor.moveToNext());
@@ -947,10 +965,14 @@ public class DBHelper extends SQLiteOpenHelper {
         return reservas;
     }
 
+
+
+
+
     public int obtenerEstacionamientoIdPorUbicacion(String ubicacion) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(
-                "SELECT estacionamientoid FROM Reservas WHERE ubicacion = ? LIMIT 1",
+                "SELECT estacionamientoid FROM Espacios WHERE ubicacion = ? LIMIT 1",
                 new String[]{ubicacion}
         );
 
@@ -961,6 +983,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return id;
     }
+
     public Cursor obtenerEstacionamientoMasSolicitado() {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT est.nombre AS estacionamiento, COUNT(*) AS total " +
@@ -986,90 +1009,111 @@ public class DBHelper extends SQLiteOpenHelper {
                 "GROUP BY e.nombre ORDER BY total DESC";
         return db.rawQuery(query, null);
     }
-    public int obtenerReservasHoy() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM Reservas WHERE fechareserva = date('now')";
-        Cursor cursor = db.rawQuery(query, null);
-        int total = 0;
-        if (cursor.moveToFirst()) {
-            total = cursor.getInt(0);
-        }
-        cursor.close();
-        return total;
-    }
+
+    // obtenerReservasDelMes() para dd/MM/yyyy
     public int obtenerReservasDelMes() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM Reservas " +
-                "WHERE strftime('%Y-%m', fechareserva) = strftime('%Y-%m', date('now'))";
-        Cursor cursor = db.rawQuery(query, null);
+        String mesActual = new SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(new Date());
+
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM Reservas WHERE strftime('%Y-%m', fechareserva) = ?",
+                new String[]{mesActual}
+        );
+
         int total = 0;
-        if (cursor.moveToFirst()) {
-            total = cursor.getInt(0);
-        }
+        if (cursor.moveToFirst()) total = cursor.getInt(0);
         cursor.close();
         return total;
     }
-    public Cursor obtenerUsuarioConMasReservas() {
+
+
+
+    // obtenerReservasHoy() con formato dd/MM/yyyy
+    public int obtenerReservasHoy() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT u.nombre, COUNT(r.reservaid) AS cantidad " +
-                "FROM reservas r " +
-                "JOIN usuarios u ON r.usuarioid = u.usuarioid " +
-                "GROUP BY r.usuarioid " +
-                "ORDER BY cantidad DESC " +
-                "LIMIT 1";
-        return db.rawQuery(query, null);
+        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM Reservas WHERE fechareserva = ?",
+                new String[]{hoy}
+        );
+
+        int total = 0;
+        if (cursor.moveToFirst()) total = cursor.getInt(0);
+        cursor.close();
+        return total;
     }
+
+
+
+
     public Cursor obtenerReservasPorDiaUltimoMes() {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT fechareserva AS fecha, COUNT(*) AS total " +
-                "FROM reservas " +
+                "FROM Reservas " +
                 "WHERE fechareserva >= date('now', '-1 month') " +
                 "GROUP BY fechareserva " +
                 "ORDER BY fechareserva ASC";
         return db.rawQuery(query, null);
     }
+
+
     public List<String> obtenerTop3Usuarios() {
-        List<String> topUsuarios = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
+        List<String> topUsuarios = new ArrayList<>();
 
         Cursor cursor = db.rawQuery(
-                "SELECT u.nombre || ' ' || u.apellido AS nombre, COUNT(*) as total " +
-                        "FROM Reservas r " +
-                        "INNER JOIN Usuarios u ON r.usuarioid = u.usuarioid " +
-                        "GROUP BY r.usuarioid ORDER BY total DESC LIMIT 3", null);
+                "SELECT U.nombre || ' ' || U.apellido AS nombreCompleto, COUNT(*) AS total " +
+                        "FROM Reservas R " +
+                        "JOIN Usuarios U ON R.usuarioid = U.usuarioid " +
+                        "GROUP BY R.usuarioid " +
+                        "ORDER BY total DESC " +
+                        "LIMIT 3", null
+        );
 
         while (cursor.moveToNext()) {
-            String nombre = cursor.getString(0);
-            int total = cursor.getInt(1);
-            topUsuarios.add(nombre + " - " + total + " reservas");
+            String nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombreCompleto"));
+            int total = cursor.getInt(cursor.getColumnIndexOrThrow("total"));
+            topUsuarios.add(nombre + " (" + total + ")");
         }
 
         cursor.close();
         return topUsuarios;
     }
 
+
     public String obtenerTipoVehiculoMasUsado() {
-        String tipoMasUsado = "-";
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(
-                "SELECT v.tipo AS tipovehiculo, COUNT(*) as total " +
-                        "FROM Reservas r " +
-                        "JOIN Vehiculos v ON r.vehiculoid = v.vehiculoid " +
-                        "GROUP BY v.tipo ORDER BY total DESC LIMIT 1", null);
+                "SELECT V.tipo, COUNT(*) AS cantidad " +
+                        "FROM Reservas R " +
+                        "JOIN Vehiculos V ON R.vehiculoid = V.vehiculoid " +
+                        "GROUP BY V.tipo " +
+                        "ORDER BY cantidad DESC " +
+                        "LIMIT 1", null
+        );
 
-        if (cursor != null && cursor.moveToFirst()) {
-            tipoMasUsado = cursor.getString(cursor.getColumnIndexOrThrow("tipovehiculo"));
-            cursor.close();
+        String tipo = "-";
+        if (cursor.moveToFirst()) {
+            tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo")) +
+                    " (" + cursor.getInt(cursor.getColumnIndexOrThrow("cantidad")) + ")";
         }
-
-        return tipoMasUsado;
+        cursor.close();
+        return tipo;
     }
+
     public List<Reserva> obtenerReservasPorEstado(String estado) {
         List<Reserva> lista = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT reservaid, placa, fechareserva, horaentrada, horasalida FROM Reservas WHERE estado = ?", new String[]{estado});
+        String query = "SELECT r.reservaid, v.placa, r.fechareserva, r.horaentrada, r.horasalida " +
+                "FROM Reservas r " +
+                "JOIN Vehiculos v ON r.vehiculoid = v.vehiculoid " +
+                "WHERE r.estado = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{estado});
+
         if (cursor.moveToFirst()) {
             do {
                 Reserva r = new Reserva();
@@ -1087,6 +1131,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return lista;
     }
 
+
     public void actualizarEstadoReserva(int reservaid, String nuevoEstado) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -1094,6 +1139,157 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update("Reservas", values, "reservaid = ?", new String[]{String.valueOf(reservaid)});
         db.close();
     }
+    public Cursor obtenerRangoHorarioMasFrecuente() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT " +
+                "CASE " +
+                "WHEN time(horaentrada) BETWEEN time('06:00') AND time('07:59') THEN '06:00 - 08:00' " +
+                "WHEN time(horaentrada) BETWEEN time('08:00') AND time('09:59') THEN '08:00 - 10:00' " +
+                "WHEN time(horaentrada) BETWEEN time('10:00') AND time('11:59') THEN '10:00 - 12:00' " +
+                "WHEN time(horaentrada) BETWEEN time('12:00') AND time('13:59') THEN '12:00 - 14:00' " +
+                "WHEN time(horaentrada) BETWEEN time('14:00') AND time('15:59') THEN '14:00 - 16:00' " +
+                "WHEN time(horaentrada) BETWEEN time('16:00') AND time('17:59') THEN '16:00 - 18:00' " +
+                "WHEN time(horaentrada) BETWEEN time('18:00') AND time('19:59') THEN '18:00 - 20:00' " +
+                "ELSE 'Otro horario' END AS rango, " +
+                "COUNT(*) AS cantidad " +
+                "FROM Reservas " +
+                "WHERE fechareserva >= date('now', '-6 days') " +
+                "GROUP BY rango " +
+                "ORDER BY cantidad DESC " +
+                "LIMIT 1";
+
+        return db.rawQuery(query, null);
+    }
+
+    // Contar reservas del día actual
+    public int contarReservasPorDia(int usuarioid) {
+        int total = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            // Obtener la fecha actual en formato dd/MM/yyyy
+            String fechaActual = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(new java.util.Date());
+
+            // Consulta con comparación exacta de fecha y usuario
+            cursor = db.rawQuery("SELECT COUNT(*) FROM Reservas WHERE fechareserva = ? AND usuarioid = ?",
+                    new String[]{fechaActual, String.valueOf(usuarioid)});
+
+            if (cursor.moveToFirst()) {
+                total = cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Log.e("DBHelper", "Error al contar reservas por día", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+
+        return total;
+    }
+
+
+    public int contarReservasPorMes(int usuarioid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String mesActual = new SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(new Date());
+
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM Reservas WHERE usuarioid = ? AND strftime('%Y-%m', fechareserva) = ?",
+                new String[]{String.valueOf(usuarioid), mesActual}
+        );
+
+        int total = 0;
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0);
+        }
+        cursor.close();
+        return total;
+    }
+    public int corregirFormatoReservas() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT reservaid, fechareserva, horaentrada, horasalida FROM Reservas", null);
+        int corregidos = 0;
+
+        SimpleDateFormat formatoOriginalFecha = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat formatoCorrectoFecha = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat formatoOriginalHora = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+        SimpleDateFormat formatoCorrectoHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            String fecha = cursor.getString(1);
+            String horaEntrada = cursor.getString(2);
+            String horaSalida = cursor.getString(3);
+
+            String nuevaFecha = fecha;
+            String nuevaEntrada = horaEntrada;
+            String nuevaSalida = horaSalida;
+
+            try {
+                if (fecha != null && fecha.contains("/")) {
+                    nuevaFecha = formatoCorrectoFecha.format(formatoOriginalFecha.parse(fecha));
+                }
+                if (horaEntrada != null && (horaEntrada.toLowerCase().contains("am") || horaEntrada.toLowerCase().contains("pm"))) {
+                    nuevaEntrada = formatoCorrectoHora.format(formatoOriginalHora.parse(horaEntrada));
+                }
+                if (horaSalida != null && (horaSalida.toLowerCase().contains("am") || horaSalida.toLowerCase().contains("pm"))) {
+                    nuevaSalida = formatoCorrectoHora.format(formatoOriginalHora.parse(horaSalida));
+                }
+
+                ContentValues values = new ContentValues();
+                values.put("fechareserva", nuevaFecha);
+                values.put("horaentrada", nuevaEntrada);
+                values.put("horasalida", nuevaSalida);
+
+                db.update("Reservas", values, "reservaid = ?", new String[]{String.valueOf(id)});
+                corregidos++;
+            } catch (Exception e) {
+                Log.e("DBHelper", "Error corrigiendo formato reserva " + id, e);
+            }
+        }
+
+        cursor.close();
+        return corregidos;
+    }
+    public int obtenerVehiculoIdPorPlaca(String placa, int usuarioid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT vehiculoid FROM Vehiculos WHERE placa = ? AND usuarioid = ? LIMIT 1",
+                new String[]{placa, String.valueOf(usuarioid)}
+        );
+
+        int vehiculoid = -1;
+        if (cursor.moveToFirst()) {
+            vehiculoid = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return vehiculoid;
+    }
+    public int contarReservasPendientes() {
+        int total = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM reservas WHERE estado = ?", new String[]{"Pendiente"});
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0);
+        }
+        cursor.close();
+        return total;
+    }
+    public Cursor obtenerReservasPorEstacionamientoYMes(String mes) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT est.nombre AS estacionamiento, COUNT(*) as total " +
+                "FROM Reservas r " +
+                "JOIN Espacios e ON r.espacioid = e.espacioid " +
+                "JOIN Estacionamientos est ON e.estacionamientoid = est.estacionamientoid " +
+                "WHERE strftime('%m', r.fechareserva) = ? " +
+                "GROUP BY est.nombre";
+
+        return db.rawQuery(query, new String[]{mes});
+    }
+
 
 }
 

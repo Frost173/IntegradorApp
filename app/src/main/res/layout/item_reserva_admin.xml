@@ -58,5 +58,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <!-- CAMPOS FALTANTES PARA EVITAR EL CRASH -->
+
+        <TextView
+            android:id="@+id/tvEstacionamiento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estacionamiento"
+            android:textColor="#3F51B5" />
+
+        <TextView
+            android:id="@+id/tvEspacio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Espacio"
+            android:textColor="#3F51B5" />
+
+        <!-- Opcional: si no lo usas, puedes poner visibility="gone" -->
+        <TextView
+            android:id="@+id/tvReservaDetalle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

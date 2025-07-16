@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="#F5F5F5">
 
     <!-- Barra superior -->
@@ -20,7 +20,7 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Historial de Reservas"
+        android:text="@string/historial_reservas"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
@@ -30,18 +30,49 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center" />
 
-    <!-- RecyclerView para mostrar las reservas -->
+    <!-- Filtros -->
+    <LinearLayout
+        android:id="@+id/layoutFiltros"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/etBuscarPlaca"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:hint="@string/buscar_hint"
+            android:background="@android:drawable/editbox_background"
+            android:padding="8dp"
+            android:inputType="text" />
+
+        <Spinner
+            android:id="@+id/spinnerFiltro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:entries="@array/filtros_array"
+            android:background="@android:drawable/btn_dropdown" />
+    </LinearLayout>
+
+    <!-- Lista de reservas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerReservas"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="56dp"
-        app:layout_constraintTop_toBottomOf="@id/topBar"
+        android:clipToPadding="false"
+        android:contentDescription="@string/lista_reservas"
+        app:layout_constraintTop_toBottomOf="@id/layoutFiltros"
         app:layout_constraintBottom_toTopOf="@+id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:clipToPadding="false"
         tools:listitem="@layout/item_reserva" />
 
     <!-- Barra inferior -->
@@ -52,10 +83,10 @@
         android:background="#FFFFFF"
         android:orientation="horizontal"
         android:gravity="center"
+        android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:elevation="8dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ImageButton
             android:id="@+id/btnHome"
@@ -65,9 +96,7 @@
             android:src="@drawable/home"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
-            android:contentDescription="Inicio" />
-
-
+            android:contentDescription="@string/inicio" />
 
         <ImageButton
             android:id="@+id/btnPerfil"
@@ -77,8 +106,7 @@
             android:src="@drawable/perfil"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
-            android:contentDescription="Perfil" />
+            android:contentDescription="@string/perfil" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
